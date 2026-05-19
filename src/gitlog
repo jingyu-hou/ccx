@@ -1,0 +1,1123 @@
+commit 8bff3f7cc57993af24bdf302ec3aa8694bb81bed
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Wed Sep 8 09:57:46 2021 +0800
+
+    add rdp, drx & dmg in frd
+
+commit a731041232b425c4b76fcfb0fc7cd10db1aac6b0
+Merge: 0ef32083 c3d7b7e9
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Sun Aug 29 16:51:55 2021 +0800
+
+    after merge
+
+commit 0ef320836fed8a10f8780d8e8d04b117022702fb
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Sun Aug 29 16:47:38 2021 +0800
+
+    change drx
+
+commit c3d7b7e9ff4d375968a1fbb3c5fd7780b2071c08
+Author: xsx <xsx>
+Date:   Sat Aug 28 15:42:34 2021 +0800
+
+    drxc calculated inside
+
+commit f349f5469058815451916f4f5a8c31b80d37a237
+Author: xsx <xsx>
+Date:   Sat Aug 28 15:25:03 2021 +0800
+
+    static space enlarged
+
+commit ccd4c521b0dab40f00b2c6c9e1bd962ae6d3912b
+Author: xsx <xsx>
+Date:   Sat Aug 28 12:51:19 2021 +0800
+
+    comment output in results.c
+
+commit f3777832d85d371c14198d9b2091a851f8e50b28
+Author: xsx <xsx>
+Date:   Sat Aug 28 12:50:57 2021 +0800
+
+    comment output in results.c
+
+commit 4c304477e7f0e56de5c891515571a7f6181218f7
+Author: xsx <xsx>
+Date:   Sat Aug 28 09:42:36 2021 +0800
+
+    drxc.c and plasticwork.c include
+    index.h, but constants are yet to be used.
+
+commit 4a68adf94230c4a5fe70e9cc8acd6be2e663eef8
+Author: xsx <xsx>
+Date:   Fri Aug 27 20:48:25 2021 +0800
+
+    emeini is initialized in nonlingeo.c, attempting to address step issue
+
+commit db962e7fe2c4037bf282b5027b0a16ab460c0d7c
+Author: xsx <xsx>
+Date:   Fri Aug 27 10:46:38 2021 +0800
+
+    material selection remains to be added in drxc.c
+
+commit 392323f8d320cb366009beb5e22cbe720b410a86
+Merge: 777c02ec b539f7e7
+Author: xsx <xsx>
+Date:   Thu Aug 26 18:46:42 2021 +0800
+
+    drx calculated outside
+
+commit 777c02ec2e257dfa27f35595bc3065ffc58b3aa0
+Author: xsx <xsx>
+Date:   Thu Aug 26 18:33:13 2021 +0800
+
+    drx calculated outside
+
+commit 6f1160f5f178bfa0037774a31a17cf2a9fcfb61c
+Author: xsx <xsx>
+Date:   Tue Aug 24 16:48:42 2021 +0800
+
+    plasticwork activated
+
+commit b539f7e7452bc080fe6f3a93a020890ee09056b8
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Mon Aug 23 09:16:31 2021 +0800
+
+    after merge2
+
+commit 5a4276338c1c8ce4d1c6e4dc82d4828dd44d1957
+Merge: f1d10e6f 16a1acc2
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Mon Aug 23 09:14:44 2021 +0800
+
+    after merge
+
+commit f1d10e6f9ef5ba2cc4cc466dbb06fbb9eb57809e
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Mon Aug 23 09:09:06 2021 +0800
+
+    rdplas modified
+
+commit 16a1acc25c7fc93338583aac31e8e1774c894197
+Author: xsx <xsx>
+Date:   Sun Aug 22 18:40:20 2021 +0800
+
+    3d blade
+
+commit 88672e0d003e3c103d655262bf66c824ebe75e7f
+Merge: c10a4013 ba868513
+Author: xsx <xsx>
+Date:   Sun Aug 22 18:37:34 2021 +0800
+
+    after merging
+
+commit c10a40132d694cf3b940101bc23839f8739e5106
+Author: xsx <xsx>
+Date:   Sun Aug 22 18:16:32 2021 +0800
+
+    constant sph
+
+commit 6d68c26a77773f456f0eabad933be017502a382a
+Author: xsx <xsx>
+Date:   Thu Aug 19 15:22:27 2021 +0800
+
+    drxc added but not activated in results.c
+
+commit ba868513e06761daf53b958b078daf65a8090d51
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue Aug 17 16:16:01 2021 +0800
+
+    change checkconvergence.f
+
+commit 227746d16b9d71da358be615cb30e0cd4b507df0
+Author: xsx <xsx>
+Date:   Tue Aug 17 08:52:45 2021 +0800
+
+    plasticwork activated, note:density needs to be rescaled in plasticwork.c
+
+commit 9c039879704a597f652b005987ce63be8ed04676
+Author: xsx <xsx>
+Date:   Thu Aug 12 11:15:16 2021 +0800
+
+    08122021
+
+commit 6d0d58bc819acbf244dc17e74eac8bac9765e275
+Merge: 67bf1c8c abde6533
+Author: xsx <xsx>
+Date:   Sun Jul 25 16:38:53 2021 +0800
+
+    after pull
+
+commit 67bf1c8c7b66dffa8459abcc800669beef8828c8
+Author: xsx <xsx>
+Date:   Sun Jul 25 16:35:04 2021 +0800
+
+    before pull 07252021
+
+commit abde653399ba5f99b233b364137484f85a0bf777
+Merge: d90db6be 18130b6a
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri Jul 23 17:44:12 2021 +0800
+
+    after merge
+
+commit d90db6be4a889b809ca0f31447a13575c3c7c174
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri Jul 23 17:41:37 2021 +0800
+
+    before merge
+
+commit e00d64c8c465d53b072d777d36b5446542cfaa12
+Author: xsx <xsx>
+Date:   Fri Jul 23 17:28:26 2021 +0800
+
+    before plasticwork test
+
+commit 18130b6ae2871b94724cd055303d27ac22356a02
+Author: zhang qingdong <zhangqd@wedge.com.cn>
+Date:   Wed Jul 21 08:25:23 2021 +0000
+
+    更新.gitlab-ci.yml
+
+commit 2ab6247b05f58bed2bce7fb6304f65f084b08d17
+Author: zhang qingdong <zhangqd@wedge.com.cn>
+Date:   Wed Jul 21 08:20:24 2021 +0000
+
+    更新.gitlab-ci.yml
+
+commit 970d97c8968495ddc8c6f8afd8b220f3ce31fd25
+Merge: ae3c5764 a1249246
+Author: xsx <xsx>
+Date:   Wed Jul 21 15:19:15 2021 +0800
+
+    Merge branch '2021-dev' of 10.1.1.101:weicme/weicme into 2021-dev
+
+commit ae3c5764e7883ecb58d07659abe964e9fdfcdabc
+Author: xsx <xsx>
+Date:   Wed Jul 21 15:18:59 2021 +0800
+
+    after merging
+
+commit a1249246fdcee3afc5538ff6c08bb82eb84480e8
+Author: zhang qingdong <zhangqd@wedge.com.cn>
+Date:   Wed Jul 21 05:45:12 2021 +0000
+
+    更新.gitlab-ci.yml
+
+commit 9e48395c314341c9e432c06e897fea4aced786da
+Merge: bc2cf9d7 25a68c49
+Author: xsx <xsx>
+Date:   Wed Jul 21 09:54:56 2021 +0800
+
+    before merging
+
+commit bc2cf9d71cb9839d661af1be618113dced97578d
+Author: xsx <xsx>
+Date:   Wed Jul 21 09:44:33 2021 +0800
+
+    comment added in uhard.f
+
+commit 25a68c49cc9f67495ab99c7a2dc7ae5c7ce55ba7
+Author: zhang qingdong <zhangqd@wedge.com.cn>
+Date:   Tue Jul 20 11:13:49 2021 +0000
+
+    更新.gitlab-ci.yml
+
+commit b26e37a744ad18ad86ea88017825a0fcc0bf4282
+Author: zhang qingdong <zhangqd@wedge.com.cn>
+Date:   Tue Jul 20 08:35:00 2021 +0000
+
+    更新.gitlab-ci.yml
+
+commit cc472f75ec1bf1b7da6f32cadf56ee3040e28d31
+Author: zhang qingdong <zhangqd@wedge.com.cn>
+Date:   Sun Jul 18 03:05:09 2021 +0000
+
+    更新Makefile_MT
+
+commit 9c82a245611a6fcaf62d24ca5efd283d159c296a
+Merge: 63adc5d7 4ce60e4c
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri Jul 16 22:51:25 2021 +0800
+
+    merge
+
+commit 63adc5d7b1381ea8fdf61712f2175dc60888abd9
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri Jul 16 22:49:03 2021 +0800
+
+    merge
+
+commit 380ec51cc97c908fe80a0441ec04e2d92b652162
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri Jul 16 19:56:00 2021 +0800
+
+    using Fmech in resultsmech.f
+
+commit 4ce60e4c71afc9975819b17a4a08eaab1db8e6b9
+Author: zhang qingdong <zhangqd@wedge.com.cn>
+Date:   Fri Jul 16 05:47:09 2021 +0000
+
+    更新.gitlab-ci.yml
+
+commit 04d62b24cb6cb0700b2fa9588232d44a605a1f81
+Author: zhang qingdong <zhangqd@wedge.com.cn>
+Date:   Fri Jul 16 05:45:12 2021 +0000
+
+    编译改为docker
+
+commit 6c99da86cb66f5ef0d665deb3c60a613e3d4d8aa
+Author: xsx <xsx>
+Date:   Thu Jul 15 10:25:02 2021 +0800
+
+    props(1) domain changed in uhard.f
+
+commit 3d2b07642db1b130ae7b934c1540f9857812f552
+Author: xsx <xsx>
+Date:   Wed Jul 14 18:06:02 2021 +0800
+
+    to be continued in plasticwork.c
+
+commit 56db73e1337c1696cc2843ed3b286cf94f38f99c
+Author: xsx <xsx>
+Date:   Wed Jul 14 16:25:51 2021 +0800
+
+    plasticwork.c updated
+
+commit 49238a2bb81c010f7a2bcd76501fe61c1b3f5b9c
+Author: xsx <xsx>
+Date:   Wed Jul 14 16:08:16 2021 +0800
+
+    Arrhenius uhard.f added
+
+commit 298c18f79dda27ab05054679dfc2704242d677ca
+Author: zhang qingdong <zhangqd@wedge.com.cn>
+Date:   Wed Jul 14 06:46:16 2021 +0000
+
+    更新Makefile_MT
+
+commit 0011e5b2724cbc147c155d2bd5066bc6bd93728a
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue Jul 13 17:51:47 2021 +0800
+
+    allocation.f:nstate=17 in rdplas
+
+commit c6067e03c9c1bcff4d32c6f3cb71a9f5c6e97d95
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri Jul 2 11:54:59 2021 +0800
+
+    convergency is optimized
+
+commit 591cbcfcbe7792f11a0b6f131d67b5e0552d85c4
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue Jun 29 18:14:31 2021 +0800
+
+    add rdplas.f and related inp keywords
+
+commit ba2e42aba73bfddf533a1c945384d72136dbc886
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Mon Jun 7 15:26:58 2021 +0800
+
+    fix Bug #208 when nlgeom=no
+
+commit 25262815fff3ac9bea730fc3ce58e83ff6177066
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Jun 3 11:35:39 2021 +0800
+
+    solve bug #208
+
+commit ec68443b494a456b0de8de166fea1e497ff07da9
+Merge: f61268a1 2b2d54fc
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri May 28 15:10:57 2021 +0800
+
+    solve conflict
+
+commit f61268a1aa7482b1199ddb1efbaecb095d73c859
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri May 28 11:32:34 2021 +0800
+
+    modify c3d8 element by bbar method
+
+commit 2b2d54fcde76a766c79ac48acc1087be5eba5ef8
+Author: xsx <xsx>
+Date:   Sat May 8 17:08:50 2021 +0800
+
+    calculate heat transfer on deformed shape
+
+commit f9deeb1a2e2ae52c3ea95a08c0730bd61f7930b1
+Author: bsye <yebs@wedge.com.cn>
+Date:   Thu Apr 8 09:09:10 2021 +0800
+
+    20210408-2
+
+commit 8f43f59bce99d4f98206f55ddd806f600d6f8cbf
+Merge: d406b48d 201cd356
+Author: bsye <yebs@wedge.com.cn>
+Date:   Thu Apr 8 08:51:52 2021 +0800
+
+    20210408
+
+commit d406b48d304055168a018ef425f637df3b736576
+Author: bsye <yebs@wedge.com.cn>
+Date:   Wed Apr 7 18:03:40 2021 +0800
+
+    1.correct enthalpy calculation; 2.write postprocess variables for casting in frd
+
+commit 201cd356466ff103c236ef3a3e44dc31d1a942cd
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Wed Mar 17 11:02:43 2021 +0800
+
+    update uhard
+
+commit e400ffb5d2ab7a768d1ea97f36103b81da06e545
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Wed Mar 17 10:35:36 2021 +0800
+
+    add damagecal
+
+commit 55fcb454f89e9cb3bb864f9ad8ccacd8e5ffad34
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri Mar 5 08:46:35 2021 +0800
+
+    stress invariant added
+
+commit 4fd396b768cb6b0660e9ad170631a6c4e2e923b3
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Wed Mar 3 10:49:01 2021 +0800
+
+    damage model update
+
+commit 1e40771f81400c47dfc8622a13a5be4f425f0b73
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Feb 25 15:55:15 2021 +0800
+
+    modify uhard.f
+
+commit 9c6e5539b6026924c4706d4030a25b45882cb1d8
+Merge: 7095ae9a 54d4cc8d
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Feb 25 15:35:17 2021 +0800
+
+    merge with 2021-dev
+
+commit 7095ae9aaf87b9f11d7383baab19816d40bb1b3e
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Feb 25 15:27:33 2021 +0800
+
+    drx using average method
+
+commit 54d4cc8dc38cfec238fae377f219b5320e9aad52
+Author: zhang qingdong <zhangqd@wedge.com.cn>
+Date:   Wed Feb 24 09:13:48 2021 +0800
+
+    Update .gitlab-ci.yml
+
+commit cd61ddde334c90168b5f930fbb87859365d3c98c
+Author: zhang qingdong <zhangqd@wedge.com.cn>
+Date:   Fri Feb 19 16:48:10 2021 +0800
+
+    更新.gitlab-ci.yml
+
+commit afda3f2526dc33f3e1643e029fceb0e3a86527dc
+Author: bsye <yebs@wedge.com.cn>
+Date:   Fri Feb 19 14:59:06 2021 +0800
+
+    fem-fluid and cast modules
+
+commit e459497585f691c8147a186df8135e341989925b
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Mon Feb 8 14:31:06 2021 +0800
+
+    damage model added
+
+commit 4c58fa0f0f3a89c81e39204d62c3db424b18ea2e
+Merge: 77cc86da 45942ed6
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue Jan 12 16:55:54 2021 +0800
+
+    Merge branch '2020' of 10.1.1.101:weicme/weicme into 2020
+
+commit 77cc86dab756f5920f0936a6b8d626b70c475316
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue Jan 12 16:53:31 2021 +0800
+
+    flow stress added
+
+commit 45942ed6a4655e8fa01f1d0613cb64b0b1542b05
+Author: xiashengxu <xrystal.my@yandex.com>
+Date:   Mon Dec 7 12:03:08 2020 +0800
+
+    Replace flowchart.vsdx
+
+commit bf63861c579e3fc781023f7e018198b105e49f71
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue Dec 1 17:52:51 2020 +0800
+
+    reverse the beta in transformation.f
+
+commit 3978fb9dd5c2d9ba013abb1b1f54be645a42e1c4
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Nov 26 10:44:15 2020 +0800
+
+    divide metal_powder.f into 3 files[C
+
+commit ac7b9d3de5c05bcd1ada873e66f8499f0ab76ef8
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Nov 12 09:15:26 2020 +0800
+
+    add drx.f for dynamic recrystallizaion of HIP
+
+commit c0448ffefcc2d7fd778cc4d6df29d62883249610
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri Sep 11 18:11:59 2020 +0800
+
+    Makefile modified
+
+commit 841347850b7791c108df9e21c90de4a81125d64d
+Merge: 6cbd582f c33abb76
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri Sep 11 15:10:29 2020 +0800
+
+    merge in 200911
+
+commit 6cbd582fb0c1b8c2e8a1de2e4ca4d48f91f45489
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri Sep 11 15:06:00 2020 +0800
+
+    modify conductance by density in HIP simulation
+
+commit c33abb767a3e11d0f0c81d3ec456004715111bbd
+Author: hdluo <cshlhd@163.com>
+Date:   Fri Sep 11 13:37:19 2020 +0800
+
+    传热分析调试
+
+commit 47e3987363a528df2fcede6601c1a5329d2511aa
+Author: hdluo <cshlhd@163.com>
+Date:   Thu Sep 3 11:33:17 2020 +0800
+
+    Calculate hardness
+
+commit fa9295d42a0e1691fafaee310cd7b033557602c0
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Wed Aug 26 09:00:07 2020 +0800
+
+    cancel the forced uhard using in incplas
+
+commit 7dec10d43abbe8f3547ba8d4a88af6d138400056
+Merge: 700a7186 ab725af1
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Sun Aug 16 16:07:20 2020 +0800
+
+    merge
+
+commit 700a718680815c84d64d3caaa7e9fefa87a762c1
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Sun Aug 16 13:50:17 2020 +0800
+
+    add powderhardening in readinput.c
+
+commit ab725af14e3563aa5c4bb2f2e7348e40979a6307
+Author: hdluo <cshlhd@163.com>
+Date:   Fri Aug 14 16:11:53 2020 +0800
+
+    Modification of dynamic extension of xstate
+
+commit 0e77339b930747a9a4d60e16c837d2f8df325562
+Author: hdluo <cshlhd@163.com>
+Date:   Wed Aug 12 15:28:46 2020 +0800
+
+    Dynamic expansion of xstate
+
+commit 576501b220b04d029e11067115b04a90477b8d27
+Merge: c2718f46 f59bfead
+Author: hdluo <cshlhd@163.com>
+Date:   Fri Aug 7 17:09:40 2020 +0800
+
+    Latent heat calculation
+
+commit c2718f46098e82305169500b0baead3f7a1dd630
+Author: hdluo <cshlhd@163.com>
+Date:   Fri Aug 7 16:56:10 2020 +0800
+
+    latent calculation
+
+commit f59bfead98b3d8c7cc3be1855c7051fb2a3c69d5
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Aug 6 15:00:09 2020 +0800
+
+    add hip strength prediction
+
+commit 581a63c3f9c6dfc47124abc0cac75ead2098de6a
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Jul 30 13:21:59 2020 +0800
+
+    conflict solved
+
+commit 3687ad54b03d80b2ff27ef6eba5e5b52f0c0e346
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Jul 30 11:09:04 2020 +0800
+
+    merge
+
+commit abec7115ed4fc7db490b5baf24c0df9d7aa72e27
+Merge: 5520f7e9 ea583d42
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Jul 30 11:06:53 2020 +0800
+
+    merge
+
+commit 5520f7e9d1aaa1caffe4d17bd16d94e59dee0f1b
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Jul 30 11:04:39 2020 +0800
+
+    optimize the convergence of metal powder model
+
+commit ea583d4281aaee7c1d336cc4749ca084b3ffe25e
+Author: hdluo <cshlhd@163.com>
+Date:   Thu Jul 23 10:49:12 2020 +0800
+
+    Code optimization
+
+commit 66f5a05c739fa7cbd4df05d90d328204f1537f63
+Author: hdluo <cshlhd@163.com>
+Date:   Wed Jul 22 13:52:52 2020 +0800
+
+    modify phasetransition1.f
+
+commit 50be2518a07e6fcbff404a82980c425c1dc9a9b8
+Author: hdluo <cshlhd@163.com>
+Date:   Mon Jul 20 15:30:19 2020 +0800
+
+    添加相平衡代码
+
+commit 118fd03922cfa7d4671c686075872c691492498d
+Merge: 98a6980e 6e0c796c
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Mon Jul 13 13:22:12 2020 +0800
+
+    merged
+
+commit 98a6980e3196c3b7ea044ba564b19736d2de24c2
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Mon Jul 13 13:16:27 2020 +0800
+
+    optimize the closest point method
+
+commit b87ea1e1abf8ef8d3033d25e8a88b4c0e59dabbc
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Mon Jul 13 13:14:00 2020 +0800
+
+    optimize the closest point method
+
+commit 6e0c796c6ce6d40a94368f54d530a61486e865c7
+Author: hdluo <cshlhd@163.com>
+Date:   Thu Jul 9 14:24:31 2020 +0800
+
+    增加屈服强度及晶粒尺寸计算代码
+
+commit 915b08488336241e120f6e85bf12d88941d882b7
+Author: hdluo <cshlhd@163.com>
+Date:   Wed Jul 8 17:32:42 2020 +0800
+
+    采用增量形式计算体积分数
+
+commit 70ae75d077e78830bc428325c5162469dcee7823
+Author: xsxia <xrystal.my@yandex.com>
+Date:   Mon Jul 6 18:23:04 2020 +0800
+
+    initial temperature set to be 0.0
+
+commit d77098baa40b59f59c32ee2db3ab305314863881
+Author: hdluo <cshlhd@163.com>
+Date:   Mon Jun 29 17:08:25 2020 +0800
+
+    热处理代码优化
+
+commit b31abf3358089ea3661656afa0847922826c2562
+Author: hdluo <cshlhd@163.com>
+Date:   Thu Jun 25 08:54:18 2020 +0800
+
+    Pass variable vini to resultstherm.f
+
+commit 4e63a011b088826e13886a6d2975763dcab325e0
+Merge: c5bf9103 cc08a909
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue Jun 23 14:54:37 2020 +0800
+
+    merged
+
+commit c5bf9103c38c3a65d3d5df2ff50a258d757a4930
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue Jun 23 14:52:26 2020 +0800
+
+    20200623
+
+commit 02b5a5cf2d99c7e06752541adff0f83264677cf2
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue Jun 23 11:05:26 2020 +0800
+
+    20200623
+
+commit cc08a9093c0299acfbcc4deb47dcd30f6b02f2f7
+Author: zhang qingdong <zhangqd@wedge.com.cn>
+Date:   Fri Jun 19 10:33:55 2020 +0800
+
+    Update .gitlab-ci.yml
+
+commit b250f70b3b1f23f94dc592adce4bc35e66500eed
+Author: zhang qingdong <zhangqd@wedge.com.cn>
+Date:   Thu Jun 18 23:31:30 2020 +0800
+
+    Update .gitlab-ci.yml
+
+commit 554301d26575deef313f4068f6b68e2f0d109d32
+Author: zhang qingdong <zhangqd@wedge.com.cn>
+Date:   Thu Jun 18 23:02:45 2020 +0800
+
+    更新.gitlab-ci.yml
+
+commit c71eeefee5b84d53754979c2a2d50404a0b6ebde
+Merge: fd534dc6 ce12a0c0
+Author: hdluo <cshlhd@163.com>
+Date:   Thu Jun 18 15:23:17 2020 +0800
+
+    添加TTT/CCT热处理代码
+
+commit fd534dc6520740ba049f4f91bd14c7361f72152e
+Author: hdluo <cshlhd@163.com>
+Date:   Thu Jun 18 15:16:40 2020 +0800
+
+    TTT curve
+
+commit ce12a0c05f57a75389b924b6c0441eddaa8a562e
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Jun 18 15:10:45 2020 +0800
+
+    lapack is added
+
+commit b3e1badf1bd744178d220643796c224c254c3b36
+Merge: 9d22c69a 2108f28b
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Jun 18 14:56:46 2020 +0800
+
+    conflict solve 20618
+
+commit 9d22c69aa01852b9fedaaf202526ff487d08b540
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Jun 18 14:52:47 2020 +0800
+
+    soomth powder mdoel surface
+
+commit 2108f28b559c3642295b3a4b200aeecc4811bb49
+Author: xsxia <xrystal.my@yandex.com>
+Date:   Wed Jun 17 14:23:08 2020 +0800
+
+    function output_mtx.c added for enabling matrix visualization
+
+commit 6de6329d2742eaa43d1fb39fa36fc2a77ef47021
+Author: zhang qingdong <qingdong0101@hotmail.com>
+Date:   Tue Jun 16 16:59:44 2020 +0800
+
+    Update .gitlab-ci.yml
+
+commit e04d91183ee54649e028f2f6c8ebe31f9cbe85e0
+Author: zhang qingdong <qingdong0101@hotmail.com>
+Date:   Tue Jun 16 16:21:56 2020 +0800
+
+    Update .gitlab-ci.yml
+
+commit 36d2fc0b37ca4767536eb528f4dc06245a5cdd0b
+Author: zhang qingdong <qingdong0101@hotmail.com>
+Date:   Tue Jun 16 16:19:33 2020 +0800
+
+    Update .gitlab-ci.yml
+
+commit 1a4ad319fdb43bf23cb8bc0454f4e35641dafb1b
+Author: zhang qingdong <qingdong0101@hotmail.com>
+Date:   Tue Jun 16 16:18:41 2020 +0800
+
+    Update .gitlab-ci.yml
+
+commit de36a88969e6bbcabe59fec597a609fc2da8940f
+Author: zhang qingdong <qingdong0101@hotmail.com>
+Date:   Tue Jun 16 16:17:10 2020 +0800
+
+    更新.gitlab-ci.yml
+
+commit b122bf904a0b4307db1fdf27b8ee80ec3a182d2a
+Author: zhang qingdong <qingdong0101@hotmail.com>
+Date:   Tue Jun 16 16:10:13 2020 +0800
+
+    修改ci文件
+
+commit 4f5782c34501c13d42c6c37fcf876a7a82c6276d
+Author: zhang qingdong <qingdong0101@hotmail.com>
+Date:   Thu Jun 11 14:44:49 2020 +0800
+
+    多线程编译用的makefile文件
+
+commit a33de1923d44a419b7429ca26567d822b9730f6e
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue Jun 2 17:57:25 2020 +0800
+
+    add mpcon in resutlstherm.f
+
+commit 7beb5b6ce5e743d672232f6ed67f30463c565eff
+Merge: 958a2020 71fbd9fd
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue Jun 2 15:45:24 2020 +0800
+
+    Merge branch '2020' of 10.1.1.101:weicme/weicme into 2020
+
+commit 958a2020d412db551d571d53ffbe3f697d10cdc8
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Mon Jun 1 10:11:55 2020 +0800
+
+    fix the thermal expansion ploblems by modifying convergence criteria in nonlingeo.c and prediction.c
+
+commit 71fbd9fd8e55652e037656d5419e49dcc211c3cd
+Author: xiashengxu <xrystal.my@yandex.com>
+Date:   Thu May 28 07:58:13 2020 +0800
+
+    flowchart updated
+
+commit 0b7b5937f44d28f1a69012c8d416f762a029674d
+Author: xiashengxu <xrystal.my@yandex.com>
+Date:   Thu May 28 07:57:36 2020 +0800
+
+    Delete flowchart.vsdx
+
+commit 743664f861f98a93fd61eab18d09877ccb33f280
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Wed May 20 09:16:59 2020 +0800
+
+    add powder's input keyword
+
+commit c7c21ca792944e65b177c7dcda085eedacdb10e5
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri May 15 10:50:29 2020 +0800
+
+    powder input read
+
+commit 72a80705d8a81a5b30e11327361048912e2ab135
+Merge: 6b91f122 c54c9f98
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue May 12 14:53:35 2020 +0800
+
+    solve conflict
+
+commit 6b91f1222b478268f8ccefeec0d2aed45058c341
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue May 12 13:16:23 2020 +0800
+
+    modify the nonlingeo.c scal1, use return map method in metal powder
+
+commit c54c9f988ebf348ebb575dd199f9ea7ddf202e48
+Author: sxxia <sxxia@dummy.edu>
+Date:   Mon Apr 27 10:22:28 2020 +0800
+
+    change corresponding to redmine bug #87
+
+commit 914e32d7fe637558adad897d6747ce46d7d690e8
+Author: xiashengxu <xrystal.my@yandex.com>
+Date:   Fri Mar 27 14:28:57 2020 +0800
+
+    flowchart.vsdx updated
+
+commit e4c2dfda5730a7f435a88132c1749aa9fc3574a4
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue Mar 24 14:38:03 2020 +0800
+
+    merge with xia's version
+
+commit c551f6374d37a91ece46479d92143545deeaed24
+Merge: 37e0ba8c 02a83cdb
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue Mar 24 14:11:41 2020 +0800
+
+    Merge branch '2020' of 10.1.1.101:weicme/weicme into 2020
+
+commit 37e0ba8c51c69f811ef721e039988a1948be6f40
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Tue Mar 24 14:08:03 2020 +0800
+
+    modified the ddsdde and stre in umat_metal_powder.f
+
+commit 02a83cdbde57c68e7b365e7781ff3188e6fac5e2
+Author: xiashengxu <xrystal.my@yandex.com>
+Date:   Fri Mar 13 11:24:22 2020 +0800
+
+    flowchart 0.1.0 uploaded
+
+commit 8a1a7da1be96b875fbb32e0998e13debcd48f6a4
+Author: xsxia <xrystal.my@yandex.com>
+Date:   Fri Feb 28 10:37:29 2020 +0800
+
+    bug fix corresponding to issue #52
+
+commit 282da28c95a04b92b394d4ad2d08f9b58897d3b7
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Feb 27 10:16:44 2020 +0800
+
+    add make clean
+
+commit a3c3b26e0dc445a89ef659387a77112f66b52f44
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Feb 27 10:08:09 2020 +0800
+
+    stiffness matrix fixed, O3 -> O0
+
+commit 638e5310ab5e3446a2c76773de46bf14f0d15296
+Merge: 075365f3 163dfd3c
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Wed Dec 4 09:47:05 2019 +0800
+
+    merge with xia's version
+
+commit 075365f320c005793a44fc2907b72aaf5e1eabbb
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Wed Dec 4 09:27:00 2019 +0800
+
+    modify the props sequence of umat_metal_powder.f
+
+commit 39c1e7d5da3f04b0fc289a3370f5147fed986f6b
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Mon Dec 2 13:55:23 2019 +0800
+
+    umat_metal_powder.f: C=F.F^T -> C=F^T.F
+
+commit 163dfd3c8b601c4178cad1fcae79d25f14ad95f8
+Author: xsxia <xrystal.my@yandex.com>
+Date:   Tue Nov 26 16:12:59 2019 +0800
+
+    src/logfile.log changed
+
+commit a69452a357f8c11ce7f52560412715161c7b5367
+Author: xsxia <xrystal.my@yandex.com>
+Date:   Fri Nov 8 20:39:20 2019 +0800
+
+    results.c modified and compiled
+
+commit 2a31b12cf25b1a31a3aae599af0e84b079b5b8c9
+Author: xsxia <xrystal.my@yandex.com>
+Date:   Fri Nov 8 20:11:51 2019 +0800
+
+    plasticwork.c added, WeICME and Makefile.inc modified
+
+commit cab95fd469e691818bf1b8fbe20ecf9d5b9379e7
+Author: xsxia <xrystal.my@yandex.com>
+Date:   Fri Nov 8 19:42:58 2019 +0800
+
+    readxstateini.c added
+
+commit e73174440ac488efd0ff576afd1b03232db8e30d
+Author: xsxia <xrystal.my@yandex.com>
+Date:   Fri Nov 8 19:38:56 2019 +0800
+
+    calcvol.f added
+
+commit 135d19ee5129b2966b95217bd523afe2fa7aac7e
+Author: xsxia <xrystal.my@yandex.com>
+Date:   Fri Nov 8 19:34:39 2019 +0800
+
+    uhardening.f replaced
+
+commit a800c1d88d05a784f96ddd2ef51976b80d1f5f09
+Author: xsxia <xrystal.my@yandex.com>
+Date:   Fri Nov 8 19:31:58 2019 +0800
+
+    incplas.f replaced
+
+commit 004272a5d0ef60932ecc79127eb3ea6cb8cf3b26
+Author: Administrator <admin@example.com>
+Date:   Thu Oct 17 14:48:49 2019 +0800
+
+    Update .gitlab-ci.yml
+
+commit fa1b35578e334298bf9f3eefa493c4e2cbc15067
+Author: Administrator <admin@example.com>
+Date:   Thu Oct 17 14:24:30 2019 +0800
+
+    Update .gitlab-ci.yml
+
+commit 26318a9bf2d193de59cb8cadf26bb7acbcd0d3de
+Author: Administrator <admin@example.com>
+Date:   Thu Oct 17 14:19:41 2019 +0800
+
+    Update .gitlab-ci.yml
+
+commit 039824a423caa31435da055a2b1c3d4be96a71aa
+Author: Administrator <admin@example.com>
+Date:   Thu Oct 17 13:51:18 2019 +0800
+
+    Update .gitlab-ci.yml
+
+commit 1ae4b3f0b489afa0e32e0dec9b99b4b9759ddabe
+Author: zhang qingdong <qingdong0101@hotmail.com>
+Date:   Thu Oct 17 13:37:35 2019 +0800
+
+    Update .gitlab-ci.yml
+
+commit 7d3ab7c83fcb464bca27f6fc09b43d0bcdd36748
+Author: zhang qingdong <qingdong0101@hotmail.com>
+Date:   Thu Oct 17 13:36:55 2019 +0800
+
+    Update .gitlab-ci.yml
+
+commit 8341e9f7287a89ca351207fdbbdcd2f2184081c9
+Author: zhang qingdong <qingdong0101@hotmail.com>
+Date:   Thu Oct 17 13:35:22 2019 +0800
+
+    Update .gitlab-ci.yml
+
+commit f232f122b19d8f8d5ab8102b0e9cc14e3561d8a9
+Author: Administrator <admin@example.com>
+Date:   Thu Oct 17 13:31:16 2019 +0800
+
+    Update .gitlab-ci.yml
+
+commit a7f7e79299d5592d773d813b65a845ef99692430
+Author: Administrator <admin@example.com>
+Date:   Thu Oct 17 13:25:33 2019 +0800
+
+    Update .gitlab-ci.yml
+
+commit 723b763b56eba76814636cc3693689b265c06eed
+Author: Administrator <admin@example.com>
+Date:   Thu Oct 17 13:21:39 2019 +0800
+
+    Update .gitlab-ci.yml
+
+commit c0647438d28cc233e87b242ab9a4f094804d368d
+Author: Administrator <admin@example.com>
+Date:   Thu Oct 17 13:17:34 2019 +0800
+
+    Update gitlab-ci.yml
+
+commit 6101b6b557e02d60e7b93f80a1dd588ad115398d
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Oct 17 11:29:18 2019 +0800
+
+    Add new file
+
+commit 6c29efef2fed0485177b2b15eac85c3d89d0c0b5
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri Oct 11 10:08:11 2019 +0800
+
+    Makefile -O0 -> -O3 thermmodel.f comment 125-127
+
+commit 18211aeb2afa698530b650577346a978bf68401a
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Sat Oct 5 15:33:59 2019 +0800
+
+    add uexpan.f and modified relative files
+
+commit 3c47990ef2d6457a405e0058540064c9bc95f9a0
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Sun Sep 29 16:38:55 2019 +0800
+
+    remove the 'free software'
+
+commit 00ace5b32041ea12e1acc0f9a3ecb9c816d0898c
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Wed Sep 25 10:32:28 2019 +0800
+
+    add uexpan.f
+
+commit ee45d1c7f76081e7aaf10eff2872215677d91379
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Sun Sep 22 23:43:31 2019 +0800
+
+    update umatht.f
+
+commit 41e00610d5a2db1e19f41db12e87303dd06274ea
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Sat Sep 21 15:26:30 2019 +0800
+
+    add umat_metal_powder.f and update umat_main.f
+
+commit ce70722d602a5431e3a0f53570d22db6defa6e11
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri Sep 20 18:08:46 2019 +0800
+
+    remove the LOGBOOK
+
+commit 7ef229b1fd40acd6e51d32a2d770c52a454fad7e
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Fri Sep 20 17:41:16 2019 +0800
+
+    replace all calculix by WeICME
+
+commit 876c53d9b5abf5e4e4fb7595699e520d45360f87
+Merge: efc7d0b2 38273e69
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Sep 19 13:35:48 2019 +0800
+
+    Merge branch 'master' of 10.1.1.101:weicme/weicme
+
+commit 38273e697a5e4f0672faaa6093daccf4ee1efd44
+Merge: 3c786564 fe613783
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Sep 19 13:20:37 2019 +0800
+
+    Merge branch 'develop' into 'master'
+    
+    Develop
+    
+    See merge request weicme/weicme!2
+
+commit fe613783f57f50de8a5f1553d06ec9b0677c77f5
+Author: hdluo <cshlhd@163.com>
+Date:   Thu Sep 19 10:45:43 2019 +0800
+
+    移除cx
+
+commit e72fb59b75f312edc9a1b4fc7875679743501f68
+Author: hdluo <cshlhd@163.com>
+Date:   Thu Sep 19 10:31:37 2019 +0800
+
+    删除cx,添加src
+
+commit 33d3cf6e96c7863abf6cf439fed66bc9982bdef6
+Author: hdluo <cshlhd@163.com>
+Date:   Tue Sep 17 10:52:36 2019 +0800
+
+    程序头文件修改
+
+commit efc7d0b27f3c6e3db43fccaad3d9e7fcb9743e51
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Mon Sep 16 23:04:35 2019 +0800
+
+    test1
+
+commit 3c786564b1e97bd6c7bf2aec00050e05aa70a25f
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Sep 12 15:07:51 2019 +0800
+
+    creat the logfie
+
+commit 5a354c8c680348435bb4e6e7ab71d9ef06a348b9
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Sep 12 14:46:04 2019 +0800
+
+    add logfile
+
+commit fb348996d553e6bc78d27d1e8d4a4b17b3de7e75
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Sep 12 14:44:31 2019 +0800
+
+    change 2
+
+commit b085d28f4b891f49effe32b303fc085f455e1a46
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Thu Sep 12 14:42:22 2019 +0800
+
+    change -1
+
+commit 660ad18c971f21fc90b04a213552c13fd762a45e
+Author: WANG Chao <wangchao1234142@hotmail.com>
+Date:   Wed Sep 11 16:20:52 2019 +0800
+
+    Initial commit

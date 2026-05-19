@@ -1,0 +1,34 @@
+!     
+!     WeICME (Wedge Integrated Computational Materials Engineering)
+!                 - A 3-dimensional finite element program.
+!     
+!     Developed and maintained by Shenzhen Wedge Central 
+!     South Research Institute co., Ltd., Shenzhen, China
+!     
+!     Copy Right 2019-2023.
+!
+      subroutine linvec10(vec,konl,vecl,istart,iend,shp)
+!
+!     calculates a linear approximation to the quadratic interpolation
+!     of the temperatures in a C3D10 element. A
+!     quadratic interpolation of the temperatures leads to quadratic
+!     thermal stresses, which cannot be handled by the elements 
+!     displacement functions (which lead to linear stresses). Thus,
+!     the temperatures are approximated by a linear function.
+!
+      implicit none
+!
+      integer konl(*),j,istart,iend
+!
+      real*8 vec(istart:iend,*),vecl(3),shp(4,*)
+!
+      do j=1,3
+         vecl(j)=
+     &    (shp(4,1)+(shp(4,5)+shp(4,7)+shp(4,8))/2.d0)*vec(j,konl(1))
+     &    +(shp(4,2)+(shp(4,5)+shp(4,6)+shp(4,9))/2.d0)*vec(j,konl(2))
+     &    +(shp(4,3)+(shp(4,6)+shp(4,7)+shp(4,10))/2.d0)*vec(j,konl(3))
+     &    +(shp(4,4)+(shp(4,8)+shp(4,9)+shp(4,10))/2.d0)*vec(j,konl(4))
+      enddo
+!     
+      return
+      end

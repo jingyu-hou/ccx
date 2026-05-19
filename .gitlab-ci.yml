@@ -1,0 +1,49 @@
+stages:
+  - job
+  - windowsd-dev-job
+
+weicme_tags:
+  stage: job
+  script: 
+    - WIDIR="/share/WEICME_dev"
+    - cd $WIDIR/weicme || exit
+    - git fetch --all && git reset --hard origin/2021-dev && git pull
+    - cd $WIDIR/test_cases || exit
+    - git fetch --all && git reset --hard origin/dev && git pull
+    - cd $WIDIR/test_script/ || exit
+    - git fetch --all && git reset --hard origin/dev && git pull
+    - chmod +x ./*
+    - bash weicmeCompile.sh
+    - exit 0
+  only:
+    - 2021-dev
+  tags:
+    - docker_solver
+
+windows_dev_tags:
+  stage: windowsd-dev-job
+  script: 
+    - $HOMEDIR="C:\cygwin64\home\gitlab-runner"
+    - $DEVDIR="C:\cygwin64\home\gitlab-runner\WEICME_DEV\weicme"
+    - cd $HOMEDIR\wicme_solver_exe
+    - git fetch --all ; git reset --hard origin/master ; git pull
+    - cd $DEVDIR
+    - git fetch --all ; git reset --hard origin/2021-dev ; git pull
+    - Remove-Item $DEVDIR\lapack-3.2.1 -Force  -recurse
+    - Copy-Item $HOMEDIR\lapack-3.2.1 $DEVDIR\ -Recurse -Force
+    - Move-Item $DEVDIR\Makefile_MT $DEVDIR\Makefile -Force 
+    - Copy-Item $HOMEDIR\makefiles\Makefile $DEVDIR\src\Makefile -Force
+    - c:\cygwin64\bin\bash.exe --login -i -c  "cd ~/WEICME_DEV/weicme && make -B"
+    - $CRHEAD=$(git rev-parse HEAD)
+    - Move-Item $DEVDIR\src\WeICME_MT.exe $HOMEDIR\wicme_solver_exe\weicme_dev_solver -Force
+    - cd $HOMEDIR\wicme_solver_exe\
+    - git add .
+    - git commit -m ""$CRHEAD"分支windows程序"
+    - git push
+    - exit 0
+
+  only:
+    - 2021-dev
+  tags:
+    - windows-exe
+

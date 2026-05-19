@@ -1,0 +1,97 @@
+!     
+!     WeICME (Wedge Integrated Computational Materials Engineering)
+!                 - A 3-dimensional finite element program.
+!     
+!     Developed and maintained by Shenzhen Wedge Central 
+!     South Research Institute co., Ltd., Shenzhen, China
+!     
+!     Copy Right 2019-2023.
+!
+      subroutine objective_shapeener_tot(ne,kon,ipkon,lakon,
+     &   fint,vold,iperturb,mi,nactdof,dgdx,df,ndesi,iobject,
+     &   jqs,irows,vec)
+!
+      implicit none
+!
+      character*8 lakon(*)
+!
+      integer ndesi,iobject,idesvar,i,j,l,jqs(*),irows(*),idof,
+     &   ne,ipkon(*),ielem,iperturb(*),indexe,konl(26),kon(*),mi(*),
+     &   nope,nactdof(0:mi(2),*)
+!      
+      real*8 dgdx(ndesi,*),df(*),vec(*),vold(0:mi(2),*),fint(*)
+!
+      intent(in) ne,kon,ipkon,lakon,
+     &   fint,vold,iperturb,mi,nactdof,df,ndesi,iobject,
+     &   jqs,irows
+!
+      intent(inout) vec,dgdx
+!
+!     ----------------------------------------------------------------
+!     Calculation of the total differential:
+!     non-linear:  dgdx = dgdx + fint^(T) * ( df )
+!     linear:      dgdx = dgdx + vold^(T) * ( df )
+!     ----------------------------------------------------------------
+!
+!     copying the entries of vold (linear) or fint (nonlinear) of the nodes
+!     belonging to the active element set in the field vec
+!
+      do ielem=1,ne
+         
+         if(ipkon(ielem).lt.0) cycle
+   
+         indexe=ipkon(ielem)
+   
+         if(lakon(ielem)(4:4).eq.'8') then
+            nope=8
+         elseif(lakon(ielem)(4:5).eq.'20') then
+            nope=20
+         elseif(lakon(ielem)(4:5).eq.'10') then
+            nope=10
+         elseif(lakon(ielem)(4:4).eq.'4') then
+            nope=4
+         elseif(lakon(ielem)(4:4).eq.'6') then          
+            nope=6
+         elseif(lakon(ielem)(4:5).eq.'15') then
+            nope=15
+         else
+            exit
+         endif
+   
+         do l=1,nope
+            konl(l)=kon(indexe+l)
+         enddo
+   
+         if(iperturb(2).eq.1) then
+            do i=1,nope
+               do j=1,3
+                  idof=nactdof(j,konl(i))
+                  if(idof.gt.0) then
+                     vec(idof)=fint(idof)
+                  endif               
+               enddo
+            enddo
+         else
+            do i=1,nope
+               do j=1,3
+                  idof=nactdof(j,konl(i))
+                  if(idof.gt.0) then      
+                     vec(idof)=vold(j,konl(i))
+                  endif               
+               enddo
+            enddo
+         endif
+      enddo
+!
+!     Calculation of the total differential:    
+!
+      do idesvar=1,ndesi
+         do j=jqs(idesvar),jqs(idesvar+1)-1
+            idof=irows(j)
+            dgdx(idesvar,iobject)=dgdx(idesvar,iobject) 
+     &            +vec(idof)*df(j) 
+         enddo
+      enddo     
+!      
+      return
+      end

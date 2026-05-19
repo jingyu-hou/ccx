@@ -1,0 +1,9 @@
+1. 在根目录中输入make
+2. 生成的可执行文件WeICME在src文件夹中
+
+
+多线程编译
+1. 进入src文件夹，删除Makefile文件
+2. 将Makefile_MT文件更名为Makefile
+3. 如果之前未编译过，则在根目录下make，生成WeICME_MT；
+   否则可在src目录下make，生成WeICME_MT。

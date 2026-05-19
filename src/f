@@ -1,0 +1,1410 @@
+!
+!     WeICME (Wedge Integrated Computational Materials Engineering)
+!                 - A 3-dimensional finite element program.
+!     
+!     Developed and maintained by Shenzhen Wedge Central 
+!     South Research Institute co., Ltd., Shenzhen, China
+!     
+!     Copy Right 2019-2023.
+!
+      subroutine umat_metal_powder(amat,iel,iint,kode,elconloc,emec,
+     &        emec0,beta,xokl,voj,xkl,vj,ithermal,t0l,t1l,dtime,time,
+     &        ttime,icmd,ielas,mi,nstate_,xstateini,xstate,stre,stiff,
+     &        iorien,pgauss,orab,istep,kinc,pnewdt,nmethod,iperturb)
+!
+!
+      implicit none
+!
+      character*80 amat
+!
+      integer ithermal,icmd,kode,ielas,iel,iint,nstate_,mi(*),i,
+     &  iorien,nmethod,iperturb(*),istep,
+     &  ndi,nshr,ntens,nprops,layer,kspt,jstep(4),kinc,kal(2,6),
+     &  kel(4,21),j1,j2,j3,j4,j5,j6,j7,j8,jj,n,ier,j,matz,k,l
+!
+      real*8 elconloc(21),stiff(21),emec(6),emec0(6),beta(6),stre(6),
+     &  vj,t0l,t1l,dtime,xkl(3,3),xokl(3,3),voj,pgauss(3),orab(7,*),
+     &  time,ttime,skl(3,3),xa(3,3),ya(3,3,3,3),xstate(nstate_,mi(1),*),
+     &  xstateini(nstate_,mi(1),*),w(3),fv1(3),fv2(3),d(3,3),v1,v2,v3,
+     &  c(3,3),r(3,3),r0(3,3),eln0(3,3),eln(3,3),e(3,3),tkl(3,3),
+     &  u(3,3),c2(3,3),dd,um1(3,3),z(3,3),u0(3,3),yy(3,3,3,3)
+!
+      real*8 ddsdde(6,6),sse,spd,scd,rpl,ddsddt(6),drplde(6),
+     &  drpldt,stran(6),dstran(6),abqtime(2),predef,temp,dtemp,temp0,
+     &  dpred,drot(3,3),celent,pnewdt
+      real*8 ee(6,1),pr(6,1),cprime(3,3,3,3),cpri(6,6),oldstre(6)
+!
+      kal=reshape((/1,1,2,2,3,3,1,2,1,3,2,3/),(/2,6/))
+!
+      kel=reshape((/1,1,1,1,1,1,2,2,2,2,2,2,1,1,3,3,2,2,3,3,3,3,3,3,
+     &          1,1,1,2,2,2,1,2,3,3,1,2,1,2,1,2,1,1,1,3,2,2,1,3,
+     &          3,3,1,3,1,2,1,3,1,3,1,3,1,1,2,3,2,2,2,3,3,3,2,3,
+     &          1,2,2,3,1,3,2,3,2,3,2,3/),(/4,21/))
+!
+      d=reshape((/1.d0,0.d0,0.d0,0.d0,1.d0,0.d0,0.d0,0.d0,1.d0/),
+     1         (/3,3/))
+      do i = 1,6
+        oldstre(i)=stre(i)
+      enddo
+      open(110, file='metalpowder.txt')
+!
+!     filling field jstep
+!
+      jstep(1)=istep
+      jstep(2)=nmethod
+      jstep(3)=iperturb(2)
+      if(iperturb(1).eq.1) then
+         jstep(4)=1
+      else
+         jstep(4)=0
+      endif
+!
+!     calculating the square of the right Cauchy-Green tensor at the
+!     start of the increment
+!
+      do i = 1,3
+         do j = 1,3
+            c(i,j)=xokl(1,i)*xokl(1,j)+xokl(2,i)*xokl(2,j)
+     1            +xokl(3,i)*xokl(3,j)
+         enddo
+      enddo
+!
+!     calculating the eigenvalues and eigenvectors
+!
+      n=3
+      matz=1
+!
+      call rs(n,n,c,w,matz,z,fv1,fv2,ier)
+!
+      if(ier.ne.0) then
+         write(*,*) '
+     &  *ERROR calculating the eigenvalues/vectors in umat_abaqusnl'
+         call exit(201)
+      endif
+!
+!     calculating the invariants at the start of the increment
+!
+      do i = 1,3
+         w(i)=w(i)**0.5
+      enddo
+      v1=w(1)+w(2)+w(3)
+      v2=w(1)*w(2)+w(2)*w(3)+w(3)*w(1)
+      v3=w(1)*w(2)*w(3)
+!
+!     calculating the square of the right Cauchy-Green tensor at the
+!     start of the increment
+!
+      do i = 1,3
+         do j = 1,3
+            c2(i,j) = c(i,1)*c(1,j)+c(i,2)*c(2,j)+c(i,3)*c(3,j) 
+         enddo
+      enddo
+!
+!     calculating the right stretch tensor at the start of the increment
+!     (cf. Simo and Hughes, Computational Inelasticity)
+!
+      dd=v1*v2-v3
+      do i=1,3
+         do j=1,3
+            u0(i,j)=(-c2(i,j)+(v1*v1-v2)*c(i,j)+v1*v3*d(i,j))/dd
+         enddo
+      enddo
+!
+!     calculating the inverse of the right stretch tensor at the start
+!     of the increment
+!
+      dd=v1*v2-v3
+      do i=1,3
+         do j=1,3
+            um1(i,j)=(c(i,j)-v1*u0(i,j)+v2*d(i,j))/v3
+         enddo
+      enddo
+!
+!     calculation of the local rotation tensor at the start of the
+!     increment
+!
+      do i=1,3
+         do j=1,3
+            r0(i,j)=xokl(i,1)*um1(1,j)+xokl(i,2)*um1(2,j)+
+     &              xokl(i,3)*um1(3,j)
+         enddo
+      enddo
+
+      e(1,1)=emec0(1)
+      e(2,2)=emec0(2)
+      e(3,3)=emec0(3)
+      e(1,2)=emec0(4)
+      e(1,3)=emec0(5)
+      e(2,3)=emec0(6)
+      e(2,1)=emec0(4)
+      e(3,1)=emec0(5)
+      e(3,2)=emec0(6)
+      call rs(n,n,e,w,matz,z,fv1,fv2,ier)
+!
+      if(ier.ne.0) then
+         write(*,*) '
+     &  *ERROR calculating the eigenvalues/vectors in umat_abaqusnl'
+         call exit(201)
+      endif
+      
+!      do i=1,3
+!         do j=1,3
+!            e(i,j)=0.d0
+!         enddo
+!         e(i,i)=dsqrt(2.d0*w(i)+1.d0)
+!      enddo
+!      u0=matmul(z,matmul(e,transpose(z)))
+!
+!
+!     calculating the principal stretches at the end of the increment
+!
+      do i=1,3
+         w(i)=log(dsqrt(2.d0*w(i)+1.d0))
+c         w(i)=log(w(i))   
+      enddo
+!
+      do i=1,3
+        do j=1,3
+          xa(i,j)=0.0d0
+        enddo
+        xa(i,i)=w(i)
+      enddo
+      eln0=matmul(z,matmul(xa,transpose(z)))
+!      eln0(1)=z(1,1)*z(1,1)*w(1)+z(1,2)*z(1,2)*w(2)+
+!     &        z(1,3)*z(1,3)*w(3)          
+!      eln0(2)=z(2,1)*z(2,1)*w(1)+z(2,2)*z(2,2)*w(2)+
+!     &        z(2,3)*z(2,3)*w(3)          
+!      eln0(3)=z(3,1)*z(3,1)*w(1)+z(3,2)*z(3,2)*w(2)+
+!     &        z(3,3)*z(3,3)*w(3)          
+!      eln0(4)=z(1,1)*z(2,1)*w(1)+z(1,2)*z(2,2)*w(2)+
+!     &        z(1,3)*z(2,3)*w(3)          
+!      eln0(5)=z(1,1)*z(3,1)*w(1)+z(1,2)*z(3,2)*w(2)+
+!     &        z(1,3)*z(3,3)*w(3)          
+!      eln0(6)=z(2,1)*z(3,1)*w(1)+z(2,2)*z(3,2)*w(2)+
+!     &        z(2,3)*z(3,3)*w(3)         
+!
+!     calculating the right Cauchy-Green tensor at the end of the
+!     increment
+!
+      do i = 1,3
+         do j = 1,3
+            c(i,j)=xkl(1,i)*xkl(1,j)+xkl(2,i)*xkl(2,j)
+     1            +xkl(3,i)*xkl(3,j)
+         enddo
+      enddo
+!
+!     calculating the eigenvalues and eigenvectors
+!
+      call rs(n,n,c,w,matz,z,fv1,fv2,ier)
+!
+!
+      if(ier.ne.0) then
+         write(*,*) '
+     &  *ERROR calculating the eigenvalues/vectors in metal powder'
+         call exit(201)
+      endif
+!
+!     calculating the invariants at the end of the increment
+!
+      do i = 1,3
+         w(i)=w(i)**0.5
+      enddo
+      v1=w(1)+w(2)+w(3)
+      v2=w(1)*w(2)+w(2)*w(3)+w(3)*w(1)
+      v3=w(1)*w(2)*w(3)
+!
+!     calculating the square of the right Cauchy-Green tensor at the
+!     end of the increment
+!
+      do i = 1,3
+         do j = 1,3
+            c2(i,j) = c(i,1)*c(1,j)+c(i,2)*c(2,j)+c(i,3)*c(3,j) 
+         enddo
+      enddo
+
+!
+!     calculating the right stretch tensor at the end of the increment
+!     (cf. Simo and Hughes, Computational Inelasticity)
+!
+      dd=v1*v2-v3
+      do i=1,3
+         do j=1,3
+            u(i,j)=(-c2(i,j)+(v1*v1-v2)*c(i,j)+v1*v3*d(i,j))/dd
+         enddo
+      enddo
+!
+!     calculating the inverse of the right stretch tensor at the end
+!     of the increment
+!
+      do i=1,3
+         do j=1,3
+            um1(i,j)=(c(i,j)-v1*u(i,j)+v2*d(i,j))/v3
+         enddo
+      enddo
+!
+!
+!     calculation of the local rotation tensor at the end of the
+!     increment
+!
+      do i=1,3
+         do j=1,3
+            r(i,j)=xkl(i,1)*um1(1,j)+xkl(i,2)*um1(2,j)+
+     &              xkl(i,3)*um1(3,j)
+         enddo
+      enddo
+!
+!     calculating the logarithmic strain at the end of the increment
+!     Elog=Z.ln(w).Z^T
+!
+      e(1,1)=emec(1)
+      e(2,2)=emec(2)
+      e(3,3)=emec(3)
+      e(1,2)=emec(4)
+      e(1,3)=emec(5)
+      e(2,3)=emec(6)
+      e(2,1)=emec(4)
+      e(3,1)=emec(5)
+      e(3,2)=emec(6)
+      
+      call rs(n,n,e,w,matz,z,fv1,fv2,ier)
+!
+      if(ier.ne.0) then
+         write(*,*) '
+     &  *ERROR calculating the eigenvalues/vectors in umat_abaqusnl'
+         call exit(201)
+      endif
+
+!      do i=1,3
+!         do j=1,3
+!            e(i,j)=0.d0
+!         enddo
+!         e(i,i)=dsqrt(2.d0*w(i)+1.d0)
+!      enddo
+!      u=matmul(z,matmul(e,transpose(z)))
+!     
+!
+!     calculating the principal stretches at the end of the increment
+!
+      do i=1,3
+         w(i)=log(dsqrt(2.d0*w(i)+1.d0))
+c         w(i)=log(w(i))
+      enddo
+
+!
+!     logarithmic strain in global coordinates at the end of the
+!     increment
+!
+      do i=1,3
+        do j=1,3
+          xa(i,j)=0.0d0
+        enddo
+        xa(i,i)=w(i)
+      enddo
+      
+      eln0=matmul(r,matmul(eln0,(transpose(r))))
+      eln=matmul(r,matmul(matmul(z,matmul(xa,transpose(z))),
+     &      transpose(r)))
+      
+!      eln(1)=z(1,1)*z(1,1)*w(1)+z(1,2)*z(1,2)*w(2)+
+!     &        z(1,3)*z(1,3)*w(3)          
+!      eln(2)=z(2,1)*z(2,1)*w(1)+z(2,2)*z(2,2)*w(2)+
+!     &        z(2,3)*z(2,3)*w(3)          
+!      eln(3)=z(3,1)*z(3,1)*w(1)+z(3,2)*z(3,2)*w(2)+
+!     &        z(3,3)*z(3,3)*w(3)          
+!      eln(4)=z(1,1)*z(2,1)*w(1)+z(1,2)*z(2,2)*w(2)+
+!     &        z(1,3)*z(2,3)*w(3)          
+!      eln(5)=z(1,1)*z(3,1)*w(1)+z(1,2)*z(3,2)*w(2)+
+!     &        z(1,3)*z(3,3)*w(3)          
+!      eln(6)=z(2,1)*z(3,1)*w(1)+z(2,2)*z(3,2)*w(2)+
+!     &        z(2,3)*z(3,3)*w(3)  
+c      write(*,*) 'iel', iel
+c      write(*,*) 'emec',(emec(i),i=1,6)
+c      write(*,*) 'eln',(eln(i),i=1,6)
+c      write(*,*) 'r0',((r0(i,j),j=1,3),i=1,3)
+c      write(*,*) 'r',((r(i,j),j=1,3),i=1,3)
+!
+!     calculating the incremental rotation tensor
+!     drot=r.r0^T
+!
+!      do i=1,3
+!         do j=1,3
+!            drot(i,j)=r(i,1)*r0(j,1)+r(i,2)*r0(j,2)+r(i,3)*r0(j,3)
+!         enddo
+!      enddo
+      drot=matmul(r,transpose(r0))
+
+!
+!
+      ntens=6
+!
+      do i=1,nstate_
+         xstate(i,iint,iel)=xstateini(i,iint,iel)
+      enddo
+!
+      abqtime(1)=time-dtime
+      abqtime(2)=ttime+time-dtime
+!
+      temp=t1l
+      temp0=t0l
+      dtemp=0.d0
+!
+      ndi=3
+      nshr=3
+      ntens=ndi+nshr
+!
+      nprops=-kode-100
+!
+!     taking local material orientations into account
+!
+      do jj=1,6
+         j1=kal(1,jj)
+         j2=kal(2,jj)
+         stran(jj)=eln0(j1,j2)
+         dstran(jj)=eln(j1,j2)-eln0(j1,j2)
+      enddo
+!      if ((iel .eq. 1) .and. (iint .eq. 1)) then 
+!        write(110,*) "kinc=", kinc
+!        write(110,"(6E10.3 )") (stran(i),i=1,6)
+!        write(110,"(6E10.3 )") (dstran(i),i=1,6)
+!        write(110,*) ""
+!      endif
+!
+!     rotating the stress into the local system
+!     s'=J^(-1).F.S.F^T
+!
+      xa(1,1)=stre(1)
+      xa(1,2)=stre(4)
+      xa(1,3)=stre(5)
+      xa(2,1)=stre(4)
+      xa(2,2)=stre(2)
+      xa(2,3)=stre(6)
+      xa(3,1)=stre(5)
+      xa(3,2)=stre(6)
+      xa(3,3)=stre(3)
+!     
+      xa=matmul(xokl,matmul(xa,transpose(xokl)))/voj
+      xa=matmul(drot,matmul(xa,transpose(drot)))
+      stre(1)=xa(1,1)
+      stre(4)=xa(1,2)
+      stre(5)=xa(1,3)
+      stre(2)=xa(2,2)
+      stre(6)=xa(2,3)
+      stre(3)=xa(3,3)
+!      if ((iel .eq. 1) .and. (iint .eq. 1)) then 
+!        write(110,*) "kinc=", kinc
+!        write(110,"(6E10.3 )") (stran(i),i=1,6)
+!        write(110,"(6E10.3 )") (dstran(i),i=1,6)
+!        write(110,*) ""
+!      endif
+!      do jj=1,6
+!         j1=kal(1,jj)
+!         j2=kal(2,jj)
+!         stre(jj)=xa(j1,j2)
+!      enddo
+!      do jj=1,6
+!         stre(jj)=0.d0
+!         j1=kal(1,jj)
+!         j2=kal(2,jj)
+!         do j3=1,3
+!            do j4=1,3
+!               stre(jj)=stre(jj)+
+!     &              xa(j3,j4)*xokl(j1,j3)*xokl(j2,j4)
+!            enddo
+!         enddo
+!         stre(jj)=stre(jj)/voj
+!      enddo
+!
+!     changing physical strain into engineering strain
+!     ABAQUS uses the engineering strain!
+!
+      do i=4,6
+         stran(i)=2.d0*stran(i)
+         dstran(i)=2.d0*dstran(i)
+      enddo
+
+      call metal_powder(stre,xstate(1,iint,iel),ddsdde,sse,spd,scd,
+     &     rpl,ddsddt,drplde,
+     &     drpldt,stran,dstran,abqtime,dtime,temp,dtemp,temp0,
+     &     predef,dpred,amat,ndi,nshr,ntens,nstate_,elconloc,nprops,
+     &     pgauss,drot,pnewdt,celent,xokl,xkl,iel,iint,layer,kspt,
+     &     jstep,kinc,vj,voj)
+
+!       call umatelastic(stre,xstate(1,iint,iel),ddsdde,sse,spd,scd,
+!     &     rpl,ddsddt,drplde,
+!     &     drpldt,stran,dstran,abqtime,dtime,temp,dtemp,
+!     &     predef,dpred,amat,ndi,nshr,ntens,nstate_,elconloc,nprops,
+!     &     pgauss,drot,pnewdt,celent,xokl,xkl,iel,iint,layer,kspt,
+!     &     jstep,kinc)
+!      if ((iel .eq. 1) .and. (iint .eq. 1)) then 
+!          open(10, file='e3888.txt')
+!          write(10,*) iel, iint, kinc, abqtime(1)
+!          write(10,*) 'r0'
+!          write(10,*) r0(1,1),r0(1,2),r0(1,3)
+!          write(10,*) r0(2,1),r0(2,2),r0(2,3)
+!          write(10,*) r0(3,1),r0(3,2),r0(3,3)
+!          write(10,*) 'r'
+!          write(10,*) r(1,1),r(1,2),r(1,3)
+!          write(10,*) r(2,1),r(2,2),r(2,3)
+!          write(10,*) r(3,1),r(3,2),r(3,3)
+!          write(10,*) 'drot'
+!          write(10,*) drot(1,1),drot(1,2),drot(1,3)
+!          write(10,*) drot(2,1),drot(2,2),drot(2,3)
+!          write(10,*) drot(3,1),drot(3,2),drot(3,3)
+!      end if
+!
+!     rotating the stress into the global system
+!     S=J.F^(-1).s'.F^(-T)
+!
+      
+      tkl(1,1)=(xkl(2,2)*xkl(3,3)-xkl(2,3)*xkl(3,2))/vj
+      tkl(1,2)=(xkl(1,3)*xkl(3,2)-xkl(1,2)*xkl(3,3))/vj
+      tkl(1,3)=(xkl(1,2)*xkl(2,3)-xkl(1,3)*xkl(2,2))/vj 
+      tkl(2,1)=(xkl(2,3)*xkl(3,1)-xkl(2,1)*xkl(3,3))/vj 
+      tkl(2,2)=(xkl(1,1)*xkl(3,3)-xkl(1,3)*xkl(3,1))/vj 
+      tkl(2,3)=(xkl(2,1)*xkl(1,3)-xkl(1,1)*xkl(2,3))/vj 
+      tkl(3,1)=(xkl(2,1)*xkl(3,2)-xkl(2,2)*xkl(3,1))/vj 
+      tkl(3,2)=(xkl(1,2)*xkl(3,1)-xkl(1,1)*xkl(3,2))/vj 
+      tkl(3,3)=(xkl(1,1)*xkl(2,2)-xkl(2,1)*xkl(1,2))/vj
+!                                                   
+      xa(1,1)=stre(1)
+      xa(1,2)=stre(4)
+      xa(1,3)=stre(5)
+      xa(2,1)=stre(4)
+      xa(2,2)=stre(2)
+      xa(2,3)=stre(6)
+      xa(3,1)=stre(5)
+      xa(3,2)=stre(6)
+      xa(3,3)=stre(3)
+      
+      xa=matmul(tkl,matmul(xa,transpose(tkl)))*vj
+      
+      stre(1)=xa(1,1)
+      stre(4)=xa(1,2)
+      stre(5)=xa(1,3)
+      stre(2)=xa(2,2)
+      stre(6)=xa(2,3)
+      stre(3)=xa(3,3)
+
+!
+!     calculate the stiffness matrix (the matrix is symmetrized)
+!
+      if(icmd.ne.3) then
+
+!         tkl=matmul(transpose(drot),tkl)
+
+         do i=1,6
+           j1=kal(1,i)
+           j2=kal(2,i)
+           do j=1,6
+             j3=kal(1,j)
+             j4=kal(2,j)
+             ya(j1,j2,j3,j4)=ddsdde(i,j)
+           enddo
+         enddo
+
+         do i=1,3
+           do j=1,3
+             do k=1,3
+               do l=1,3
+                 cprime(i,j,k,l)=0.5d0*(d(i,k)*xa(j,l)+
+     1             d(i,l)*xa(j,k)+d(j,k)*xa(i,l)+d(j,l)*xa(i,k))
+                 yy(i,j,k,l)=ya(i,j,k,l)-cprime(i,j,k,l)
+               enddo
+             enddo
+           enddo
+         enddo
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+         if ((iel .eq. 1) .and. (iint .eq. 1)) then 
+           do i=1,6
+             j5=kal(1,i)
+             j6=kal(2,i)
+             do j=1,6
+               j7=kal(1,j)
+               j8=kal(2,j)
+               ddsdde(i,j)=yy(j5,j6,j7,j8)
+               cpri(i,j)=cprime(j5,j6,j7,j8)
+             enddo
+           enddo
+        
+           write(110,*) "c_prime"
+           do i=1,6
+             write(110,"(6E10.3 )") (cpri(i,j),j=1,6)
+           enddo
+           write(110,*) "c"
+           do i=1,6
+             write(110,"(6E10.3 )") (ddsdde(i,j),j=1,6)
+           enddo
+
+         endif
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+         do j1=1,3
+           do j2=1,3
+             do j3=1,3
+               do j4=1,3
+                 ya(j1,j2,j3,j4)=0.d0
+                 do j5=1,3
+                   do j6=1,3
+                     do j7=1,3
+                       do j8=1,3
+                         ya(j1,j2,j3,j4)=ya(j1,j2,j3,j4)+
+     &                     vj*yy(j5,j6,j7,j8)*
+     &                     tkl(j1,j5)*tkl(j2,j6)*tkl(j3,j7)*tkl(j4,j8)
+                       enddo
+                     enddo
+                   enddo
+                 enddo
+               enddo
+             enddo
+           enddo
+         enddo
+!
+         do i=1,6
+           j1=kal(1,i)
+           j2=kal(2,i)
+           do j=1,6
+             j3=kal(1,j)
+             j4=kal(2,j)
+             ddsdde(i,j)=ya(j1,j2,j3,j4)
+           enddo  
+         enddo
+         stiff(1)=ddsdde(1,1)
+         stiff(2)=(ddsdde(1,2)+ddsdde(2,1))/2.d0
+         stiff(3)=ddsdde(2,2)
+         stiff(4)=(ddsdde(1,3)+ddsdde(3,1))/2.d0
+         stiff(5)=(ddsdde(2,3)+ddsdde(3,2))/2.d0
+         stiff(6)=ddsdde(3,3)
+         stiff(7)=(ddsdde(1,4)+ddsdde(4,1))/2.d0
+         stiff(8)=(ddsdde(2,4)+ddsdde(4,2))/2.d0
+         stiff(9)=(ddsdde(3,4)+ddsdde(4,3))/2.d0
+         stiff(10)=ddsdde(4,4)
+         stiff(11)=(ddsdde(1,5)+ddsdde(5,1))/2.d0
+         stiff(12)=(ddsdde(2,5)+ddsdde(5,2))/2.d0
+         stiff(13)=(ddsdde(3,5)+ddsdde(5,3))/2.d0
+         stiff(14)=(ddsdde(4,5)+ddsdde(5,4))/2.d0
+         stiff(15)=ddsdde(5,5)
+         stiff(16)=(ddsdde(1,6)+ddsdde(6,1))/2.d0
+         stiff(17)=(ddsdde(2,6)+ddsdde(6,2))/2.d0
+         stiff(18)=(ddsdde(3,6)+ddsdde(6,3))/2.d0
+         stiff(19)=(ddsdde(4,6)+ddsdde(6,4))/2.d0
+         stiff(20)=(ddsdde(5,6)+ddsdde(6,5))/2.d0
+         stiff(21)=ddsdde(6,6)
+c         stiff(1)=ddsdde(1,1)
+c         stiff(2)=ddsdde(1,2)
+c         stiff(3)=ddsdde(2,2)
+c         stiff(4)=ddsdde(1,3)
+c         stiff(5)=ddsdde(2,3)
+c         stiff(6)=ddsdde(3,3)
+c         stiff(7)=ddsdde(1,4)
+c         stiff(8)=ddsdde(2,4)
+c         stiff(9)=ddsdde(3,4)
+c         stiff(10)=ddsdde(4,4)
+c         stiff(11)=ddsdde(1,5)
+c         stiff(12)=ddsdde(2,5)
+c         stiff(13)=ddsdde(3,5)
+c         stiff(14)=ddsdde(4,5)
+c         stiff(15)=ddsdde(5,5)
+c         stiff(16)=ddsdde(1,6)
+c         stiff(17)=ddsdde(2,6)
+c         stiff(18)=ddsdde(3,6)
+c         stiff(19)=ddsdde(4,6)
+c         stiff(20)=ddsdde(5,6)
+c         stiff(21)=ddsdde(6,6)
+!
+!         rotating the stiffness coefficients into the global system
+!
+!          call anisotropic(stiff,ya)
+      endif
+      
+      if ((iel .eq. 1) .and. (iint .eq. 1)) then 
+        do i=1,6
+          ee(i,1)=emec(i)-emec0(i)
+        enddo
+        pr = matmul(ddsdde,ee)
+        write(110,*) "ddSddE"
+        do i =1,6
+          write(110,"(6E10.3)") (ddsdde(i,j),j=1,6)
+        enddo
+        write(110,*) "ddSddE_demec"
+        write(110,"(6E10.3)") (pr(i,1),i=1,6)
+        write(110,*) "S change"
+        write(110,"(6E10.3)") (stre(i)-oldstre(i),i=1,6)
+        write(110,*) "E change"
+        write(110,"(6E10.3)") (emec(i)-emec0(i),i=1,6)
+        write(110,*) " " 
+      endif
+
+      return
+      end
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+      subroutine metal_powder(stress,statev,ddsdde,sse,spd,scd,
+     1 rpl,ddsddt,drplde,drpldt,
+     2 stran,dstran,time,dtime,temp,dtemp,temp0,predef,dpred,cmname,
+     3 ndi,nshr,ntens,nstatv,props,nprops,coords,drot,pnewdt,
+     4 celent,dfgrd0,dfgrd1,noel,npt,layer,kspt,jstep,kinc,vj,voj)
+c
+      implicit none
+c      include 'aba_param.inc'
+c
+      character*80 cmname
+      integer :: ndi,nshr,ntens,nstatv, nprops, noel, npt, 
+     1 layer, kspt, jstep, kinc
+      real*8 :: sse,spd,scd,rpl,drpldt,dtime,temp,dtemp,temp0, 
+     1 pnewdt,celent
+      real*8  stress(ntens),statev(nstatv),
+     1 ddsdde(ntens,ntens),ddsddt(ntens),drplde(ntens),
+     2 stran(ntens),dstran(ntens),time(2),predef(1),dpred(1),
+     3 props(nprops),coords(3),drot(3,3),dfgrd0(3,3),dfgrd1(3,3),
+     4 vj,voj
+      real*8 :: e, v, p, q, d, r,tanb, qy, tanb0, r0, d0, py
+      real*8 :: fs,fc,oldfs,oldfc,dfs,dfc,dqds(ntens,1)
+      real*8 :: olds(ntens,1)
+      real*8 :: s(ntens,1), dstrain(ntens,1), ds(ntens,1), hv(ntens,1)
+      real*8 :: dep(ntens,ntens),dp(ntens,1),pe(ntens,1),ee(ntens,1)
+      real*8 :: tp(1,1),tp1(1,1), dels(ntens,ntens)
+      real*8 :: pb, pb0, dens, dens0, tpb, td, tqy,de,te, dv, tv
+      real*8 :: dlamda,dd,dpb, h, dx, x,y, pa, pa0, m
+      real*8 :: tolerance,fst,fct,oldt,t
+      real*8 :: tels(ntens,ntens),ddels(ntens,ntens)
+      real*8 :: det(ntens,1),dt(ntens,1), densels(ntens,ntens)
+      real*8 :: aftrot(ndi,ndi),befrot(ndi,ndi), z(ntens,1)
+      real*8 :: f,df,dfds(ntens,1),dfdd,dfdt,
+     1  strial(ntens,1),ptrial,qtrial,ttrial,ftrial,petrial(ntens,1),
+     2  subinc,xdp,xcap,sx(ntens,1),tx,fx,px
+      integer :: i, j, k, inc
+      character*10 yield,yieldtrial
+      real*8, parameter :: pi=3.14159265359d0,one=1.0d0,zero=0.0d0,
+     1        two=2.0d0, four=4.0d0, half=0.5d0
+      real*8, external :: pressure, mises
+
+c      props(1): beta0
+c      props(2): r0
+c      props(3): density0
+c      props(4): d0
+c      props(5): density threshold
+c      props(6): parameters of pb(dens)
+c      props(7): parameters of pb(dens)
+c      props(8): parameters of pb(dens)
+c      props(9): parameters of pb(dens)
+c      props(10): parameters of yield strength
+c      props(11): parameters of yield strength
+c      props(12): parameters of yield strength
+c      props(13): parameters of Young's modulus about temperature
+c      props(14): parameters of Young's modulus about temperature
+c      props(15): parameters of Poisson's ratio about temperature
+c      props(16): parameters of Poisson's ratio about temperature
+c      props(17): 0 - cohesion change, other - cohesion is constant
+      
+
+        if ((nprops .lt. 16)) then
+           write(*,*) 'MATERIAL CONSTANTS should be 16'
+           call exit(201)
+        endif
+        
+c input parameters and initial values
+        tolerance = 0.0001d0
+        k = 0
+        inc = 0
+        m = one
+
+cc rotate the plastic strain
+        do i = 1, ndi
+          do j = 1, ndi
+            befrot(i,j)=zero
+          end do
+        end do
+        
+        do i = 1, ndi
+          befrot(i,i)=statev(i)
+        end do
+        
+        befrot(1,2)=statev(ndi+1)/two
+        befrot(2,1)=statev(ndi+1)/two
+        
+        if (nshr .eq. 3) then
+          befrot(1,3)=statev(ndi+2)/two
+          befrot(3,1)=statev(ndi+2)/two
+          befrot(2,3)=statev(ndi+3)/two
+          befrot(3,2)=statev(ndi+3)/two
+        end if
+
+        aftrot = matmul(drot,matmul(befrot,transpose(drot)))
+
+        do i = 1, ndi
+          pe(i,1) = aftrot(i,i)
+        end do
+        
+        pe(ndi+1,1) = aftrot(1,2)*two
+        
+        if (nshr .eq. 3) then
+          pe(ndi+2,1) = aftrot(1,3)*two
+          pe(ndi+3,1) = aftrot(2,3)*two
+        end if
+
+cc calculate the temperate increasement
+        if (kinc .eq. 0) then
+          dtemp = temp-temp0
+        else
+          dtemp = temp-statev(8)
+        end if
+        dtemp =0
+
+        do i = 1, ntens
+          s(i,1) = stress(i)
+          olds(i,1) = stress(i)
+          ee(i,1) = stran(i)- pe(i,1)
+          dp(i,1) = zero
+        end do
+        
+        t = temp
+
+cc initialize the parameters
+        do i = 1, ndi
+          hv(i, 1) = -one
+          dstrain(i,1) = dstran(i)
+        end do
+        
+        do i = ndi+1, ntens
+          hv(i, 1) = zero
+          dstrain(i,1) = dstran(i)
+        end do 
+
+        tanb0 = tan(props(1)/180d0*pi)
+        r0 = props(2)
+        dens0 = props(3)
+        call sigy(qy,tqy,props,nprops,t)
+
+        tp = matmul(transpose(hv),pe)
+        dens = dens0*exp(tp(1,1))
+        p = pressure(s, ntens, ndi)
+        q = mises(s, ntens, ndi)
+        
+        call fpb(pb0, dpb, tpb, dens0,props,nprops,t)
+        call fpb(pb, dpb, tpb, dens,props,nprops,t)
+        call fcoh(d0, dd, td, dens0,props,nprops,t)
+        call fcoh(d, dd, td, dens,props,nprops,t)
+        
+        py = (qy-d0)/tanb0
+        pa0 = (pb0 - r0*d0)/(one + r0*tanb0)
+        tanb = (qy-d)/py
+        pa = pa0*pb*py/(pa0*pb+pb0*py-pa0*pb0)
+        r = (pb-pa)/(pa*tanb+d)
+
+cc calculate the tolerance
+        fct = min(one, r)*(d+pa*tanb)
+        fst = (p*tanb+d)
+        
+        if (p .ge. pa) then
+          tolerance = tolerance*fct
+        else
+          tolerance = tolerance*fst
+          if (tolerance .lt. one) then
+            tolerance = one
+          end if 
+        end if 
+
+c get the elastic stiffness matrix
+        call fyoung(e,de,te,dens,props,nprops,t)
+        call fpoisson(v,dv,tv,dens,props,nprops,t)
+!        e=2000.d6
+!        v=0.d0
+
+        do i = 1, ntens
+          do j = 1, ntens
+            dels(i,j) = zero
+            tels(i,j) = zero
+            densels(i,j) = zero
+          end do 
+        end do
+        
+        do i = 1, ndi
+          do j = 1, ndi
+            if (i .eq. j) then
+              dels(i,j) = e*(one-v)/(one+v)/(one-two*v)
+              tels(i,j)=((te*(one-v)+e*(-tv))*(one+v)*(one-two*v)-
+     1          e*(one-v)*(-tv-four*v*tv))/((one+v)**two*(one-two*v)
+     2          **two)
+              densels(i,j)=((de*(one-v)+e*(-dv))*(one+v)*(one-two*v)-
+     1          e*(one-v)*(-dv-four*v*dv))/((one+v)**two*(one-two*v)
+     2          **two)
+            else
+              dels(i,j) = e*v/(one+v)/(one-two*v)
+              tels(i,j)=((te*v+e*tv)*(one+v)*(one-two*v)-e*v*
+     1          (-tv-four*v*tv))/((one+v)**two*(one-two*v)**two)
+              densels(i,j)=((de*v+e*dv)*(one+v)*(one-two*v)-e*v*
+     1          (-dv-four*v*dv))/((one+v)**two*(one-two*v)**two)
+            end if
+          end do 
+        end do
+        
+        do i = ndi+1, ntens
+          dels(i,i) = e/(one+v)/two
+          tels(i,i)=(te*(one+v)-e*tv)/((one+v)**two)/two
+          densels(i,i)=(de*(one+v)-e*dv)/((one+v)**two)/two
+        end do 
+
+c calculate the trial stress
+        dt = matmul(tels, ee)
+        ds = matmul(dels,dstrain)+dt*dtemp
+        strial= s + ds
+        ttrial = t + dtemp
+        ptrial = pressure(strial, ntens, ndi)
+        qtrial = mises(strial, ntens, ndi)
+
+c check the initial yield condition
+        yield = 'not yield'
+        df = zero
+        
+        if (p .ge. pa) then
+          call funcap(f,dfds,dfdd,dfdt,s,dens, dens0,
+     1      props,nprops, ntens, ndi,t)
+          if (f .gt. -tolerance) then
+            yield = 'cap'
+            tp = matmul(transpose(dfds),ds)
+            df = tp(1,1)+dfdt*dtemp
+          end if
+        else
+          call fundp(f,dfds,dfdd,dfdt,s,dens,
+     1      props,nprops, ntens, ndi,t)
+          if (f .gt. -tolerance) then
+            yield = 'dp'
+            tp = matmul(transpose(dfds),ds)
+            df = tp(1,1)+dfdt*dtemp
+          end if
+        end if
+
+c calculate the yield condition after deforming
+        yieldtrial = 'not yield'
+        call funcap(fc,dfds,dfdd,dfdt,strial,dens, dens0,
+     1    props,nprops, ntens, ndi,ttrial)
+        if (fc .gt. tolerance) then
+          yieldtrial = 'yield'
+        end if
+        call fundp(fs,dfds,dfdd,dfdt,strial,dens,
+     1    props,nprops, ntens, ndi,ttrial)
+        if (fs .gt. tolerance) then
+          yieldtrial = 'yield'
+        end if
+
+c stress update
+        if (yieldtrial .eq. 'not yield') then
+!        if (two .gt. one) then
+
+          ddsdde = dels
+          do j = 1, ntens
+            ddsddt(j) = dt(j,1)
+          end do
+          s = strial
+        else
+             
+cc determine the yield location
+          if ((yield .eq. 'not yield') .or. (df .lt. zero)) then
+            xcap = zero
+            xdp = zero
+            
+cc calculate the elastic part by newton iteration 
+            if (fc .gt. tolerance) then
+              k = 0
+              sx = strial
+              tx = ttrial
+              call funcap(fx,dfds,dfdd,dfdt,sx,dens, dens0,
+     1          props,nprops, ntens, ndi,tx)
+              tp = matmul(transpose(dfds),ds)
+              df = tp(1,1)+dfdt*dtemp
+              do while (abs(fx) .gt. tolerance)
+                dx = -fx/df
+                xcap = xcap + dx
+                sx = sx + ds*dx
+                tx = tx + dtemp*dx
+                call funcap(fx,dfds,dfdd,dfdt,sx,dens, dens0,
+     1            props,nprops, ntens, ndi,tx)
+                tp = matmul(transpose(dfds),ds)
+                df = tp(1,1)+dfdt*dtemp
+                k = k +1
+                if (k .gt. 1000) then
+                  exit
+                end if
+              end do
+            end if
+
+            if (fs .gt. tolerance) then
+              xdp = zero
+              k = 0
+              sx = strial
+              tx = ttrial
+              call fundp(fx,dfds,dfdd,dfdt,sx,dens,
+     1          props,nprops, ntens, ndi,tx)
+              tp = matmul(transpose(dfds),ds)
+              df = tp(1,1)+dfdt*dtemp
+              do while (abs(fx) .gt. tolerance)
+                dx = -fx/df
+                xdp = xdp + dx
+                sx = sx + ds*dx
+                tx = tx + dtemp*dx
+                call fundp(fx,dfds,dfdd,dfdt,sx,dens,
+     1            props,nprops, ntens, ndi,tx)
+                tp = matmul(transpose(dfds),ds)
+                df = tp(1,1)+dfdt*dtemp
+                k = k +1
+                if (k .gt. 1000) then
+                  exit
+                end if
+              end do
+            end if 
+            
+            x = min(xcap,xdp)
+            if (x .lt. -two) then
+              x = -one
+            end if 
+            if (x .eq. xcap) then
+              yield = 'cap'
+            elseif (x .eq. xdp) then
+              yield = 'dp'
+            end if
+            
+          else
+            x = -one
+          end if
+          
+!          ddsdde = dels
+          ddsdde = dels*(one+x)
+          do j = 1, ntens
+!            ddsddt(j) = dt(j,1)
+            ddsddt(j) = dt(j,1)*(one+x)
+          end do
+          s = s + ds*(one+x)
+          t = t + dtemp*(one+x)
+          
+          if (yield .eq. 'cap') then
+            inc = ceiling(fc/fct*10.d0)
+          else if (yield .eq. 'dp') then
+            inc = ceiling(fs/fst*10.d0)
+          end if
+          inc = min(inc,100)
+          
+cc plastic stiffness matrix 
+          y = (-x)/inc
+          do i = 1, inc
+            if (yield .eq. 'cap') then
+              call funcap(f,dfds,dfdd,dfdt,s,dens, dens0,
+     1          props,nprops, ntens, ndi,t)
+              dqds = dfds
+              do j=ndi+1,ntens
+                dqds(j,1)=dqds(j,1)*two
+              enddo
+            else
+              call fundp(f,dfds,dfdd,dfdt,s,dens,
+     1          props,nprops, ntens, ndi,t)
+              dqds = dfds
+c              call devgdp(dqds,s,dens, dens0,
+c     1          props,nprops, ntens, ndi,t)
+              do j=ndi+1,ntens
+                dqds(j,1)=dqds(j,1)*two
+              enddo
+            end if
+
+            tp = matmul(transpose(dfds),matmul(dels, dqds))    
+     1           -matmul(transpose(dfds),matmul(densels,matmul(ee,
+     2           matmul(transpose(hv),dqds))))*dens
+     3           -dens*dfdd*matmul(transpose(hv), dqds)
+            h = tp(1,1)
+            tp=matmul(transpose(dfds),matmul(dels,dstrain))
+     1         +matmul(transpose(dfds),matmul(tels,ee))*dtemp
+     2         +dfdt*dtemp
+            dlamda = tp(1,1)/h
+            
+            z=matmul(densels,matmul(ee,matmul(transpose(hv),dqds)))
+     1         *dens-matmul(dels,dqds)
+            z = z/h
+            dep=dels+matmul(z,matmul(transpose(dfds),dels))
+            det=dt+matmul(z,matmul(transpose(dfds),dt))
+     1          +z*dfdt
+     
+            dp=dlamda*dqds
+            ds = matmul(dep, dstrain)+det*dtemp
+            
+cc update stress, strain and density
+            s = s + ds*y
+            t = t + dtemp*y
+            pe = pe + dp*y
+            ddsdde = ddsdde+dep*y
+!            ddsdde = dep
+            do j = 1, ntens
+              ddsddt(j) = ddsddt(j)+det(j,1)*y
+            end do
+            p = pressure(s, ntens, ndi)
+            q = mises(s, ntens, ndi)
+            tp = matmul(transpose(hv),pe)
+            dens = dens0*exp(tp(1,1))
+            call fpb(pb0, dpb,tpb, dens0,props,nprops,t)
+            call fpb(pb, dpb,tpb, dens,props,nprops,t)
+            call fcoh(d0, dd,td, dens0,props,nprops,t)
+            call fcoh(d, dd,td, dens,props,nprops,t)
+            py = (qy-d0)/tanb0
+            pa0 = (pb0 - r0*d0)/(one + r0*tanb0)
+            tanb = (qy-d)/py
+            pa = pa0*pb*py/(pa0*pb+pb0*py-pa0*pb0)
+            r = (pb-pa)/(pa*tanb+d)
+
+cc stress correction
+!            if (p .ge. pa) then
+!              yield = 'cap'
+!              call funcap(f,dfds,dfdd,dfdt,s,dens, dens0,
+!     1          props,nprops, ntens, ndi,t)
+!              if (f .gt. zero) then
+!                m = (r*(d+pa*tanb))/(((p-pa)**two+(r*q)**two)**half)
+!                s = m*(s-hv*pa)+hv*pa
+!              end if
+!            elseif (p .gt. (pa-(q-d-tanb*pa)*tanb)) then
+!              if ((-ds(1,1)-ds(2,1)-ds(3,1)) .gt. zero) then
+!                yield = 'cap'
+!                call funcap(f,dfds,dfdd,dfdt,s,dens, dens0,
+!     1            props,nprops, ntens, ndi,t)
+!              else
+!                yield = 'dp'
+!                call fundp(f,dfds,dfdd,dfdt,s,dens,
+!     1            props,nprops, ntens, ndi,t)
+!              end if
+!              if (f .gt. zero) then
+!                px = p-(d+tanb*pa-q)/(pa-p)
+!                m = sqrt(((px-pa)**2+(d+tanb*pa)**2)/((px-p)**2+q**2))
+!                s = m*(s-hv*px)+hv*px
+!              end if
+!            else
+!              yield = 'dp'
+!              call fundp(f,dfds,dfdd,dfdt,s,dens,
+!     1          props,nprops, ntens, ndi,t)
+!              if (f .gt. zero) then
+!                px = q*tanb+p
+!                m = ((q+p/tanb+d/tanb**two)/(one+one/tanb**two))/q
+!                s = m*(s-hv*px)+hv*px
+!              end if
+!            end if
+
+          end do
+
+        end if
+
+
+c update variables
+        do i = 1, ntens
+          stress(i) = s(i,1)
+          statev(i) = pe(i,1)
+        end do 
+        tp = matmul(transpose(hv),pe)
+        statev(7) = dens0*exp(tp(1,1))
+        statev(8) = temp
+ 
+        p = pressure(s, ntens, ndi)
+        q = mises(s, ntens, ndi)
+
+        if ((noel .eq. 1) .and. (npt .eq. 1)) then 
+          ds = matmul(ddsdde,dstrain)
+          write(110,*) "kinc=", kinc
+          write(110,*) "ddsdde"
+          do i =1,6
+            write(110,"(6E10.3)") (ddsdde(i,j),j=1,6)
+          enddo
+          ds=matmul(ddsdde,dstrain)
+          write(110,*) "ddsdde_dstrain"
+          write(110,"(6E10.3)") (ds(i,1),i=1,6)
+          write(110,*) "s change"
+          write(110,"(6E10.3)") (s(i,1)-olds(i,1),i=1,6)
+          write(110,*) "e change"
+          write(110,"(6E10.3)") (dstran(i),i=1,6)
+        endif
+        
+        ddsdde = matmul(olds,transpose(-hv))+ddsdde
+
+        if ((noel .eq. 1) .and. (npt .eq. 1)) then 
+          write(110,*) "c_abaqus"
+          do i =1,6
+            write(110,"(6E10.3)") (ddsdde(i,j),j=1,6)
+          enddo
+          ds=matmul(ddsdde,dstrain)*vj
+          write(110,*) "c_abaqus_dstrain"
+          write(110,"(6E10.3)") (ds(i,1),i=1,6)
+          ds=vj*s-voj*olds
+          write(110,*) "Js change"
+          write(110,"(6E10.3)") (ds(i,1),i=1,6)
+
+        endif
+
+      return
+      end subroutine
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+c functions and subroutines 
+      function pressure(s, ntens, ndi)
+        implicit none
+        integer :: ntens, ndi, i
+        real*8 :: pressure, s(ntens,1)
+        real*8, parameter :: zero=0.0d0,three=3.0d0
+        pressure = zero
+        do i = 1, ndi
+            pressure = pressure + s(i,1)
+        end do
+        pressure = -pressure/three
+        return
+      end
+
+      function mises(s, ntens, ndi)
+        implicit none
+        integer :: ntens, ndi, i
+        real*8 :: s(ntens,1), p, q, d, tanb,mises
+        real*8, parameter :: zero=0.0d0,two=2.0d0,six=6.0d0,half=0.5d0
+        mises = (s(1,1)-s(2,1))**two+(s(2,1)-s(3,1))**two+ 
+     1          (s(3,1)-s(1,1))**two
+        do i=ndi+1,ntens
+          mises = mises+six*s(i,1)**two
+        end do
+        mises = sqrt(half*mises)
+        return
+      end
+      
+      subroutine fpb(pb, dpb, tpb, dens, props,nprops,temp)
+        implicit none
+        integer :: nprops
+        real*8 :: pb, dpb, tpb, dens, qy,tqy,a,b,c,d
+        real*8 :: props(nprops),temp
+        a = props(6)
+        b = props(7)
+        c = props(8)
+        d = props(9)
+        call sigy(qy,tqy,props,nprops,temp)
+        pb = qy*(dens**a)*((b+c*dens)**d)
+        dpb = qy*a*(dens**(a-1.d0))*((b+c*dens)**d)
+     1    +qy*(dens**a)*d*((b+c*dens)**(d-1.d0))*c
+        tpb = tqy*(dens**a)*((b+c*dens)**d)
+        return
+      end subroutine
+      
+      subroutine fcoh(d,dd,td,dens, props,nprops,temp)
+        implicit none
+        integer :: nprops
+        real*8 :: props(nprops)
+        real*8 :: d0, d, dd, td, dens, denst, qy,tqy,temp
+        real*8, parameter :: zero=0.0d0,one=1.0d0,two=2.0d0
+        call sigy(qy,tqy,props,nprops,temp)
+        denst = props(5)
+        d0 = props(4)
+        if (denst .lt. d0) then
+          denst = 10.d0
+        endif
+
+        if (dens .lt. denst) then
+          d = d0*qy
+          dd = zero
+          td = d0*tqy
+        else
+          d = ((dens-denst)/(one-denst))*(qy-d0*qy)+d0*qy
+          dd = (qy-d0*qy)/(one-denst)
+          td = ((dens-denst)/(one-denst))*(tqy-d0*tqy)+d0*tqy
+        end if
+
+        return
+      end subroutine
+      
+      subroutine sigy(qy,tqy,props,nprops,temp)
+        implicit none
+        integer :: nprops
+        real*8 :: props(nprops)
+        real*8 :: d0, d, dd, dens, qy, tqy,temp,a,b,c
+        a = props(10)
+        b = props(11)
+        c = props(12)
+        qy = a+b*temp**c
+        tqy = c*b*temp**(c-1.d0)
+        return
+      end subroutine
+      
+      subroutine fyoung(ee,de,te,dens,props,nprops,temp)
+        implicit none
+        integer :: nprops
+        real*8 :: ee,de,te,dens,temp,props(nprops),a,b,c,d,e
+
+        a = props(13)
+        b = props(14)
+        c = 0.15d0
+        d = 0.85d0
+        e = 12.d0
+
+        ee = (a+b*temp)*(c+d*dens**e)
+        de = (a+b*temp)*(e*d*dens**(e-1.d0))
+        te = b*(c+d*dens**e)
+        return
+      end subroutine
+      
+      subroutine fpoisson(v,dv,tv,dens,props,nprops,temp)
+        implicit none
+        integer :: nprops
+        real*8 :: v,dv,tv,dens,temp,props(nprops),a,b,c,d,e
+        a = props(15)
+        b = props(16)
+        c = 3.d0
+        d = -2.d0
+        e = 0.5d0
+        
+        v = (a+b*temp)*(dens/(c+d*dens))**e
+        dv = (a+b*temp)*e*((c+d*dens-dens*d)
+     1       /(c+d*dens)**2.d0)**(e-1.d0)
+        tv = b*(dens/(c+d*dens))**e
+        return
+      end subroutine
+
+c gradient of drucker prager critiria
+      subroutine fundp(fs,dfds,dfdd,dfdt,s,dens,
+     1    props,nprops, ntens, ndi,temp)
+        implicit none
+        integer :: ntens, ndi, nprops, i
+        real*8 :: s(ntens,1), dfds(ntens,1), props(nprops), temp
+        real*8 :: fs,dfdd,dens,dens0,p,q,d,dd,d0,tanb,tanb0,qy,py
+        real*8 :: tqy, td, tpy, ttanb, dfdt, dtanb
+        real*8, parameter :: pi = 3.14159265359d0, tolerance=1.0d-3,
+     1       zero=0.0d0,half=0.5d0,two=2.0d0,three=3.0d0
+        real*8, external :: pressure, mises
+
+        p = pressure(s, ntens, ndi)
+        q = mises(s, ntens, ndi)
+        tanb0 = tan(props(1)/180.0d0*pi)
+        dens0 = props(3)
+        call sigy(qy,tqy,props,nprops,temp)
+        call fcoh(d0, dd, td, dens0,props,nprops,temp)
+        call fcoh(d, dd, td, dens,props,nprops,temp)
+        py = (qy-d0)/tanb0
+        tanb = (qy-d)/py 
+        tpy = tqy/tanb0 
+        dtanb = -dd/py
+        ttanb = ((tqy-td)*py-(qy-d)*tpy)/(py**two)
+
+        fs = q - p*tanb - d
+        if (q .lt. tolerance) then 
+          q = tolerance
+        end if
+        dfds(1,1)=half/q*(s(1,1)*two-s(2,1)-s(3,1))+tanb/three
+        dfds(2,1)=half/q*(s(2,1)*two-s(3,1)-s(1,1))+tanb/three
+        dfds(3,1)=half/q*(s(3,1)*two-s(1,1)-s(2,1))+tanb/three
+        do i = ndi+1, ntens
+          dfds(i,1)=three/q*s(i,1)
+        end do
+        dfdd = -p*dtanb-dd
+        dfdt = -p*ttanb-td
+        
+        return
+      end subroutine
+
+c gradient of gap critiria
+      subroutine funcap(fc,dfds,dfdd,dfdt,s,dens, dens0,
+     1    props,nprops, ntens, ndi,temp)
+        implicit none
+        integer :: ntens, ndi, nprops,i
+        real*8 :: p,q,gc,fc,dfdd,dd,dens0,dens,temp,twothrid
+        real*8 :: s(ntens,1), dfds(ntens,1),props(nprops)
+        real*8 :: py, qy, dpb,dtanb,dpa,dr
+        real*8 :: pa, pb, r, tanb, d
+        real*8 :: pa0, pb0, r0, tanb0, d0 
+        real*8 :: tqy, td, tpb, tpy, ttanb, tpa, tr, dfdt
+        real*8, parameter :: pi = 3.14159265359,one=1.0d0,
+     1    zero=0.0d0,half=0.5d0,two=2.0d0,three=3.0d0,six=6.0d0 
+        real*8, external :: pressure, mises
+        twothrid = 2.0d0/3.0d0
+        
+        p = pressure(s, ntens, ndi)
+        q = mises(s, ntens, ndi)
+        tanb0 = tan(props(1)/180*pi)
+        r0 = props(2)
+        call sigy(qy,tqy,props,nprops,temp)
+        dens0 = props(3)
+        call fpb(pb0,dpb,tpb,dens0,props,nprops,temp)
+        call fpb(pb,dpb,tpb,dens,props,nprops,temp)
+        call fcoh(d0,dd,td,dens0,props,nprops,temp)
+        call fcoh(d,dd,td,dens,props,nprops,temp)
+        py = (qy-d0)/tanb0
+        pa0 = (pb0 - r0*d0)/(one + r0*tanb0)
+        tanb = (qy-d)/py
+        pa = pa0*pb*py/(pa0*pb+pb0*py-pa0*pb0)
+        r = (pb-pa)/(pa*tanb+d)
+        
+        if (p .lt. pa) then
+          p=pa
+        end if
+        gc = ((p-pa)**two+(r*q)**two)**(half)
+        fc = gc-r*(d+pa*tanb)
+        
+        tpy = tqy/tanb0 
+        dtanb = -dd/py
+        ttanb = ((tqy-td)*py-(qy-d)*tpy)/(py**two)
+        dpa = (pa0*py*dpb*(pa0*pb+pb0*py-pa0*pb0)-py*pa0**two*pb*dpb)
+     1      / ((pa0*pb+pb0*py-pa0*pb0)**two)
+        tpa = (pa0*(tpy*pb+py*tpb)*(pa0*pb+pb0*py-pa0*pb0)-
+     1      py*pa0*pb*(pa0*tpb+pb0*tpy))/((pa0*pb+pb0*py-pa0*pb0)**two)
+        dr = ((dpb-dpa)*(pa*tanb+d)-(pb-pa)*(dpa*tanb+pa*dtanb+dd))
+     1      / ((pa*tanb+d)**two)
+        tr = ((tpb-tpa)*(pa*tanb+d)-(pb-pa)*(tpa*tanb+pa*ttanb+td))
+     1      / ((pa*tanb+d)**two)
+        dfds(1,1) = half/gc*(-twothrid*(p-pa)+
+     1             r**two*(s(1,1)*two-s(2,1)-s(3,1)))
+        dfds(2,1) = half/gc*(-twothrid*(p-pa)+
+     1             r**two*(s(2,1)*two-s(3,1)-s(1,1)))
+        dfds(3,1) = half/gc*(-twothrid*(p-pa)+
+     1             r**two*(s(3,1)*two-s(1,1)-s(2,1)))
+        do i = ndi+1, ntens
+          dfds(i,1) = half/gc*(six*r**two*s(i,1))
+        end do
+        dfdd = ((p-pa)*(-dpa)+r*q**two*dr)/gc-
+     1          dr*(d+pa*tanb)-r*(dd+dpa*tanb+pa*dtanb)
+        dfdt = ((p-pa)*(-tpa)+r*q**two*tr)/gc-
+     1          tr*(d+pa*tanb)-r*(td+tpa*tanb+pa*ttanb)
+     
+        return
+      end subroutine
+
+c gradient of drucker prager plastic potential
+      subroutine devgdp(dqds,s,dens, dens0,
+     1    props,nprops, ntens, ndi,temp)
+        implicit none
+        integer :: ntens, ndi, nprops, i
+        real*8 :: p, q, gs,temp, twothrid
+        real*8 :: pa, pb, tanb, d, dens, qy, py
+        real*8 :: pa0, pb0, r0, tanb0, d0, dens0
+        real*8 :: dpb, dd, tpb,td,tqy
+        real*8 :: dqds(ntens,1), s(ntens,1),props(nprops)
+        real*8, parameter :: pi = 3.14159265359,one=1.0d0,
+     1    zero=0.0d0,half=0.5d0,two=2.0d0,three=3.0d0,six=6.0d0 
+        real*8, external :: pressure, mises
+        twothrid = 2.0d0/3.0d0
+        
+        do i = 1, ntens
+          dqds(i,1) = zero
+        end do
+        
+        p = pressure(s, ntens, ndi)
+        q = mises(s, ntens, ndi)
+        tanb0 = tan(props(1)/180*pi)
+        r0 = props(2)
+        call sigy(qy,tqy,props,nprops,temp)
+        dens0 = props(3)
+        call fpb(pb0, dpb, tpb, dens0,props,nprops,temp)
+        call fpb(pb, dpb, tpb, dens,props,nprops,temp)
+        call fcoh(d0, dd, td, dens0,props,nprops,temp)
+        call fcoh(d, dd, td, dens,props,nprops,temp)
+        py = (qy-d0)/tanb0
+        pa0 = (pb0 - r0*d0)/(one + r0*tanb0)
+        tanb = (qy-d)/py
+        pa = pa0*pb*py/(pa0*pb+pb0*py-pa0*pb0)
+
+        gs = (((pa-p)*tanb)**two+q**two)**half
+        dqds(1,1) = half/gs*((pa-p)*tanb**two*twothrid+
+     1               (s(1,1)*two-s(2,1)-s(3,1)))
+        dqds(2,1) = half/gs*((pa-p)*tanb**two*twothrid+
+     1               (s(2,1)*two-s(3,1)-s(1,1)))
+        dqds(3,1) = half/gs*((pa-p)*tanb**two*twothrid+
+     1               (s(3,1)*two-s(1,1)-s(2,1)))
+        do i = ndi+1, ntens
+          dqds(i,1) = three/gs*s(i,1)
+        end do
+        
+        return
+      end subroutine

@@ -1,0 +1,75 @@
+!     
+!     WeICME (Wedge Integrated Computational Materials Engineering)
+!                 - A 3-dimensional finite element program.
+!     
+!     Developed and maintained by Shenzhen Wedge Central 
+!     South Research Institute co., Ltd., Shenzhen, China
+!     
+!     Copy Right 2019-2023.
+
+      subroutine cd_lab_radius(rad,s,hst,cd_radius)
+!
+      implicit none
+!
+      integer id,i,number,n9
+!
+      real*8 rad,s,cd_radius,rzs_tab(9),cd_sharp(9),rzs,hst
+!
+      real*8 rzs_tab1(9)
+      data rzs_tab1
+     &     /0d0,0.05d0,0.100d0,0.150d0,0.200d0,0.250d0,0.300d0,0.350d0,
+     &      0.400d0/
+!
+      real*8 cd_sharp1(9)
+      data cd_sharp1
+     &     /1d0,1.025d0,1.10d0,1.11d0,1.12d0,1.125d0,1.126d0,1.127d0,
+     &      1.127d0/
+!
+      real*8 rzs_tab2(9)
+      data rzs_tab2
+     &     /0d0,0.05d0,075d0,0.100d0,0.15d0,0.20d0,0.25d0,0.30d0,0.40d0/
+!
+      real*8 cd_sharp2(9)
+      data cd_sharp2
+     &     /1d0,1.10d0,1.15d0,1.20d0,1.26d0,1.31d0,1.34d0,1.36d0,1.37d0/
+!
+      data n9 /9/
+!
+      rzs=rad/s
+!
+!     straight labyrinth
+!
+      if(hst.eq.0d0) then
+         call ident(rzs_tab1,rzs,n9,id)
+         number=9
+         do i=1,9
+            rzs_tab(i)=rzs_tab1(i)
+            cd_sharp(i)=cd_sharp1(i)
+         enddo
+!
+!     stepped labyrinth
+!
+      else
+         call ident(rzs_tab2,rzs,n9,id)
+         number=9
+         do i=1,9
+            rzs_tab(i)=rzs_tab2(i)
+            cd_sharp(i)=cd_sharp2(i)
+         enddo
+      endif
+!
+!     linear interpolation
+!
+!    
+            if(id.eq.1) then
+              cd_radius=cd_sharp(1)
+            elseif(id.eq.number) then
+               cd_radius=cd_sharp(number)
+            else
+               cd_radius=cd_sharp(id)+(cd_sharp(id+1)-cd_sharp(id))
+     &              *(rzs-rzs_tab(id))/(rzs_tab(id+1)-rzs_tab(id))
+            endif
+!
+            return
+!
+            end

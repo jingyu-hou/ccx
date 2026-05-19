@@ -1,0 +1,3284 @@
+diff --git a/src/Makefile b/src/Makefile
+index 64d0f62f..9c92d836 100755
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -1,7 +1,7 @@
+-CFLAGS = -Wall -O3 -fopenmp -I ../SPOOLES.2.2 -DARCH="Linux" -DSPOOLES -DARPACK -DMATRIXSTORAGE -DUSE_MT=1 
+-FFLAGS = -Wall -O3 -fopenmp 
++CFLAGS = -g -pg -Wall -O0 -I  ../SPOOLES.2.2 -DARCH="Linux" -DSPOOLES -DARPACK -DMATRIXSTORAGE -DNETWORKOUT
++FFLAGS = -g -pg -Wall -O0 -I  ../lapack-3.2.1 -DARCH="Linux" -DLAPACK
+ 
+-CC=cc
++CC=gcc
+ FC=gfortran
+ 
+ .c.o :
+@@ -20,18 +20,17 @@ OCCXMAIN = $(SCCXMAIN:.c=.o)
+ DIR=../SPOOLES.2.2
+ 
+ LIBS = \
+-       $(DIR)/MT/src/spoolesMT.a \
+        $(DIR)/spooles.a \
+ 	../ARPACK/libarpack_REDHAT.a \
+ 	../lapack-3.2.1/liblapackREDHAT.a \
+ 	../lapack-3.2.1/libblasREDHAT.a \
+        -lpthread -lm -lc
+ 
+-WeICME_MT: $(OCCXMAIN) WeICME_MT.a  $(LIBS)
+-	./date.pl; $(CC) $(CFLAGS) -c WeICME.c; $(FC) -fopenmp -Wall -O3 -o $@ $(OCCXMAIN) WeICME_MT.a $(LIBS)
++WeICME: $(OCCXMAIN) WeICME.a  $(LIBS)
++	./date.pl; $(CC) $(CFLAGS) -c WeICME.c; $(FC)  -Wall -O3 -o $@ $(OCCXMAIN) WeICME.a $(LIBS)
+ 
+-WeICME_MT.a: $(OCCXF) $(OCCXC)
++WeICME.a: $(OCCXF) $(OCCXC)
+ 	ar vr $@ $?
+-                                                                               
++
+ clean:
+ 	rm *.o *.a
+diff --git a/src/Makefile_ST b/src/Makefile_ST
+index 11dbc2ba..aad1a4b3 100755
+--- a/src/Makefile_ST
++++ b/src/Makefile_ST
+@@ -1,5 +1,5 @@
+-CFLAGS = -pg -Wall -O3  -I ../SPOOLES.2.2 -DARCH="Linux" -DSPOOLES -DARPACK -DMATRIXSTORAGE -DNETWORKOUT
+-FFLAGS = -pg -Wall -O3  -I ../lapack-3.2.1 -DARCH="Linux" -DLAPACK
++CFLAGS = -g -pg -Wall -O0 -I ../SPOOLES.2.2 -DARCH="Linux" -DSPOOLES -DARPACK -DMATRIXSTORAGE -DNETWORKOUT
++FFLAGS = -g -pg -Wall -O0 -I ../lapack-3.2.1 -DARCH="Linux" -DLAPACK
+ 
+ CC=gcc
+ FC=gfortran
+diff --git a/src/WeICME b/src/WeICME
+index 6a413579..7713f56e 100755
+Binary files a/src/WeICME and b/src/WeICME differ
+diff --git a/src/WeICME.a b/src/WeICME.a
+index 1a67ef53..5f08027c 100644
+Binary files a/src/WeICME.a and b/src/WeICME.a differ
+diff --git a/src/WeICME.c b/src/WeICME.c
+index f6ba62e4..6edd47db 100644
+--- a/src/WeICME.c
++++ b/src/WeICME.c
+@@ -133,7 +133,7 @@ FORTRAN(openfile,(jobnamef,output));
+ printf("\n************************************************************\n\n");
+ printf("WeICME Version 2020.0, Copyright(C) 2019-2023 Wedge\n\n");
+ printf("************************************************************\n\n");
+-printf("You are using an executable made on Sun Aug 29 16:51:30 CST 2021\n");
++printf("You are using an executable made on Tue Aug 31 09:42:37 CST 2021\n");
+ fflush(stdout);
+ 
+ istep=0;
+diff --git a/src/WeICME.o b/src/WeICME.o
+index 13b69548..701f9c53 100644
+Binary files a/src/WeICME.o and b/src/WeICME.o differ
+diff --git a/src/WeICME_MT b/src/WeICME_MT
+index bb437ec3..e93a92fa 100755
+Binary files a/src/WeICME_MT and b/src/WeICME_MT differ
+diff --git a/src/WeICME_MT.a b/src/WeICME_MT.a
+index 3ea167e8..0c57d348 100644
+Binary files a/src/WeICME_MT.a and b/src/WeICME_MT.a differ
+diff --git a/src/absolute_relative.o b/src/absolute_relative.o
+index 0ec729c6..23389a06 100644
+Binary files a/src/absolute_relative.o and b/src/absolute_relative.o differ
+diff --git a/src/acctube.o b/src/acctube.o
+index d3e0a00c..97703884 100644
+Binary files a/src/acctube.o and b/src/acctube.o differ
+diff --git a/src/acctube_one.o b/src/acctube_one.o
+index 30423acc..4ebe16db 100644
+Binary files a/src/acctube_one.o and b/src/acctube_one.o differ
+diff --git a/src/actideacti.o b/src/actideacti.o
+index 17b301c4..b92a0541 100644
+Binary files a/src/actideacti.o and b/src/actideacti.o differ
+diff --git a/src/actideactistr.o b/src/actideactistr.o
+index 8e7503e9..a257464a 100644
+Binary files a/src/actideactistr.o and b/src/actideactistr.o differ
+diff --git a/src/adaptconnectivity.o b/src/adaptconnectivity.o
+index 2cdc1587..33f0b35d 100644
+Binary files a/src/adaptconnectivity.o and b/src/adaptconnectivity.o differ
+diff --git a/src/add_bo_st.o b/src/add_bo_st.o
+index d6379270..b02e71ab 100644
+Binary files a/src/add_bo_st.o and b/src/add_bo_st.o differ
+diff --git a/src/add_sm_ei.o b/src/add_sm_ei.o
+index faacf059..38b0d3c5 100644
+Binary files a/src/add_sm_ei.o and b/src/add_sm_ei.o differ
+diff --git a/src/add_sm_fl.o b/src/add_sm_fl.o
+index 4408366a..f7ca9e81 100644
+Binary files a/src/add_sm_fl.o and b/src/add_sm_fl.o differ
+diff --git a/src/add_sm_fl_as.o b/src/add_sm_fl_as.o
+index 7ffceb89..a81e5464 100644
+Binary files a/src/add_sm_fl_as.o and b/src/add_sm_fl_as.o differ
+diff --git a/src/add_sm_st.o b/src/add_sm_st.o
+index bd6ff46e..9c6f2838 100644
+Binary files a/src/add_sm_st.o and b/src/add_sm_st.o differ
+diff --git a/src/add_sm_st_as.o b/src/add_sm_st_as.o
+index de4fd1cc..78e8791c 100644
+Binary files a/src/add_sm_st_as.o and b/src/add_sm_st_as.o differ
+diff --git a/src/add_sm_st_corio.o b/src/add_sm_st_corio.o
+index c3ad6791..47b37ca3 100644
+Binary files a/src/add_sm_st_corio.o and b/src/add_sm_st_corio.o differ
+diff --git a/src/addimd.o b/src/addimd.o
+index 558e49a6..28c58342 100644
+Binary files a/src/addimd.o and b/src/addimd.o differ
+diff --git a/src/addimdnodecload.o b/src/addimdnodecload.o
+index 081bf4ba..09f72c70 100644
+Binary files a/src/addimdnodecload.o and b/src/addimdnodecload.o differ
+diff --git a/src/addimdnodedload.o b/src/addimdnodedload.o
+index 9a35f9fe..490dd146 100644
+Binary files a/src/addimdnodedload.o and b/src/addimdnodedload.o differ
+diff --git a/src/addimdnodedof.o b/src/addimdnodedof.o
+index bc606929..cfdc5b11 100644
+Binary files a/src/addimdnodedof.o and b/src/addimdnodedof.o differ
+diff --git a/src/addizdofcload.o b/src/addizdofcload.o
+index 2daa6193..f841bbee 100644
+Binary files a/src/addizdofcload.o and b/src/addizdofcload.o differ
+diff --git a/src/addizdofdload.o b/src/addizdofdload.o
+index e9fc23a3..7409b7df 100644
+Binary files a/src/addizdofdload.o and b/src/addizdofdload.o differ
+diff --git a/src/adjustcontactnodes.o b/src/adjustcontactnodes.o
+index 91aadec3..5e2f0021 100644
+Binary files a/src/adjustcontactnodes.o and b/src/adjustcontactnodes.o differ
+diff --git a/src/advecforc.o b/src/advecforc.o
+index ab042280..8fffa359 100644
+Binary files a/src/advecforc.o and b/src/advecforc.o differ
+diff --git a/src/advecstiff.o b/src/advecstiff.o
+index 3e9a7714..d986d245 100644
+Binary files a/src/advecstiff.o and b/src/advecstiff.o differ
+diff --git a/src/allocation.o b/src/allocation.o
+index c318eb34..2218bac7 100644
+Binary files a/src/allocation.o and b/src/allocation.o differ
+diff --git a/src/allocont.o b/src/allocont.o
+index ead8963a..6a8097fc 100644
+Binary files a/src/allocont.o and b/src/allocont.o differ
+diff --git a/src/amplitudes.o b/src/amplitudes.o
+index 917f3846..99642889 100644
+Binary files a/src/amplitudes.o and b/src/amplitudes.o differ
+diff --git a/src/angsum.o b/src/angsum.o
+index 7c2ae350..d8505fa2 100644
+Binary files a/src/angsum.o and b/src/angsum.o differ
+diff --git a/src/anisomaxwavspd.o b/src/anisomaxwavspd.o
+index 05a9ea49..84c7f7a5 100644
+Binary files a/src/anisomaxwavspd.o and b/src/anisomaxwavspd.o differ
+diff --git a/src/anisonl.o b/src/anisonl.o
+index 6529e4e0..efdeed21 100644
+Binary files a/src/anisonl.o and b/src/anisonl.o differ
+diff --git a/src/anisotropic.o b/src/anisotropic.o
+index 23d4fc45..cd6988c8 100644
+Binary files a/src/anisotropic.o and b/src/anisotropic.o differ
+diff --git a/src/applyboun.o b/src/applyboun.o
+index bd34a607..bc3c41e2 100644
+Binary files a/src/applyboun.o and b/src/applyboun.o differ
+diff --git a/src/applyboun_cast.o b/src/applyboun_cast.o
+index 1d9a6ae6..0cc1fc60 100644
+Binary files a/src/applyboun_cast.o and b/src/applyboun_cast.o differ
+diff --git a/src/applybounfem.o b/src/applybounfem.o
+index 9c2586c6..5e9840ac 100644
+Binary files a/src/applybounfem.o and b/src/applybounfem.o differ
+diff --git a/src/applybounp.o b/src/applybounp.o
+index db5a4968..76da176a 100644
+Binary files a/src/applybounp.o and b/src/applybounp.o differ
+diff --git a/src/applympc.o b/src/applympc.o
+index a50df66a..3862592f 100644
+Binary files a/src/applympc.o and b/src/applympc.o differ
+diff --git a/src/applympc_hfa.o b/src/applympc_hfa.o
+index 17eadbf2..a1991b7a 100644
+Binary files a/src/applympc_hfa.o and b/src/applympc_hfa.o differ
+diff --git a/src/approxplane.o b/src/approxplane.o
+index 2d47f061..fb1f9a03 100644
+Binary files a/src/approxplane.o and b/src/approxplane.o differ
+diff --git a/src/arpack.o b/src/arpack.o
+index e816c1fd..0c0632db 100644
+Binary files a/src/arpack.o and b/src/arpack.o differ
+diff --git a/src/arpackbu.o b/src/arpackbu.o
+index a62f43e9..bb2ab9f6 100644
+Binary files a/src/arpackbu.o and b/src/arpackbu.o differ
+diff --git a/src/arpackcs.o b/src/arpackcs.o
+index d70125db..f7dc73d4 100644
+Binary files a/src/arpackcs.o and b/src/arpackcs.o differ
+diff --git a/src/assigndomtonodes.o b/src/assigndomtonodes.o
+index e3fc4819..ee6ddc56 100644
+Binary files a/src/assigndomtonodes.o and b/src/assigndomtonodes.o differ
+diff --git a/src/attach.o b/src/attach.o
+index 6061f7c8..6eb9e61a 100644
+Binary files a/src/attach.o and b/src/attach.o differ
+diff --git a/src/attach_3d.o b/src/attach_3d.o
+index 84dbfb2a..9f7c0ee8 100644
+Binary files a/src/attach_3d.o and b/src/attach_3d.o differ
+diff --git a/src/attachline.o b/src/attachline.o
+index dfcb6870..3dcec7f6 100644
+Binary files a/src/attachline.o and b/src/attachline.o differ
+diff --git a/src/autocovmatrix.o b/src/autocovmatrix.o
+index 0afbf994..22f37b6b 100644
+Binary files a/src/autocovmatrix.o and b/src/autocovmatrix.o differ
+diff --git a/src/basemotions.o b/src/basemotions.o
+index 6ac94c15..820cde7a 100644
+Binary files a/src/basemotions.o and b/src/basemotions.o differ
+diff --git a/src/basis.o b/src/basis.o
+index 1a1c670c..2f2dbe0e 100644
+Binary files a/src/basis.o and b/src/basis.o differ
+diff --git a/src/basis_cfdfem.o b/src/basis_cfdfem.o
+index 610ab5e2..98d0a028 100644
+Binary files a/src/basis_cfdfem.o and b/src/basis_cfdfem.o differ
+diff --git a/src/beamextscheme.o b/src/beamextscheme.o
+index e5c3893b..cdedd8a5 100644
+Binary files a/src/beamextscheme.o and b/src/beamextscheme.o differ
+diff --git a/src/beamgeneralsections.o b/src/beamgeneralsections.o
+index 13faa3d1..8ba8cbee 100644
+Binary files a/src/beamgeneralsections.o and b/src/beamgeneralsections.o differ
+diff --git a/src/beamintscheme.o b/src/beamintscheme.o
+index c2932fac..03707315 100644
+Binary files a/src/beamintscheme.o and b/src/beamintscheme.o differ
+diff --git a/src/beammpc.o b/src/beammpc.o
+index d8287bf1..fa3d6f41 100644
+Binary files a/src/beammpc.o and b/src/beammpc.o differ
+diff --git a/src/beamsections.o b/src/beamsections.o
+index a227ba48..7ee03814 100644
+Binary files a/src/beamsections.o and b/src/beamsections.o differ
+diff --git a/src/biosav.o b/src/biosav.o
+index 51ead6a4..5438144e 100644
+Binary files a/src/biosav.o and b/src/biosav.o differ
+diff --git a/src/biotsavart.o b/src/biotsavart.o
+index 85be35d4..32626310 100644
+Binary files a/src/biotsavart.o and b/src/biotsavart.o differ
+diff --git a/src/blockanalysis.o b/src/blockanalysis.o
+index d24f5837..17ce3074 100644
+Binary files a/src/blockanalysis.o and b/src/blockanalysis.o differ
+diff --git a/src/bmatrix.o b/src/bmatrix.o
+index 9debe13f..90786866 100644
+Binary files a/src/bmatrix.o and b/src/bmatrix.o differ
+diff --git a/src/bodyadd.o b/src/bodyadd.o
+index 71849279..f1968b68 100644
+Binary files a/src/bodyadd.o and b/src/bodyadd.o differ
+diff --git a/src/bodyforce.o b/src/bodyforce.o
+index e646def9..a67a4bc9 100644
+Binary files a/src/bodyforce.o and b/src/bodyforce.o differ
+diff --git a/src/bounadd.o b/src/bounadd.o
+index 554a544b..997dfcf0 100644
+Binary files a/src/bounadd.o and b/src/bounadd.o differ
+diff --git a/src/bounaddf.o b/src/bounaddf.o
+index bb4460cc..2c4052cc 100644
+Binary files a/src/bounaddf.o and b/src/bounaddf.o differ
+diff --git a/src/boundaryfs.o b/src/boundaryfs.o
+index 6fd3a7f4..29ab6ba0 100644
+Binary files a/src/boundaryfs.o and b/src/boundaryfs.o differ
+diff --git a/src/boundarys.o b/src/boundarys.o
+index 4e74b110..fde1bb49 100644
+Binary files a/src/boundarys.o and b/src/boundarys.o differ
+diff --git a/src/bsort.o b/src/bsort.o
+index eaf9dac0..6952b0d2 100644
+Binary files a/src/bsort.o and b/src/bsort.o differ
+diff --git a/src/buckles.o b/src/buckles.o
+index f86cfbb1..14cbd634 100644
+Binary files a/src/buckles.o and b/src/buckles.o differ
+diff --git a/src/calc_ider_cross_split.o b/src/calc_ider_cross_split.o
+index 60fd1d7a..186d507d 100644
+Binary files a/src/calc_ider_cross_split.o and b/src/calc_ider_cross_split.o differ
+diff --git a/src/calc_ider_tee.o b/src/calc_ider_tee.o
+index 1d694904..3ae457bd 100644
+Binary files a/src/calc_ider_tee.o and b/src/calc_ider_tee.o differ
+diff --git a/src/calc_ider_wye.o b/src/calc_ider_wye.o
+index 19195044..7380c8ba 100644
+Binary files a/src/calc_ider_wye.o and b/src/calc_ider_wye.o differ
+diff --git a/src/calc_residual_cross_split.o b/src/calc_residual_cross_split.o
+index dce8d009..14db85c7 100644
+Binary files a/src/calc_residual_cross_split.o and b/src/calc_residual_cross_split.o differ
+diff --git a/src/calc_residual_tee.o b/src/calc_residual_tee.o
+index 11f514ed..49d6c002 100644
+Binary files a/src/calc_residual_tee.o and b/src/calc_residual_tee.o differ
+diff --git a/src/calc_residual_wye.o b/src/calc_residual_wye.o
+index 6b5974a2..c0ae23a0 100644
+Binary files a/src/calc_residual_wye.o and b/src/calc_residual_wye.o differ
+diff --git a/src/calcbody.o b/src/calcbody.o
+index 9bd41fc9..3a34f29e 100644
+Binary files a/src/calcbody.o and b/src/calcbody.o differ
+diff --git a/src/calccvel.o b/src/calccvel.o
+index f190fbfc..3f7254e0 100644
+Binary files a/src/calccvel.o and b/src/calccvel.o differ
+diff --git a/src/calccvelcomp.o b/src/calccvelcomp.o
+index 83dd6c11..944ec117 100644
+Binary files a/src/calccvelcomp.o and b/src/calccvelcomp.o differ
+diff --git a/src/calccvfa.o b/src/calccvfa.o
+index 5a065999..db2f0522 100644
+Binary files a/src/calccvfa.o and b/src/calccvfa.o differ
+diff --git a/src/calccvfacomp.o b/src/calccvfacomp.o
+index 9c45f9ba..9891e069 100644
+Binary files a/src/calccvfacomp.o and b/src/calccvfacomp.o differ
+diff --git a/src/calceigenvalues.o b/src/calceigenvalues.o
+index 61a6b6c4..19bc6633 100644
+Binary files a/src/calceigenvalues.o and b/src/calceigenvalues.o differ
+diff --git a/src/calcenergy.o b/src/calcenergy.o
+index 8be4749b..eaf37aa9 100644
+Binary files a/src/calcenergy.o and b/src/calcenergy.o differ
+diff --git a/src/calcenergycs.o b/src/calcenergycs.o
+index e746d3f5..71c180a2 100644
+Binary files a/src/calcenergycs.o and b/src/calcenergycs.o differ
+diff --git a/src/calceth.o b/src/calceth.o
+index 66895be0..bd0692ac 100644
+Binary files a/src/calceth.o and b/src/calceth.o differ
+diff --git a/src/calcflux.o b/src/calcflux.o
+index 4f8855b6..863f880a 100644
+Binary files a/src/calcflux.o and b/src/calcflux.o differ
+diff --git a/src/calcgamma.o b/src/calcgamma.o
+index 085cb9f2..b8d27373 100644
+Binary files a/src/calcgamma.o and b/src/calcgamma.o differ
+diff --git a/src/calcgammak.o b/src/calcgammak.o
+index 86f3c5cd..ac84e819 100644
+Binary files a/src/calcgammak.o and b/src/calcgammak.o differ
+diff --git a/src/calcgammao.o b/src/calcgammao.o
+index d68e8673..78732e75 100644
+Binary files a/src/calcgammao.o and b/src/calcgammao.o differ
+diff --git a/src/calcgammap.o b/src/calcgammap.o
+index e1d56818..5015ac64 100644
+Binary files a/src/calcgammap.o and b/src/calcgammap.o differ
+diff --git a/src/calcgammat.o b/src/calcgammat.o
+index deca3acb..3eab9afc 100644
+Binary files a/src/calcgammat.o and b/src/calcgammat.o differ
+diff --git a/src/calcgeomelemnet.o b/src/calcgeomelemnet.o
+index b69c97a2..fc1df5f5 100644
+Binary files a/src/calcgeomelemnet.o and b/src/calcgeomelemnet.o differ
+diff --git a/src/calcgradtemp_cast.o b/src/calcgradtemp_cast.o
+index 5869aa45..2d25278f 100644
+Binary files a/src/calcgradtemp_cast.o and b/src/calcgradtemp_cast.o differ
+diff --git a/src/calcguesstincf.o b/src/calcguesstincf.o
+index a905baf7..72a4f95b 100644
+Binary files a/src/calcguesstincf.o and b/src/calcguesstincf.o differ
+diff --git a/src/calch0interface.o b/src/calch0interface.o
+index 5d79e920..349c91fc 100644
+Binary files a/src/calch0interface.o and b/src/calch0interface.o differ
+diff --git a/src/calchcel.o b/src/calchcel.o
+index 587ba9d3..3da7a2cd 100644
+Binary files a/src/calchcel.o and b/src/calchcel.o differ
+diff --git a/src/calchcfa.o b/src/calchcfa.o
+index 317c41bd..a7b431c5 100644
+Binary files a/src/calchcfa.o and b/src/calchcfa.o differ
+diff --git a/src/calcheatnet.o b/src/calcheatnet.o
+index 2967dd76..c7785957 100644
+Binary files a/src/calcheatnet.o and b/src/calcheatnet.o differ
+diff --git a/src/calcinitialflux.o b/src/calcinitialflux.o
+index 973221d1..2dbb15d1 100644
+Binary files a/src/calcinitialflux.o and b/src/calcinitialflux.o differ
+diff --git a/src/calcmac.o b/src/calcmac.o
+index cc27cbca..1d5958d5 100644
+Binary files a/src/calcmac.o and b/src/calcmac.o differ
+diff --git a/src/calcmach.o b/src/calcmach.o
+index 6ded3efe..2294a360 100644
+Binary files a/src/calcmach.o and b/src/calcmach.o differ
+diff --git a/src/calcmass.o b/src/calcmass.o
+index 24497cee..6001ca8c 100644
+Binary files a/src/calcmass.o and b/src/calcmass.o differ
+diff --git a/src/calcmatwavspeed.o b/src/calcmatwavspeed.o
+index 9b014321..656edbeb 100644
+Binary files a/src/calcmatwavspeed.o and b/src/calcmatwavspeed.o differ
+diff --git a/src/calcmechstrain.o b/src/calcmechstrain.o
+index 3ff6c9b7..ae5cd41e 100644
+Binary files a/src/calcmechstrain.o and b/src/calcmechstrain.o differ
+diff --git a/src/calcnormal.o b/src/calcnormal.o
+index cf30faed..9f29b8af 100644
+Binary files a/src/calcnormal.o and b/src/calcnormal.o differ
+diff --git a/src/calcpel.o b/src/calcpel.o
+index 1d630ef8..975e4956 100644
+Binary files a/src/calcpel.o and b/src/calcpel.o differ
+diff --git a/src/calcresfluid.o b/src/calcresfluid.o
+index 68a8e2a5..b7cd9aee 100644
+Binary files a/src/calcresfluid.o and b/src/calcresfluid.o differ
+diff --git a/src/calcresidual.o b/src/calcresidual.o
+index f0932456..00a31ebf 100644
+Binary files a/src/calcresidual.o and b/src/calcresidual.o differ
+diff --git a/src/calcresidual_em.o b/src/calcresidual_em.o
+index ff81b703..56523da9 100644
+Binary files a/src/calcresidual_em.o and b/src/calcresidual_em.o differ
+diff --git a/src/calcrespfluid.o b/src/calcrespfluid.o
+index f489c5c4..f8656046 100644
+Binary files a/src/calcrespfluid.o and b/src/calcrespfluid.o differ
+diff --git a/src/calcresvfluid.o b/src/calcresvfluid.o
+index 0d01171c..88f3c006 100644
+Binary files a/src/calcresvfluid.o and b/src/calcresvfluid.o differ
+diff --git a/src/calcrhoel.o b/src/calcrhoel.o
+index 402fa728..aa6bcce8 100644
+Binary files a/src/calcrhoel.o and b/src/calcrhoel.o differ
+diff --git a/src/calcrhoelcomp.o b/src/calcrhoelcomp.o
+index 6e7391f9..2bba95b9 100644
+Binary files a/src/calcrhoelcomp.o and b/src/calcrhoelcomp.o differ
+diff --git a/src/calcrhofa.o b/src/calcrhofa.o
+index 58711045..622dda48 100644
+Binary files a/src/calcrhofa.o and b/src/calcrhofa.o differ
+diff --git a/src/calcrhofacomp_mod_smart.o b/src/calcrhofacomp_mod_smart.o
+index 8aced82d..164280c8 100644
+Binary files a/src/calcrhofacomp_mod_smart.o and b/src/calcrhofacomp_mod_smart.o differ
+diff --git a/src/calcrhofacomp_ud.o b/src/calcrhofacomp_ud.o
+index 3f102ea7..940b53cb 100644
+Binary files a/src/calcrhofacomp_ud.o and b/src/calcrhofacomp_ud.o differ
+diff --git a/src/calcrhofacompisen.o b/src/calcrhofacompisen.o
+index cb5deec0..7728e8d2 100644
+Binary files a/src/calcrhofacompisen.o and b/src/calcrhofacompisen.o differ
+diff --git a/src/calcshapef.o b/src/calcshapef.o
+index 5da11ed7..854811db 100644
+Binary files a/src/calcshapef.o and b/src/calcshapef.o differ
+diff --git a/src/calcspringforc.o b/src/calcspringforc.o
+index 7d2e3108..e48d6fdd 100644
+Binary files a/src/calcspringforc.o and b/src/calcspringforc.o differ
+diff --git a/src/calcstabletimeinccont.o b/src/calcstabletimeinccont.o
+index 4641c019..5402f0b2 100644
+Binary files a/src/calcstabletimeinccont.o and b/src/calcstabletimeinccont.o differ
+diff --git a/src/calcstabletimeincvol.o b/src/calcstabletimeincvol.o
+index 5a839ee4..aa682d65 100644
+Binary files a/src/calcstabletimeincvol.o and b/src/calcstabletimeincvol.o differ
+diff --git a/src/calcstressheatflux.o b/src/calcstressheatflux.o
+index e85bd704..1bd18bb6 100644
+Binary files a/src/calcstressheatflux.o and b/src/calcstressheatflux.o differ
+diff --git a/src/calcstressheatfluxfem.o b/src/calcstressheatfluxfem.o
+index d51d5c90..05e8905c 100644
+Binary files a/src/calcstressheatfluxfem.o and b/src/calcstressheatfluxfem.o differ
+diff --git a/src/calcttel.o b/src/calcttel.o
+index fb7194cf..ea9a3c87 100644
+Binary files a/src/calcttel.o and b/src/calcttel.o differ
+diff --git a/src/calcttfaext.o b/src/calcttfaext.o
+index 599c6e0d..0e516025 100644
+Binary files a/src/calcttfaext.o and b/src/calcttfaext.o differ
+diff --git a/src/calcumel.o b/src/calcumel.o
+index 6291fd0e..1cbe4c7b 100644
+Binary files a/src/calcumel.o and b/src/calcumel.o differ
+diff --git a/src/calcumfa.o b/src/calcumfa.o
+index 1e4fb49b..2e356b19 100644
+Binary files a/src/calcumfa.o and b/src/calcumfa.o differ
+diff --git a/src/calcvel.o b/src/calcvel.o
+index 734fdb75..f8ec9f9b 100644
+Binary files a/src/calcvel.o and b/src/calcvel.o differ
+diff --git a/src/calcview.o b/src/calcview.o
+index 26e60742..0380e543 100644
+Binary files a/src/calcview.o and b/src/calcview.o differ
+diff --git a/src/calcvol.o b/src/calcvol.o
+index 2ea77cc3..f4fefca6 100644
+Binary files a/src/calcvol.o and b/src/calcvol.o differ
+diff --git a/src/calcvol2.o b/src/calcvol2.o
+index 1153e604..23905620 100644
+Binary files a/src/calcvol2.o and b/src/calcvol2.o differ
+diff --git a/src/calinput.o b/src/calinput.o
+index 500360e7..0029f034 100644
+Binary files a/src/calinput.o and b/src/calinput.o differ
+diff --git a/src/call_external_umat.o b/src/call_external_umat.o
+index 9e4289e4..35fa6f2d 100644
+Binary files a/src/call_external_umat.o and b/src/call_external_umat.o differ
+diff --git a/src/call_external_umat_user.o b/src/call_external_umat_user.o
+index 685d116b..490cd4c8 100644
+Binary files a/src/call_external_umat_user.o and b/src/call_external_umat_user.o differ
+diff --git a/src/carbon_seal.o b/src/carbon_seal.o
+index 44c1c578..81ba9a05 100644
+Binary files a/src/carbon_seal.o and b/src/carbon_seal.o differ
+diff --git a/src/cascade.o b/src/cascade.o
+index 0c72e094..6bd31d5b 100644
+Binary files a/src/cascade.o and b/src/cascade.o differ
+diff --git a/src/cascadefem.o b/src/cascadefem.o
+index 9c664d4c..5ad1e801 100644
+Binary files a/src/cascadefem.o and b/src/cascadefem.o differ
+diff --git a/src/castfem.o b/src/castfem.o
+index 9000b529..7c5b0137 100644
+Binary files a/src/castfem.o and b/src/castfem.o differ
+diff --git a/src/casts.o b/src/casts.o
+index ea095b20..2fa868aa 100644
+Binary files a/src/casts.o and b/src/casts.o differ
+diff --git a/src/cataloguenodes.o b/src/cataloguenodes.o
+index 7875b97e..0a071f29 100644
+Binary files a/src/cataloguenodes.o and b/src/cataloguenodes.o differ
+diff --git a/src/cd_Mcgreehan_Schotsch.o b/src/cd_Mcgreehan_Schotsch.o
+index 9a5a9d9d..146d24b9 100644
+Binary files a/src/cd_Mcgreehan_Schotsch.o and b/src/cd_Mcgreehan_Schotsch.o differ
+diff --git a/src/cd_bleedtapping.o b/src/cd_bleedtapping.o
+index 7863b842..d5e4eef0 100644
+Binary files a/src/cd_bleedtapping.o and b/src/cd_bleedtapping.o differ
+diff --git a/src/cd_bragg.o b/src/cd_bragg.o
+index 4c919193..08ce0bf1 100644
+Binary files a/src/cd_bragg.o and b/src/cd_bragg.o differ
+diff --git a/src/cd_chamfer.o b/src/cd_chamfer.o
+index 2c3a5dd8..2005d1a7 100644
+Binary files a/src/cd_chamfer.o and b/src/cd_chamfer.o differ
+diff --git a/src/cd_lab_1spike.o b/src/cd_lab_1spike.o
+index 7add5ae3..43514a87 100644
+Binary files a/src/cd_lab_1spike.o and b/src/cd_lab_1spike.o differ
+diff --git a/src/cd_lab_correction.o b/src/cd_lab_correction.o
+index 9aafd91e..a5dbdbba 100644
+Binary files a/src/cd_lab_correction.o and b/src/cd_lab_correction.o differ
+diff --git a/src/cd_lab_honeycomb.o b/src/cd_lab_honeycomb.o
+index 8652549c..1dc0bd41 100644
+Binary files a/src/cd_lab_honeycomb.o and b/src/cd_lab_honeycomb.o differ
+diff --git a/src/cd_lab_radius.o b/src/cd_lab_radius.o
+index 964cb681..2161ab3f 100644
+Binary files a/src/cd_lab_radius.o and b/src/cd_lab_radius.o differ
+diff --git a/src/cd_lab_straight.o b/src/cd_lab_straight.o
+index 9624e289..0c5c1c4a 100644
+Binary files a/src/cd_lab_straight.o and b/src/cd_lab_straight.o differ
+diff --git a/src/cd_lichtarowicz.o b/src/cd_lichtarowicz.o
+index bf6dbe5c..05a16053 100644
+Binary files a/src/cd_lichtarowicz.o and b/src/cd_lichtarowicz.o differ
+diff --git a/src/cd_ms_ms.o b/src/cd_ms_ms.o
+index 11bdb755..f60bc638 100644
+Binary files a/src/cd_ms_ms.o and b/src/cd_ms_ms.o differ
+diff --git a/src/cd_own_albers.o b/src/cd_own_albers.o
+index dd9494d4..22382271 100644
+Binary files a/src/cd_own_albers.o and b/src/cd_own_albers.o differ
+diff --git a/src/cd_pk_albers.o b/src/cd_pk_albers.o
+index 84d63ad5..0d11eb7b 100644
+Binary files a/src/cd_pk_albers.o and b/src/cd_pk_albers.o differ
+diff --git a/src/cd_pk_ms.o b/src/cd_pk_ms.o
+index dfd6fc7a..149e22a3 100644
+Binary files a/src/cd_pk_ms.o and b/src/cd_pk_ms.o differ
+diff --git a/src/cd_preswirlnozzle.o b/src/cd_preswirlnozzle.o
+index 57bd9669..430f54e5 100644
+Binary files a/src/cd_preswirlnozzle.o and b/src/cd_preswirlnozzle.o differ
+diff --git a/src/cfdconv.o b/src/cfdconv.o
+index 86eab90c..bfb3a2d8 100644
+Binary files a/src/cfdconv.o and b/src/cfdconv.o differ
+diff --git a/src/cfds.o b/src/cfds.o
+index d420f784..8417faee 100644
+Binary files a/src/cfds.o and b/src/cfds.o differ
+diff --git a/src/cflux.o b/src/cflux.o
+index 8faf59b5..24d2b5c8 100644
+Binary files a/src/cflux.o and b/src/cflux.o differ
+diff --git a/src/cfluxs.o b/src/cfluxs.o
+index 7a1b4c47..abfe1df4 100644
+Binary files a/src/cfluxs.o and b/src/cfluxs.o differ
+diff --git a/src/changedepterm.o b/src/changedepterm.o
+index 2a35c62d..a30ba9c0 100644
+Binary files a/src/changedepterm.o and b/src/changedepterm.o differ
+diff --git a/src/changefrictions.o b/src/changefrictions.o
+index eab2c9db..bf712235 100644
+Binary files a/src/changefrictions.o and b/src/changefrictions.o differ
+diff --git a/src/changekon.o b/src/changekon.o
+index 71284cde..3c09db4d 100644
+Binary files a/src/changekon.o and b/src/changekon.o differ
+diff --git a/src/changematerials.o b/src/changematerials.o
+index 05a1fc39..9300f3af 100644
+Binary files a/src/changematerials.o and b/src/changematerials.o differ
+diff --git a/src/changeplastics.o b/src/changeplastics.o
+index 92df64a2..b10e3950 100644
+Binary files a/src/changeplastics.o and b/src/changeplastics.o differ
+diff --git a/src/changesolidsections.o b/src/changesolidsections.o
+index 58b35c02..cc5f01e8 100644
+Binary files a/src/changesolidsections.o and b/src/changesolidsections.o differ
+diff --git a/src/changesurfacebehaviors.o b/src/changesurfacebehaviors.o
+index 1a7a54cb..47e80e8b 100644
+Binary files a/src/changesurfacebehaviors.o and b/src/changesurfacebehaviors.o differ
+diff --git a/src/characteristic.o b/src/characteristic.o
+index 1d078b8f..44097696 100644
+Binary files a/src/characteristic.o and b/src/characteristic.o differ
+diff --git a/src/checkconstraint.o b/src/checkconstraint.o
+index a805bf67..18a5eda1 100644
+Binary files a/src/checkconstraint.o and b/src/checkconstraint.o differ
+diff --git a/src/checkconvergence.o b/src/checkconvergence.o
+index e35d659b..175dbfa1 100644
+Binary files a/src/checkconvergence.o and b/src/checkconvergence.o differ
+diff --git a/src/checkconvnet.o b/src/checkconvnet.o
+index 9b219bb1..6dfb9e9e 100644
+Binary files a/src/checkconvnet.o and b/src/checkconvnet.o differ
+diff --git a/src/checkdivergence.o b/src/checkdivergence.o
+index 806eb5c4..9fff7d95 100644
+Binary files a/src/checkdivergence.o and b/src/checkdivergence.o differ
+diff --git a/src/checkimpacts.o b/src/checkimpacts.o
+index da4f78a8..74e41e45 100644
+Binary files a/src/checkimpacts.o and b/src/checkimpacts.o differ
+diff --git a/src/checkinclength.o b/src/checkinclength.o
+index 9f24c38b..8d3e5e26 100644
+Binary files a/src/checkinclength.o and b/src/checkinclength.o differ
+diff --git a/src/checkinputvaluesnet.o b/src/checkinputvaluesnet.o
+index 94e27912..7767dedc 100644
+Binary files a/src/checkinputvaluesnet.o and b/src/checkinputvaluesnet.o differ
+diff --git a/src/checkprojectgrad.o b/src/checkprojectgrad.o
+index fb9bc778..91b4a13a 100644
+Binary files a/src/checkprojectgrad.o and b/src/checkprojectgrad.o differ
+diff --git a/src/checktemp.o b/src/checktemp.o
+index a33930e4..88828632 100644
+Binary files a/src/checktemp.o and b/src/checktemp.o differ
+diff --git a/src/checktime.o b/src/checktime.o
+index 599ac56a..4c285da6 100644
+Binary files a/src/checktime.o and b/src/checktime.o differ
+diff --git a/src/checktruecontact.o b/src/checktruecontact.o
+index a722a6cc..4dc2c4b3 100644
+Binary files a/src/checktruecontact.o and b/src/checktruecontact.o differ
+diff --git a/src/chksurf.o b/src/chksurf.o
+index 2ac3fc96..a6d138b4 100644
+Binary files a/src/chksurf.o and b/src/chksurf.o differ
+diff --git a/src/cident.o b/src/cident.o
+index 70c2e1d3..ffe2db9f 100644
+Binary files a/src/cident.o and b/src/cident.o differ
+diff --git a/src/cident20.o b/src/cident20.o
+index 2be53958..f0a26a0c 100644
+Binary files a/src/cident20.o and b/src/cident20.o differ
+diff --git a/src/cident80.o b/src/cident80.o
+index 2ed7f3a8..244a0a70 100644
+Binary files a/src/cident80.o and b/src/cident80.o differ
+diff --git a/src/clearances.o b/src/clearances.o
+index 8c0eb574..ecadf52e 100644
+Binary files a/src/clearances.o and b/src/clearances.o differ
+diff --git a/src/cload.o b/src/cload.o
+index 64f16ec5..66498516 100644
+Binary files a/src/cload.o and b/src/cload.o differ
+diff --git a/src/cloads.o b/src/cloads.o
+index 31b8c587..7e5c022b 100644
+Binary files a/src/cloads.o and b/src/cloads.o differ
+diff --git a/src/closefile.o b/src/closefile.o
+index b003c9e1..b1db4510 100644
+Binary files a/src/closefile.o and b/src/closefile.o differ
+diff --git a/src/closefilefluid.o b/src/closefilefluid.o
+index 439c2d69..06e32eb9 100644
+Binary files a/src/closefilefluid.o and b/src/closefilefluid.o differ
+diff --git a/src/compare.o b/src/compare.o
+index aeb41e25..08667808 100644
+Binary files a/src/compare.o and b/src/compare.o differ
+diff --git a/src/compdt.o b/src/compdt.o
+index f69cda48..414c7f05 100644
+Binary files a/src/compdt.o and b/src/compdt.o differ
+diff --git a/src/compfluid.o b/src/compfluid.o
+index 40240526..a7b58dcd 100644
+Binary files a/src/compfluid.o and b/src/compfluid.o differ
+diff --git a/src/compfluidfem.o b/src/compfluidfem.o
+index 3a162a92..9a166f88 100644
+Binary files a/src/compfluidfem.o and b/src/compfluidfem.o differ
+diff --git a/src/complete_hel.o b/src/complete_hel.o
+index 0e2723c0..099a129b 100644
+Binary files a/src/complete_hel.o and b/src/complete_hel.o differ
+diff --git a/src/complete_hel_blk.o b/src/complete_hel_blk.o
+index 926e0353..9d7d7587 100644
+Binary files a/src/complete_hel_blk.o and b/src/complete_hel_blk.o differ
+diff --git a/src/complete_hel_cyclic.o b/src/complete_hel_cyclic.o
+index 896e5ff0..6e63aad6 100644
+Binary files a/src/complete_hel_cyclic.o and b/src/complete_hel_cyclic.o differ
+diff --git a/src/complete_hel_cyclic_blk.o b/src/complete_hel_cyclic_blk.o
+index b984a4f7..28f4efe8 100644
+Binary files a/src/complete_hel_cyclic_blk.o and b/src/complete_hel_cyclic_blk.o differ
+diff --git a/src/complexfreq.o b/src/complexfreq.o
+index ef0f2a9c..d75cb3ec 100644
+Binary files a/src/complexfreq.o and b/src/complexfreq.o differ
+diff --git a/src/complexfrequencys.o b/src/complexfrequencys.o
+index d4311384..93bdc449 100644
+Binary files a/src/complexfrequencys.o and b/src/complexfrequencys.o differ
+diff --git a/src/con2phys.o b/src/con2phys.o
+index da2de7e4..1182a6c0 100644
+Binary files a/src/con2phys.o and b/src/con2phys.o differ
+diff --git a/src/con2phys_cast.o b/src/con2phys_cast.o
+index 15e29663..5ba755dc 100644
+Binary files a/src/con2phys_cast.o and b/src/con2phys_cast.o differ
+diff --git a/src/conductivitys.o b/src/conductivitys.o
+index f12aabfe..22282c82 100644
+Binary files a/src/conductivitys.o and b/src/conductivitys.o differ
+diff --git a/src/constraints.o b/src/constraints.o
+index 2bd9f204..82f21f59 100644
+Binary files a/src/constraints.o and b/src/constraints.o differ
+diff --git a/src/contact.o b/src/contact.o
+index a7f744b3..9a4444eb 100644
+Binary files a/src/contact.o and b/src/contact.o differ
+diff --git a/src/contactdampings.o b/src/contactdampings.o
+index 32716490..cf29a569 100644
+Binary files a/src/contactdampings.o and b/src/contactdampings.o differ
+diff --git a/src/contactpairs.o b/src/contactpairs.o
+index 43c517fd..0aa83404 100644
+Binary files a/src/contactpairs.o and b/src/contactpairs.o differ
+diff --git a/src/contactprints.o b/src/contactprints.o
+index d628ea22..8317e667 100644
+Binary files a/src/contactprints.o and b/src/contactprints.o differ
+diff --git a/src/controlss.o b/src/controlss.o
+index cef33272..3523a2cc 100644
+Binary files a/src/controlss.o and b/src/controlss.o differ
+diff --git a/src/convert2slapcol.o b/src/convert2slapcol.o
+index 57821267..3771a803 100644
+Binary files a/src/convert2slapcol.o and b/src/convert2slapcol.o differ
+diff --git a/src/coriolissolve.o b/src/coriolissolve.o
+index d1a54031..5f0cd043 100644
+Binary files a/src/coriolissolve.o and b/src/coriolissolve.o differ
+diff --git a/src/correctflux.o b/src/correctflux.o
+index a2c56537..7b912f1c 100644
+Binary files a/src/correctflux.o and b/src/correctflux.o differ
+diff --git a/src/correctfluxcomp.o b/src/correctfluxcomp.o
+index e013dd83..a41dc420 100644
+Binary files a/src/correctfluxcomp.o and b/src/correctfluxcomp.o differ
+diff --git a/src/correctrhoelcomp.o b/src/correctrhoelcomp.o
+index e39b19ea..df3bf9d0 100644
+Binary files a/src/correctrhoelcomp.o and b/src/correctrhoelcomp.o differ
+diff --git a/src/correctrhofacomp.o b/src/correctrhofacomp.o
+index f4dab3df..31947887 100644
+Binary files a/src/correctrhofacomp.o and b/src/correctrhofacomp.o differ
+diff --git a/src/correctvel.o b/src/correctvel.o
+index d3ace1d0..f041a64d 100644
+Binary files a/src/correctvel.o and b/src/correctvel.o differ
+diff --git a/src/correctvel_simplec.o b/src/correctvel_simplec.o
+index 1cd0796c..d956827a 100644
+Binary files a/src/correctvel_simplec.o and b/src/correctvel_simplec.o differ
+diff --git a/src/couplings.o b/src/couplings.o
+index 26d48a0a..49159fd2 100644
+Binary files a/src/couplings.o and b/src/couplings.o differ
+diff --git a/src/couptempdisps.o b/src/couptempdisps.o
+index cd766179..1aef0509 100644
+Binary files a/src/couptempdisps.o and b/src/couptempdisps.o differ
+diff --git a/src/cp_corrected.o b/src/cp_corrected.o
+index 3e24034f..d7ba57ea 100644
+Binary files a/src/cp_corrected.o and b/src/cp_corrected.o differ
+diff --git a/src/create_iau6.o b/src/create_iau6.o
+index 984b7d5e..1d21a8d1 100644
+Binary files a/src/create_iau6.o and b/src/create_iau6.o differ
+diff --git a/src/createblock.o b/src/createblock.o
+index 7304c599..71e3ec5d 100644
+Binary files a/src/createblock.o and b/src/createblock.o differ
+diff --git a/src/createelemneigh.o b/src/createelemneigh.o
+index 15a3f5c1..092ac417 100644
+Binary files a/src/createelemneigh.o and b/src/createelemneigh.o differ
+diff --git a/src/createfint.o b/src/createfint.o
+index c6c02f41..9340c2ae 100644
+Binary files a/src/createfint.o and b/src/createfint.o differ
+diff --git a/src/createialnk.o b/src/createialnk.o
+index d50546d6..b8027fa0 100644
+Binary files a/src/createialnk.o and b/src/createialnk.o differ
+diff --git a/src/createinterfacempcs.o b/src/createinterfacempcs.o
+index 652bbbb3..3704d447 100644
+Binary files a/src/createinterfacempcs.o and b/src/createinterfacempcs.o differ
+diff --git a/src/createinum.o b/src/createinum.o
+index 7f46f681..5c6361e0 100644
+Binary files a/src/createinum.o and b/src/createinum.o differ
+diff --git a/src/createmddof.o b/src/createmddof.o
+index 49ca5cb0..04a703ee 100644
+Binary files a/src/createmddof.o and b/src/createmddof.o differ
+diff --git a/src/createmdelem.o b/src/createmdelem.o
+index c5f0f6f6..bdf09e9a 100644
+Binary files a/src/createmdelem.o and b/src/createmdelem.o differ
+diff --git a/src/createnodeneigh.o b/src/createnodeneigh.o
+index d9194f7a..095afc1f 100644
+Binary files a/src/createnodeneigh.o and b/src/createnodeneigh.o differ
+diff --git a/src/createtiedsurfs.o b/src/createtiedsurfs.o
+index 2486bf06..44fbced2 100644
+Binary files a/src/createtiedsurfs.o and b/src/createtiedsurfs.o differ
+diff --git a/src/creep.o b/src/creep.o
+index cfd8655b..c1caa5d5 100644
+Binary files a/src/creep.o and b/src/creep.o differ
+diff --git a/src/creeps.o b/src/creeps.o
+index d47b12c5..f6ed069d 100644
+Binary files a/src/creeps.o and b/src/creeps.o differ
+diff --git a/src/cross_split.o b/src/cross_split.o
+index efa82f70..54820207 100644
+Binary files a/src/cross_split.o and b/src/cross_split.o differ
+diff --git a/src/cubic.o b/src/cubic.o
+index 7ee9f8bc..9112fa8a 100644
+Binary files a/src/cubic.o and b/src/cubic.o differ
+diff --git a/src/cubtri.o b/src/cubtri.o
+index 9b722c57..2fe9f061 100644
+Binary files a/src/cubtri.o and b/src/cubtri.o differ
+diff --git a/src/cyclichardenings.o b/src/cyclichardenings.o
+index 0ae48011..b1c549b7 100644
+Binary files a/src/cyclichardenings.o and b/src/cyclichardenings.o differ
+diff --git a/src/cyclicsymmetrymodels.o b/src/cyclicsymmetrymodels.o
+index 245d87f0..f65df0e7 100644
+Binary files a/src/cyclicsymmetrymodels.o and b/src/cyclicsymmetrymodels.o differ
+diff --git a/src/dKdX.o b/src/dKdX.o
+index f7524d7a..f4b50dea 100644
+Binary files a/src/dKdX.o and b/src/dKdX.o differ
+diff --git a/src/dKdm.o b/src/dKdm.o
+index 8db4f00c..7110c466 100644
+Binary files a/src/dKdm.o and b/src/dKdm.o differ
+diff --git a/src/dKdp.o b/src/dKdp.o
+index fb9ef177..18847988 100644
+Binary files a/src/dKdp.o and b/src/dKdp.o differ
+diff --git a/src/dKdt.o b/src/dKdt.o
+index 6c1a87a2..d86a19a7 100644
+Binary files a/src/dKdt.o and b/src/dKdt.o differ
+diff --git a/src/damage.o b/src/damage.o
+index aa8b914a..3b46bdb2 100644
+Binary files a/src/damage.o and b/src/damage.o differ
+diff --git a/src/damagecal.o b/src/damagecal.o
+index 1309228f..f6b9b714 100644
+Binary files a/src/damagecal.o and b/src/damagecal.o differ
+diff --git a/src/damages.o b/src/damages.o
+index 0dca5e53..0908bfcb 100644
+Binary files a/src/damages.o and b/src/damages.o differ
+diff --git a/src/dampings.o b/src/dampings.o
+index f538a222..56f3d64f 100644
+Binary files a/src/dampings.o and b/src/dampings.o differ
+diff --git a/src/dashdamp.o b/src/dashdamp.o
+index cbb8a532..dfe2d480 100644
+Binary files a/src/dashdamp.o and b/src/dashdamp.o differ
+diff --git a/src/dashforc.o b/src/dashforc.o
+index 7ff9d77a..b30b0e7d 100644
+Binary files a/src/dashforc.o and b/src/dashforc.o differ
+diff --git a/src/dashpots.o b/src/dashpots.o
+index ba597762..e35575e2 100644
+Binary files a/src/dashpots.o and b/src/dashpots.o differ
+diff --git a/src/dattime.o b/src/dattime.o
+index 37f69bb0..dd0cdc55 100644
+Binary files a/src/dattime.o and b/src/dattime.o differ
+diff --git a/src/ddeabm.o b/src/ddeabm.o
+index 06c0de83..bcca609b 100644
+Binary files a/src/ddeabm.o and b/src/ddeabm.o differ
+diff --git a/src/ddebdf.o b/src/ddebdf.o
+index b6a6efc1..e66a1a5d 100644
+Binary files a/src/ddebdf.o and b/src/ddebdf.o differ
+diff --git a/src/deformationplasticitys.o b/src/deformationplasticitys.o
+index aa1fc585..d46c9b97 100644
+Binary files a/src/deformationplasticitys.o and b/src/deformationplasticitys.o differ
+diff --git a/src/defplas.o b/src/defplas.o
+index 2e9d2e21..87302f6a 100644
+Binary files a/src/defplas.o and b/src/defplas.o differ
+diff --git a/src/delaun.o b/src/delaun.o
+index fba6b387..6ca738aa 100644
+Binary files a/src/delaun.o and b/src/delaun.o differ
+diff --git a/src/deltri.o b/src/deltri.o
+index f2c9245f..9ad288bf 100644
+Binary files a/src/deltri.o and b/src/deltri.o differ
+diff --git a/src/densitys.o b/src/densitys.o
+index 2037194e..9415570b 100644
+Binary files a/src/densitys.o and b/src/densitys.o differ
+diff --git a/src/depvars.o b/src/depvars.o
+index 50866c3b..2e518110 100644
+Binary files a/src/depvars.o and b/src/depvars.o differ
+diff --git a/src/designvariabless.o b/src/designvariabless.o
+index 3000f02e..9feb05b3 100644
+Binary files a/src/designvariabless.o and b/src/designvariabless.o differ
+diff --git a/src/desiperelem.o b/src/desiperelem.o
+index 7bd91945..62315d28 100644
+Binary files a/src/desiperelem.o and b/src/desiperelem.o differ
+diff --git a/src/deuldlag.o b/src/deuldlag.o
+index 597c4400..a7989f3d 100644
+Binary files a/src/deuldlag.o and b/src/deuldlag.o differ
+diff --git a/src/dfdbj.o b/src/dfdbj.o
+index 57da68dd..87db83a1 100644
+Binary files a/src/dfdbj.o and b/src/dfdbj.o differ
+diff --git a/src/dflux.o b/src/dflux.o
+index d83882a4..0626d35f 100644
+Binary files a/src/dflux.o and b/src/dflux.o differ
+diff --git a/src/dfluxs.o b/src/dfluxs.o
+index 7364ae65..fc4eabe9 100644
+Binary files a/src/dfluxs.o and b/src/dfluxs.o differ
+diff --git a/src/dgesv.o b/src/dgesv.o
+index e7eea793..510bd18c 100644
+Binary files a/src/dgesv.o and b/src/dgesv.o differ
+diff --git a/src/dgmres.o b/src/dgmres.o
+index fe4d4d96..2ac76d34 100644
+Binary files a/src/dgmres.o and b/src/dgmres.o differ
+diff --git a/src/dir.o b/src/dir.o
+index e966c6a3..94f87c77 100644
+Binary files a/src/dir.o and b/src/dir.o differ
+diff --git a/src/distattach.o b/src/distattach.o
+index 98854977..830e9009 100644
+Binary files a/src/distattach.o and b/src/distattach.o differ
+diff --git a/src/distattach_3d.o b/src/distattach_3d.o
+index fcb88da6..a0debcf0 100644
+Binary files a/src/distattach_3d.o and b/src/distattach_3d.o differ
+diff --git a/src/distattachline.o b/src/distattachline.o
+index 1ace3df6..fdea5660 100644
+Binary files a/src/distattachline.o and b/src/distattachline.o differ
+diff --git a/src/distributesens.o b/src/distributesens.o
+index cd57e94d..522714c8 100644
+Binary files a/src/distributesens.o and b/src/distributesens.o differ
+diff --git a/src/distributingcouplings.o b/src/distributingcouplings.o
+index b1d1bba6..b5972e61 100644
+Binary files a/src/distributingcouplings.o and b/src/distributingcouplings.o differ
+diff --git a/src/dload.o b/src/dload.o
+index c64d8564..50fd55e6 100644
+Binary files a/src/dload.o and b/src/dload.o differ
+diff --git a/src/dloads.o b/src/dloads.o
+index c6bf3646..e24e6eed 100644
+Binary files a/src/dloads.o and b/src/dloads.o differ
+diff --git a/src/dlz.o b/src/dlz.o
+index 25d73f95..b32c2547 100644
+Binary files a/src/dlz.o and b/src/dlz.o differ
+diff --git a/src/dqag.o b/src/dqag.o
+index 197e1bbf..ac6efa45 100644
+Binary files a/src/dqag.o and b/src/dqag.o differ
+diff --git a/src/drfftf.o b/src/drfftf.o
+index c6efce36..e0d5fa71 100644
+Binary files a/src/drfftf.o and b/src/drfftf.o differ
+diff --git a/src/drx.o b/src/drx.o
+index 7e67faec..2c0ac8b8 100644
+Binary files a/src/drx.o and b/src/drx.o differ
+diff --git a/src/drx_hip_weicme.o b/src/drx_hip_weicme.o
+index 68b6cba8..785d3752 100644
+Binary files a/src/drx_hip_weicme.o and b/src/drx_hip_weicme.o differ
+diff --git a/src/drx_weicme.o b/src/drx_weicme.o
+index 51c1e7be..651c7207 100644
+Binary files a/src/drx_weicme.o and b/src/drx_weicme.o differ
+diff --git a/src/drxc.o b/src/drxc.o
+index 5448d75e..f29d45ba 100644
+Binary files a/src/drxc.o and b/src/drxc.o differ
+diff --git a/src/dslugm.o b/src/dslugm.o
+index 42b5fb82..a2ca7b5e 100644
+Binary files a/src/dslugm.o and b/src/dslugm.o differ
+diff --git a/src/dsort.o b/src/dsort.o
+index abe50bd2..b901df87 100644
+Binary files a/src/dsort.o and b/src/dsort.o differ
+diff --git a/src/dyna.o b/src/dyna.o
+index a9e13a13..4bd7765f 100644
+Binary files a/src/dyna.o and b/src/dyna.o differ
+diff --git a/src/dynacont.o b/src/dynacont.o
+index 84b7d605..5f232eae 100644
+Binary files a/src/dynacont.o and b/src/dynacont.o differ
+diff --git a/src/dynamic_viscosity.o b/src/dynamic_viscosity.o
+index aa72175d..ea3f8a3c 100644
+Binary files a/src/dynamic_viscosity.o and b/src/dynamic_viscosity.o differ
+diff --git a/src/dynamicrecrystallizations.o b/src/dynamicrecrystallizations.o
+index a2d5e5b0..85b203e7 100644
+Binary files a/src/dynamicrecrystallizations.o and b/src/dynamicrecrystallizations.o differ
+diff --git a/src/dynamics.o b/src/dynamics.o
+index fca41bb0..8f7bbb01 100644
+Binary files a/src/dynamics.o and b/src/dynamics.o differ
+diff --git a/src/dynboun.o b/src/dynboun.o
+index e26249e8..dc0d8341 100644
+Binary files a/src/dynboun.o and b/src/dynboun.o differ
+diff --git a/src/dynresults.o b/src/dynresults.o
+index 38419b2a..8691a5dc 100644
+Binary files a/src/dynresults.o and b/src/dynresults.o differ
+diff --git a/src/e_c3d.o b/src/e_c3d.o
+index 94066fda..61c5d342 100644
+Binary files a/src/e_c3d.o and b/src/e_c3d.o differ
+diff --git a/src/e_c3d_cs_se.o b/src/e_c3d_cs_se.o
+index c6a7b65f..41cbf9dc 100644
+Binary files a/src/e_c3d_cs_se.o and b/src/e_c3d_cs_se.o differ
+diff --git a/src/e_c3d_em.o b/src/e_c3d_em.o
+index 88469b17..4877d6a0 100644
+Binary files a/src/e_c3d_em.o and b/src/e_c3d_em.o differ
+diff --git a/src/e_c3d_krhs.o b/src/e_c3d_krhs.o
+index 8a3acefe..3dd3d10a 100644
+Binary files a/src/e_c3d_krhs.o and b/src/e_c3d_krhs.o differ
+diff --git a/src/e_c3d_plhs.o b/src/e_c3d_plhs.o
+index e354c185..031a25b0 100644
+Binary files a/src/e_c3d_plhs.o and b/src/e_c3d_plhs.o differ
+diff --git a/src/e_c3d_prhs.o b/src/e_c3d_prhs.o
+index 1ac6f48e..29674c99 100644
+Binary files a/src/e_c3d_prhs.o and b/src/e_c3d_prhs.o differ
+diff --git a/src/e_c3d_rhs.o b/src/e_c3d_rhs.o
+index 83c2a05d..92c4f5fe 100644
+Binary files a/src/e_c3d_rhs.o and b/src/e_c3d_rhs.o differ
+diff --git a/src/e_c3d_rhs_th.o b/src/e_c3d_rhs_th.o
+index da150c17..ee5371df 100644
+Binary files a/src/e_c3d_rhs_th.o and b/src/e_c3d_rhs_th.o differ
+diff --git a/src/e_c3d_se.o b/src/e_c3d_se.o
+index 7a84eac2..9fc78b1d 100644
+Binary files a/src/e_c3d_se.o and b/src/e_c3d_se.o differ
+diff --git a/src/e_c3d_se2.o b/src/e_c3d_se2.o
+index 11302a6a..c5c718a5 100644
+Binary files a/src/e_c3d_se2.o and b/src/e_c3d_se2.o differ
+diff --git a/src/e_c3d_th.o b/src/e_c3d_th.o
+index d5e0c249..a3e18d8a 100644
+Binary files a/src/e_c3d_th.o and b/src/e_c3d_th.o differ
+diff --git a/src/e_c3d_tlhs.o b/src/e_c3d_tlhs.o
+index e083a5a3..cbfb55b1 100644
+Binary files a/src/e_c3d_tlhs.o and b/src/e_c3d_tlhs.o differ
+diff --git a/src/e_c3d_trhs.o b/src/e_c3d_trhs.o
+index e5118435..c9d1690c 100644
+Binary files a/src/e_c3d_trhs.o and b/src/e_c3d_trhs.o differ
+diff --git a/src/e_c3d_u.o b/src/e_c3d_u.o
+index 68c1fe58..bbcb7ba0 100644
+Binary files a/src/e_c3d_u.o and b/src/e_c3d_u.o differ
+diff --git a/src/e_c3d_u1.o b/src/e_c3d_u1.o
+index 45b39ae9..1ccbc63d 100644
+Binary files a/src/e_c3d_u1.o and b/src/e_c3d_u1.o differ
+diff --git a/src/e_c3d_v1rhs.o b/src/e_c3d_v1rhs.o
+index 04688455..ba144bff 100644
+Binary files a/src/e_c3d_v1rhs.o and b/src/e_c3d_v1rhs.o differ
+diff --git a/src/e_c3d_v2rhs.o b/src/e_c3d_v2rhs.o
+index 28e0136a..67ea49bb 100644
+Binary files a/src/e_c3d_v2rhs.o and b/src/e_c3d_v2rhs.o differ
+diff --git a/src/e_c3d_vlhs.o b/src/e_c3d_vlhs.o
+index 57a65f5e..b61e5dd6 100644
+Binary files a/src/e_c3d_vlhs.o and b/src/e_c3d_vlhs.o differ
+diff --git a/src/e_corio.o b/src/e_corio.o
+index c097d8e7..a4d24bac 100644
+Binary files a/src/e_corio.o and b/src/e_corio.o differ
+diff --git a/src/e_damp.o b/src/e_damp.o
+index bd82fca4..353bbe4e 100644
+Binary files a/src/e_damp.o and b/src/e_damp.o differ
+diff --git a/src/edg.o b/src/edg.o
+index 0205eecb..0dfd0014 100644
+Binary files a/src/edg.o and b/src/edg.o differ
+diff --git a/src/effectivemodalmass.o b/src/effectivemodalmass.o
+index 35977fdb..ed50e048 100644
+Binary files a/src/effectivemodalmass.o and b/src/effectivemodalmass.o differ
+diff --git a/src/elastics.o b/src/elastics.o
+index c2cbcb55..cb407736 100644
+Binary files a/src/elastics.o and b/src/elastics.o differ
+diff --git a/src/electricalconductivitys.o b/src/electricalconductivitys.o
+index ed5165f4..82e59ab9 100644
+Binary files a/src/electricalconductivitys.o and b/src/electricalconductivitys.o differ
+diff --git a/src/electromagnetics.o b/src/electromagnetics.o
+index 16ede853..b6d2ca32 100644
+Binary files a/src/electromagnetics.o and b/src/electromagnetics.o differ
+diff --git a/src/electromagneticss.o b/src/electromagneticss.o
+index d6a673d4..ee952c1e 100644
+Binary files a/src/electromagneticss.o and b/src/electromagneticss.o differ
+diff --git a/src/elemChecker.o b/src/elemChecker.o
+index 99dbe35f..127cf33b 100644
+Binary files a/src/elemChecker.o and b/src/elemChecker.o differ
+diff --git a/src/elementcpuload.o b/src/elementcpuload.o
+index 6779f889..9a5aa7c4 100644
+Binary files a/src/elementcpuload.o and b/src/elementcpuload.o differ
+diff --git a/src/elementpernode.o b/src/elementpernode.o
+index 60138b99..52e34b2b 100644
+Binary files a/src/elementpernode.o and b/src/elementpernode.o differ
+diff --git a/src/elements.o b/src/elements.o
+index 6d0cc0af..c6eeabfd 100644
+Binary files a/src/elements.o and b/src/elements.o differ
+diff --git a/src/elemperdesi.o b/src/elemperdesi.o
+index 75f03078..21463861 100644
+Binary files a/src/elemperdesi.o and b/src/elemperdesi.o differ
+diff --git a/src/elemperorien.o b/src/elemperorien.o
+index a1e6e480..325ebd76 100644
+Binary files a/src/elemperorien.o and b/src/elemperorien.o differ
+diff --git a/src/elprints.o b/src/elprints.o
+index 0016772d..0d5f9267 100644
+Binary files a/src/elprints.o and b/src/elprints.o differ
+diff --git a/src/envtemp.o b/src/envtemp.o
+index d1283548..212db945 100644
+Binary files a/src/envtemp.o and b/src/envtemp.o differ
+diff --git a/src/eplane.o b/src/eplane.o
+index e07b8b59..682c2973 100644
+Binary files a/src/eplane.o and b/src/eplane.o differ
+diff --git a/src/equationcheck.o b/src/equationcheck.o
+index d91cda04..c09bba82 100644
+Binary files a/src/equationcheck.o and b/src/equationcheck.o differ
+diff --git a/src/equationfs.o b/src/equationfs.o
+index 90bda531..e1a6bc62 100644
+Binary files a/src/equationfs.o and b/src/equationfs.o differ
+diff --git a/src/equations.o b/src/equations.o
+index 9b41e65c..5edbbba6 100644
+Binary files a/src/equations.o and b/src/equations.o differ
+diff --git a/src/equcons.o b/src/equcons.o
+index be6936b6..dbc3b98f 100644
+Binary files a/src/equcons.o and b/src/equcons.o differ
+diff --git a/src/errorestimator.o b/src/errorestimator.o
+index 7eb00877..e83e38f7 100644
+Binary files a/src/errorestimator.o and b/src/errorestimator.o differ
+diff --git a/src/evalshapefunc.o b/src/evalshapefunc.o
+index 7681fcc8..03779e27 100644
+Binary files a/src/evalshapefunc.o and b/src/evalshapefunc.o differ
+diff --git a/src/expand.o b/src/expand.o
+index 78b3ab4b..ee6b27ff 100644
+Binary files a/src/expand.o and b/src/expand.o differ
+diff --git a/src/expansions.o b/src/expansions.o
+index fef61d4e..62841b08 100644
+Binary files a/src/expansions.o and b/src/expansions.o differ
+diff --git a/src/external.o b/src/external.o
+index 294cb3c0..1fd5a605 100644
+Binary files a/src/external.o and b/src/external.o differ
+diff --git a/src/extfacepernode.o b/src/extfacepernode.o
+index f8807852..babbef92 100644
+Binary files a/src/extfacepernode.o and b/src/extfacepernode.o differ
+diff --git a/src/extrapol_dpel.o b/src/extrapol_dpel.o
+index 1a199e88..2a310dcf 100644
+Binary files a/src/extrapol_dpel.o and b/src/extrapol_dpel.o differ
+diff --git a/src/extrapol_kel.o b/src/extrapol_kel.o
+index 4fb6d201..6022917f 100644
+Binary files a/src/extrapol_kel.o and b/src/extrapol_kel.o differ
+diff --git a/src/extrapol_oel.o b/src/extrapol_oel.o
+index 5c19e14a..0894d8a6 100644
+Binary files a/src/extrapol_oel.o and b/src/extrapol_oel.o differ
+diff --git a/src/extrapol_pel.o b/src/extrapol_pel.o
+index 4ed9bf68..76f8eda5 100644
+Binary files a/src/extrapol_pel.o and b/src/extrapol_pel.o differ
+diff --git a/src/extrapol_tel.o b/src/extrapol_tel.o
+index 0e426fc4..8c336e2e 100644
+Binary files a/src/extrapol_tel.o and b/src/extrapol_tel.o differ
+diff --git a/src/extrapol_vel.o b/src/extrapol_vel.o
+index 88338819..dce6fd84 100644
+Binary files a/src/extrapol_vel.o and b/src/extrapol_vel.o differ
+diff --git a/src/extrapolate.o b/src/extrapolate.o
+index 997cc70f..803c5c7c 100644
+Binary files a/src/extrapolate.o and b/src/extrapolate.o differ
+diff --git a/src/extrapolate_d_v_simple.o b/src/extrapolate_d_v_simple.o
+index 0fc30a40..59a1ea65 100644
+Binary files a/src/extrapolate_d_v_simple.o and b/src/extrapolate_d_v_simple.o differ
+diff --git a/src/extrapolate_d_v_simplec.o b/src/extrapolate_d_v_simplec.o
+index 383c98aa..421a065c 100644
+Binary files a/src/extrapolate_d_v_simplec.o and b/src/extrapolate_d_v_simplec.o differ
+diff --git a/src/extrapolate_se.o b/src/extrapolate_se.o
+index e05d8667..e3315a36 100644
+Binary files a/src/extrapolate_se.o and b/src/extrapolate_se.o differ
+diff --git a/src/extrapolate_u.o b/src/extrapolate_u.o
+index d2fadac1..7dbef9b0 100644
+Binary files a/src/extrapolate_u.o and b/src/extrapolate_u.o differ
+diff --git a/src/extrapolate_u1.o b/src/extrapolate_u1.o
+index bdc96f24..57400a81 100644
+Binary files a/src/extrapolate_u1.o and b/src/extrapolate_u1.o differ
+diff --git a/src/extrapolatecontact.o b/src/extrapolatecontact.o
+index 024b4d8f..5a4a69c8 100644
+Binary files a/src/extrapolatecontact.o and b/src/extrapolatecontact.o differ
+diff --git a/src/extrapolatefem.o b/src/extrapolatefem.o
+index 97531f7f..08465c5e 100644
+Binary files a/src/extrapolatefem.o and b/src/extrapolatefem.o differ
+diff --git a/src/extrapolatefluid.o b/src/extrapolatefluid.o
+index 73f1dd8f..91eb588c 100644
+Binary files a/src/extrapolatefluid.o and b/src/extrapolatefluid.o differ
+diff --git a/src/faceinfo.o b/src/faceinfo.o
+index 49e1baf3..0f0a4067 100644
+Binary files a/src/faceinfo.o and b/src/faceinfo.o differ
+diff --git a/src/fcrit.o b/src/fcrit.o
+index 62dea3c9..d17ff941 100644
+Binary files a/src/fcrit.o and b/src/fcrit.o differ
+diff --git a/src/fill_neiel.o b/src/fill_neiel.o
+index 66c0a9f0..15ec3cf9 100644
+Binary files a/src/fill_neiel.o and b/src/fill_neiel.o differ
+diff --git a/src/fillknotmpc.o b/src/fillknotmpc.o
+index c930fd2a..076a970e 100644
+Binary files a/src/fillknotmpc.o and b/src/fillknotmpc.o differ
+diff --git a/src/film.o b/src/film.o
+index e592520e..19882e21 100644
+Binary files a/src/film.o and b/src/film.o differ
+diff --git a/src/films.o b/src/films.o
+index 4c56c348..49820ab1 100644
+Binary files a/src/films.o and b/src/films.o differ
+diff --git a/src/filter.o b/src/filter.o
+index f99dfaa9..2577a14f 100644
+Binary files a/src/filter.o and b/src/filter.o differ
+diff --git a/src/filtermain.o b/src/filtermain.o
+index 82613da5..9ea103cd 100644
+Binary files a/src/filtermain.o and b/src/filtermain.o differ
+diff --git a/src/filters.o b/src/filters.o
+index a98ff37f..ff1785b2 100644
+Binary files a/src/filters.o and b/src/filters.o differ
+diff --git a/src/findextsurface.o b/src/findextsurface.o
+index d6296979..fee0e87d 100644
+Binary files a/src/findextsurface.o and b/src/findextsurface.o differ
+diff --git a/src/findslavcfd.o b/src/findslavcfd.o
+index aef97d24..19394bf2 100644
+Binary files a/src/findslavcfd.o and b/src/findslavcfd.o differ
+diff --git a/src/findsurface.o b/src/findsurface.o
+index af833143..86751fac 100644
+Binary files a/src/findsurface.o and b/src/findsurface.o differ
+diff --git a/src/fixnode.o b/src/fixnode.o
+index 4b2edd78..468acaf4 100644
+Binary files a/src/fixnode.o and b/src/fixnode.o differ
+diff --git a/src/flowoutput.o b/src/flowoutput.o
+index 75f8c279..da0e5d39 100644
+Binary files a/src/flowoutput.o and b/src/flowoutput.o differ
+diff --git a/src/flowresult.o b/src/flowresult.o
+index ade2794b..773d074a 100644
+Binary files a/src/flowresult.o and b/src/flowresult.o differ
+diff --git a/src/flowstress.o b/src/flowstress.o
+index 515aebbc..720628e1 100644
+Binary files a/src/flowstress.o and b/src/flowstress.o differ
+diff --git a/src/fluidconstantss.o b/src/fluidconstantss.o
+index a47c9a24..f72821c2 100644
+Binary files a/src/fluidconstantss.o and b/src/fluidconstantss.o differ
+diff --git a/src/fluidsections.o b/src/fluidsections.o
+index 88fb3e72..350b8859 100644
+Binary files a/src/fluidsections.o and b/src/fluidsections.o differ
+diff --git a/src/flux.o b/src/flux.o
+index 592f7019..8b8695a4 100644
+Binary files a/src/flux.o and b/src/flux.o differ
+diff --git a/src/forcadd.o b/src/forcadd.o
+index dbcc90d2..dcd1510c 100644
+Binary files a/src/forcadd.o and b/src/forcadd.o differ
+diff --git a/src/forcesolve.o b/src/forcesolve.o
+index 9ff81d9b..9a8bd8ba 100644
+Binary files a/src/forcesolve.o and b/src/forcesolve.o differ
+diff --git a/src/frd.c b/src/frd.c
+index 36e60db9..b0d44a74 100644
+--- a/src/frd.c
++++ b/src/frd.c
+@@ -78,7 +78,7 @@ void frd(double *co,ITG *nk,ITG *kon,ITG *ipkon,char *lakon,ITG *ne0,
+ 
+   float ifl;
+ 
+-  double pi,oner,sinv[6**nk],rdp[2**nk],drx[5**nk],dmg[2**nk];
++  double pi,oner,rdp[8**nk],drx[5**nk],dmg[2**nk];
+ 
+   strcpy(fneig,jobnamec);
+   strcat(fneig,".frd");
+@@ -181,7 +181,7 @@ void frd(double *co,ITG *nk,ITG *kon,ITG *ipkon,char *lakon,ITG *ne0,
+     fprintf(f1,"%5sUHOST                                                              \n",p1);
+     fprintf(f1,"%5sUPGM               WeICME                                        \n",p1);
+     fprintf(f1,"%5sUVERSION           Version 2020                             \n",p1);
+-    fprintf(f1,"%5sUCOMPILETIME       Sun Aug 29 16:51:30 CST 2021                    \n",p1);
++    fprintf(f1,"%5sUCOMPILETIME       Tue Aug 31 09:42:37 CST 2021                    \n",p1);
+     fprintf(f1,"%5sUDIR                                                               \n",p1);
+     fprintf(f1,"%5sUDBN                                                               \n",p1);
+ 
+diff --git a/src/frd.o b/src/frd.o
+index b3d7189d..fd0cea03 100644
+Binary files a/src/frd.o and b/src/frd.o differ
+diff --git a/src/frd_cast.o b/src/frd_cast.o
+index 02671def..acaf9cd8 100644
+Binary files a/src/frd_cast.o and b/src/frd_cast.o differ
+diff --git a/src/frd_sen.o b/src/frd_sen.o
+index 3df0e18e..a278e7af 100644
+Binary files a/src/frd_sen.o and b/src/frd_sen.o differ
+diff --git a/src/frdcyc.o b/src/frdcyc.o
+index f0c6514e..739f4d62 100644
+Binary files a/src/frdcyc.o and b/src/frdcyc.o differ
+diff --git a/src/frdfluid.o b/src/frdfluid.o
+index 946779b0..9c92e490 100644
+Binary files a/src/frdfluid.o and b/src/frdfluid.o differ
+diff --git a/src/frdfluidfem.o b/src/frdfluidfem.o
+index b2aac2d9..8a149ab2 100644
+Binary files a/src/frdfluidfem.o and b/src/frdfluidfem.o differ
+diff --git a/src/frdgeneralvector.o b/src/frdgeneralvector.o
+index 010b525f..6508c84f 100644
+Binary files a/src/frdgeneralvector.o and b/src/frdgeneralvector.o differ
+diff --git a/src/frdheader.o b/src/frdheader.o
+index ac34dc6a..21df5a26 100644
+Binary files a/src/frdheader.o and b/src/frdheader.o differ
+diff --git a/src/frditeration.o b/src/frditeration.o
+index 5953153e..07915369 100644
+Binary files a/src/frditeration.o and b/src/frditeration.o differ
+diff --git a/src/frdselect.o b/src/frdselect.o
+index 498ebc81..ad40d7cf 100644
+Binary files a/src/frdselect.o and b/src/frdselect.o differ
+diff --git a/src/frdset.o b/src/frdset.o
+index 8dc878c7..4c470b20 100644
+Binary files a/src/frdset.o and b/src/frdset.o differ
+diff --git a/src/frdvector.o b/src/frdvector.o
+index 682850b9..b358358d 100644
+Binary files a/src/frdvector.o and b/src/frdvector.o differ
+diff --git a/src/frecord.o b/src/frecord.o
+index cc73b2c4..ebf674ff 100644
+Binary files a/src/frecord.o and b/src/frecord.o differ
+diff --git a/src/free_convection.o b/src/free_convection.o
+index 2970c478..3b749701 100644
+Binary files a/src/free_convection.o and b/src/free_convection.o differ
+diff --git a/src/free_disc_pumping.o b/src/free_disc_pumping.o
+index 53961cff..02606949 100644
+Binary files a/src/free_disc_pumping.o and b/src/free_disc_pumping.o differ
+diff --git a/src/frequencys.o b/src/frequencys.o
+index 3b2e2071..03e34b88 100644
+Binary files a/src/frequencys.o and b/src/frequencys.o differ
+diff --git a/src/fricheat.o b/src/fricheat.o
+index 6ccf8430..82a56e9f 100644
+Binary files a/src/fricheat.o and b/src/fricheat.o differ
+diff --git a/src/friction_coefficient.o b/src/friction_coefficient.o
+index 86e3f5bf..b358cacd 100644
+Binary files a/src/friction_coefficient.o and b/src/friction_coefficient.o differ
+diff --git a/src/frictionheating.o b/src/frictionheating.o
+index 5b7712a6..23c25d23 100644
+Binary files a/src/frictionheating.o and b/src/frictionheating.o differ
+diff --git a/src/frictions.o b/src/frictions.o
+index 91e4757d..620d5380 100644
+Binary files a/src/frictions.o and b/src/frictions.o differ
+diff --git a/src/fsub.o b/src/fsub.o
+index e19499bc..d1a3f6b5 100644
+Binary files a/src/fsub.o and b/src/fsub.o differ
+diff --git a/src/fsuper.o b/src/fsuper.o
+index e295e652..39b1b8b4 100644
+Binary files a/src/fsuper.o and b/src/fsuper.o differ
+diff --git a/src/gapcon.o b/src/gapcon.o
+index afe68370..961b5ecd 100644
+Binary files a/src/gapcon.o and b/src/gapcon.o differ
+diff --git a/src/gapconductances.o b/src/gapconductances.o
+index 794ecc5a..66bed3b6 100644
+Binary files a/src/gapconductances.o and b/src/gapconductances.o differ
+diff --git a/src/gapheatgenerations.o b/src/gapheatgenerations.o
+index 0bd841a2..7a8fdf83 100644
+Binary files a/src/gapheatgenerations.o and b/src/gapheatgenerations.o differ
+diff --git a/src/gaps.o b/src/gaps.o
+index ab4c531c..dfdaba23 100644
+Binary files a/src/gaps.o and b/src/gaps.o differ
+diff --git a/src/gasmechbc.o b/src/gasmechbc.o
+index 5d69cebe..5aacaca0 100644
+Binary files a/src/gasmechbc.o and b/src/gasmechbc.o differ
+diff --git a/src/gaspipe_fanno.o b/src/gaspipe_fanno.o
+index 92127781..43162b29 100644
+Binary files a/src/gaspipe_fanno.o and b/src/gaspipe_fanno.o differ
+diff --git a/src/gen3dboun.o b/src/gen3dboun.o
+index 03953e1a..0145d8e2 100644
+Binary files a/src/gen3dboun.o and b/src/gen3dboun.o differ
+diff --git a/src/gen3dconnect.o b/src/gen3dconnect.o
+index b31937f5..4e42194b 100644
+Binary files a/src/gen3dconnect.o and b/src/gen3dconnect.o differ
+diff --git a/src/gen3delem.o b/src/gen3delem.o
+index b0229ad5..6183f8a2 100644
+Binary files a/src/gen3delem.o and b/src/gen3delem.o differ
+diff --git a/src/gen3dforc.o b/src/gen3dforc.o
+index 987e46f4..9e20a20b 100644
+Binary files a/src/gen3dforc.o and b/src/gen3dforc.o differ
+diff --git a/src/gen3dfrom1d.o b/src/gen3dfrom1d.o
+index 8086191d..3265fef0 100644
+Binary files a/src/gen3dfrom1d.o and b/src/gen3dfrom1d.o differ
+diff --git a/src/gen3dfrom2d.o b/src/gen3dfrom2d.o
+index e7f6e121..bb913107 100644
+Binary files a/src/gen3dfrom2d.o and b/src/gen3dfrom2d.o differ
+diff --git a/src/gen3dmembrane.o b/src/gen3dmembrane.o
+index 33b67243..517c8ed0 100644
+Binary files a/src/gen3dmembrane.o and b/src/gen3dmembrane.o differ
+diff --git a/src/gen3dmpc.o b/src/gen3dmpc.o
+index ec950591..856a31af 100644
+Binary files a/src/gen3dmpc.o and b/src/gen3dmpc.o differ
+diff --git a/src/gen3dnor.o b/src/gen3dnor.o
+index 1f5d1095..21ccf721 100644
+Binary files a/src/gen3dnor.o and b/src/gen3dnor.o differ
+diff --git a/src/gen3dprop.o b/src/gen3dprop.o
+index fddcf97b..46a3e1c8 100644
+Binary files a/src/gen3dprop.o and b/src/gen3dprop.o differ
+diff --git a/src/gen3dsurf.o b/src/gen3dsurf.o
+index afb712d1..5c66d875 100644
+Binary files a/src/gen3dsurf.o and b/src/gen3dsurf.o differ
+diff --git a/src/gen3dtemp.o b/src/gen3dtemp.o
+index 97c53fb8..89beb03e 100644
+Binary files a/src/gen3dtemp.o and b/src/gen3dtemp.o differ
+diff --git a/src/gen3dtruss.o b/src/gen3dtruss.o
+index 81258b9d..27a03432 100644
+Binary files a/src/gen3dtruss.o and b/src/gen3dtruss.o differ
+diff --git a/src/genadvecelem.o b/src/genadvecelem.o
+index 183458db..55ae5235 100644
+Binary files a/src/genadvecelem.o and b/src/genadvecelem.o differ
+diff --git a/src/gencontelem_f2f.o b/src/gencontelem_f2f.o
+index e822b1b2..2af31f5e 100644
+Binary files a/src/gencontelem_f2f.o and b/src/gencontelem_f2f.o differ
+diff --git a/src/gencontelem_n2f.o b/src/gencontelem_n2f.o
+index 675b8b08..c4821e93 100644
+Binary files a/src/gencontelem_n2f.o and b/src/gencontelem_n2f.o differ
+diff --git a/src/gencycsymelemcfd.o b/src/gencycsymelemcfd.o
+index e8f2beaa..cc188212 100644
+Binary files a/src/gencycsymelemcfd.o and b/src/gencycsymelemcfd.o differ
+diff --git a/src/generatecycmpcs.o b/src/generatecycmpcs.o
+index f8d2a486..fc85381b 100644
+Binary files a/src/generatecycmpcs.o and b/src/generatecycmpcs.o differ
+diff --git a/src/generateeminterfaces.o b/src/generateeminterfaces.o
+index ae124831..0bc60067 100644
+Binary files a/src/generateeminterfaces.o and b/src/generateeminterfaces.o differ
+diff --git a/src/generatetet.o b/src/generatetet.o
+index a6542d6a..3254368b 100644
+Binary files a/src/generatetet.o and b/src/generatetet.o differ
+diff --git a/src/genmodes.o b/src/genmodes.o
+index cd33fba4..c60559dd 100644
+Binary files a/src/genmodes.o and b/src/genmodes.o differ
+diff --git a/src/gennactdofinv.o b/src/gennactdofinv.o
+index 865ba595..d5d18c4f 100644
+Binary files a/src/gennactdofinv.o and b/src/gennactdofinv.o differ
+diff --git a/src/gentiedmpc.o b/src/gentiedmpc.o
+index 074cfc3a..018bf1d1 100644
+Binary files a/src/gentiedmpc.o and b/src/gentiedmpc.o differ
+diff --git a/src/geomview.o b/src/geomview.o
+index 8a0b502b..322a0a4b 100644
+Binary files a/src/geomview.o and b/src/geomview.o differ
+diff --git a/src/getSystemCPUs.o b/src/getSystemCPUs.o
+index 4acaa63a..4ce8d0ec 100644
+Binary files a/src/getSystemCPUs.o and b/src/getSystemCPUs.o differ
+diff --git a/src/getdesiinfo.o b/src/getdesiinfo.o
+index 0c37732d..11e083b3 100644
+Binary files a/src/getdesiinfo.o and b/src/getdesiinfo.o differ
+diff --git a/src/getglobalresults.o b/src/getglobalresults.o
+index 8af4d137..2192af04 100644
+Binary files a/src/getglobalresults.o and b/src/getglobalresults.o differ
+diff --git a/src/getnewline.o b/src/getnewline.o
+index 9a6402b6..7d04dcfe 100644
+Binary files a/src/getnewline.o and b/src/getnewline.o differ
+diff --git a/src/getnodel.o b/src/getnodel.o
+index d6a20113..6fb19505 100644
+Binary files a/src/getnodel.o and b/src/getnodel.o differ
+diff --git a/src/getversion.o b/src/getversion.o
+index 256c9f0d..a38e006e 100644
+Binary files a/src/getversion.o and b/src/getversion.o differ
+diff --git a/src/greens.o b/src/greens.o
+index ee0fa3fe..278795cd 100644
+Binary files a/src/greens.o and b/src/greens.o differ
+diff --git a/src/hcrit.o b/src/hcrit.o
+index 2b78a1fe..d94cc4fa 100644
+Binary files a/src/hcrit.o and b/src/hcrit.o differ
+diff --git a/src/headings.o b/src/headings.o
+index c1ca0ed7..39ad86d7 100644
+Binary files a/src/headings.o and b/src/headings.o differ
+diff --git a/src/heattransfers.o b/src/heattransfers.o
+index cb738169..4bc6725b 100644
+Binary files a/src/heattransfers.o and b/src/heattransfers.o differ
+diff --git a/src/hgforce.o b/src/hgforce.o
+index 330bfe87..9f1c34fd 100644
+Binary files a/src/hgforce.o and b/src/hgforce.o differ
+diff --git a/src/hgstiffness.o b/src/hgstiffness.o
+index aacf78ad..dcd964a1 100644
+Binary files a/src/hgstiffness.o and b/src/hgstiffness.o differ
+diff --git a/src/hns.o b/src/hns.o
+index ad0c1cc4..d77fa334 100644
+Binary files a/src/hns.o and b/src/hns.o differ
+diff --git a/src/hrt_mod_smart.o b/src/hrt_mod_smart.o
+index cb7477fc..e14dfa54 100644
+Binary files a/src/hrt_mod_smart.o and b/src/hrt_mod_smart.o differ
+diff --git a/src/hrt_ud.o b/src/hrt_ud.o
+index 5bc9a5d7..63cc64a5 100644
+Binary files a/src/hrt_ud.o and b/src/hrt_ud.o differ
+diff --git a/src/hrv_mod_smart.o b/src/hrv_mod_smart.o
+index c3475f40..5e6d6866 100644
+Binary files a/src/hrv_mod_smart.o and b/src/hrv_mod_smart.o differ
+diff --git a/src/hrv_ud.o b/src/hrv_ud.o
+index cec5592f..afef6dd5 100644
+Binary files a/src/hrv_ud.o and b/src/hrv_ud.o differ
+diff --git a/src/htchart.o b/src/htchart.o
+index 8504145e..92d397ed 100644
+Binary files a/src/htchart.o and b/src/htchart.o differ
+diff --git a/src/hybsvd.o b/src/hybsvd.o
+index 70769cf7..9d0c0a43 100644
+Binary files a/src/hybsvd.o and b/src/hybsvd.o differ
+diff --git a/src/hyperelastics.o b/src/hyperelastics.o
+index 83efd346..f50a3f6e 100644
+Binary files a/src/hyperelastics.o and b/src/hyperelastics.o differ
+diff --git a/src/hyperfoams.o b/src/hyperfoams.o
+index e3f5af19..8c663b40 100644
+Binary files a/src/hyperfoams.o and b/src/hyperfoams.o differ
+diff --git a/src/ident.o b/src/ident.o
+index d48275fe..b6a55e3f 100644
+Binary files a/src/ident.o and b/src/ident.o differ
+diff --git a/src/ident2.o b/src/ident2.o
+index 2f81c556..bf7c9240 100644
+Binary files a/src/ident2.o and b/src/ident2.o differ
+diff --git a/src/ident2_decr.o b/src/ident2_decr.o
+index edbce3df..23d45971 100644
+Binary files a/src/ident2_decr.o and b/src/ident2_decr.o differ
+diff --git a/src/identamta.o b/src/identamta.o
+index ce105f30..e6e02684 100644
+Binary files a/src/identamta.o and b/src/identamta.o differ
+diff --git a/src/identifyface.o b/src/identifyface.o
+index 60496b5d..010303fe 100644
+Binary files a/src/identifyface.o and b/src/identifyface.o differ
+diff --git a/src/identifytiedface.o b/src/identifytiedface.o
+index 41aa4241..d8e72b08 100644
+Binary files a/src/identifytiedface.o and b/src/identifytiedface.o differ
+diff --git a/src/identifytransform.o b/src/identifytransform.o
+index 4fc25038..caebdb44 100644
+Binary files a/src/identifytransform.o and b/src/identifytransform.o differ
+diff --git a/src/includefilename.o b/src/includefilename.o
+index c6c8b338..2b925750 100644
+Binary files a/src/includefilename.o and b/src/includefilename.o differ
+diff --git a/src/incplas.o b/src/incplas.o
+index 973f2a0d..68cc6af0 100644
+Binary files a/src/incplas.o and b/src/incplas.o differ
+diff --git a/src/incplas_lin.o b/src/incplas_lin.o
+index a78a9582..09c8a032 100644
+Binary files a/src/incplas_lin.o and b/src/incplas_lin.o differ
+diff --git a/src/inequcons.o b/src/inequcons.o
+index fd79c643..1d8c0ff7 100644
+Binary files a/src/inequcons.o and b/src/inequcons.o differ
+diff --git a/src/inicalcbody.o b/src/inicalcbody.o
+index cceb5bc3..60ee5aff 100644
+Binary files a/src/inicalcbody.o and b/src/inicalcbody.o differ
+diff --git a/src/inicont.o b/src/inicont.o
+index 1dc0689d..1508b45b 100644
+Binary files a/src/inicont.o and b/src/inicont.o differ
+diff --git a/src/init.o b/src/init.o
+index 79e40cf3..692d5409 100644
+Binary files a/src/init.o and b/src/init.o differ
+diff --git a/src/initial_cast.o b/src/initial_cast.o
+index 23bd1c65..a9235dc1 100644
+Binary files a/src/initial_cast.o and b/src/initial_cast.o differ
+diff --git a/src/initialcfd.o b/src/initialcfd.o
+index d8d0407a..fbe30d44 100644
+Binary files a/src/initialcfd.o and b/src/initialcfd.o differ
+diff --git a/src/initialcfdfem.o b/src/initialcfdfem.o
+index b3dd52f7..c61b5b9e 100644
+Binary files a/src/initialcfdfem.o and b/src/initialcfdfem.o differ
+diff --git a/src/initialchannel.o b/src/initialchannel.o
+index 7ca2bbe5..6ca3dd07 100644
+Binary files a/src/initialchannel.o and b/src/initialchannel.o differ
+diff --git a/src/initialconditionss.o b/src/initialconditionss.o
+index 54c6a770..93eaf816 100644
+Binary files a/src/initialconditionss.o and b/src/initialconditionss.o differ
+diff --git a/src/initialnet.o b/src/initialnet.o
+index 9c59e36b..201f5117 100644
+Binary files a/src/initialnet.o and b/src/initialnet.o differ
+diff --git a/src/initialstrainincreases.o b/src/initialstrainincreases.o
+index c3f4da84..c54f586a 100644
+Binary files a/src/initialstrainincreases.o and b/src/initialstrainincreases.o differ
+diff --git a/src/inputerror.o b/src/inputerror.o
+index 0081b268..fc451401 100644
+Binary files a/src/inputerror.o and b/src/inputerror.o differ
+diff --git a/src/inputinfo.o b/src/inputinfo.o
+index ce708d0b..756d7afb 100644
+Binary files a/src/inputinfo.o and b/src/inputinfo.o differ
+diff --git a/src/inputwarning.o b/src/inputwarning.o
+index 39eecee9..530de073 100644
+Binary files a/src/inputwarning.o and b/src/inputwarning.o differ
+diff --git a/src/insert.o b/src/insert.o
+index a5d41d12..5a82bf2d 100644
+Binary files a/src/insert.o and b/src/insert.o differ
+diff --git a/src/insertcbs.o b/src/insertcbs.o
+index 88f354d8..042f1bcf 100644
+Binary files a/src/insertcbs.o and b/src/insertcbs.o differ
+diff --git a/src/insertfreq.o b/src/insertfreq.o
+index cb5ef248..0fcdc39e 100644
+Binary files a/src/insertfreq.o and b/src/insertfreq.o differ
+diff --git a/src/insertrad.o b/src/insertrad.o
+index 61df3cfe..1ca31725 100644
+Binary files a/src/insertrad.o and b/src/insertrad.o differ
+diff --git a/src/insertsortd.o b/src/insertsortd.o
+index dfdfff48..d7f72546 100644
+Binary files a/src/insertsortd.o and b/src/insertsortd.o differ
+diff --git a/src/integratelinesproduct.o b/src/integratelinesproduct.o
+index 913fff70..59d90c5b 100644
+Binary files a/src/integratelinesproduct.o and b/src/integratelinesproduct.o differ
+diff --git a/src/integraterhocp.o b/src/integraterhocp.o
+index 98f5342f..acd8b08d 100644
+Binary files a/src/integraterhocp.o and b/src/integraterhocp.o differ
+diff --git a/src/interpol_alfa2.o b/src/interpol_alfa2.o
+index 8bf06222..1225100a 100644
+Binary files a/src/interpol_alfa2.o and b/src/interpol_alfa2.o differ
+diff --git a/src/interpolateinface.o b/src/interpolateinface.o
+index b1fd8e2a..fd31fa94 100644
+Binary files a/src/interpolateinface.o and b/src/interpolateinface.o differ
+diff --git a/src/interpolatestate.o b/src/interpolatestate.o
+index 8d522834..89bbd84c 100644
+Binary files a/src/interpolatestate.o and b/src/interpolatestate.o differ
+diff --git a/src/interpolcycsymcfd.o b/src/interpolcycsymcfd.o
+index 34f5c6ff..d21056a8 100644
+Binary files a/src/interpolcycsymcfd.o and b/src/interpolcycsymcfd.o differ
+diff --git a/src/interpolsubmodel.o b/src/interpolsubmodel.o
+index 7f749d57..3a67ec0b 100644
+Binary files a/src/interpolsubmodel.o and b/src/interpolsubmodel.o differ
+diff --git a/src/interpolsubmodel_cfdfem.o b/src/interpolsubmodel_cfdfem.o
+index e2434ab6..d8b44bea 100644
+Binary files a/src/interpolsubmodel_cfdfem.o and b/src/interpolsubmodel_cfdfem.o differ
+diff --git a/src/intersectionpoint.o b/src/intersectionpoint.o
+index ed10187b..5e955885 100644
+Binary files a/src/intersectionpoint.o and b/src/intersectionpoint.o differ
+diff --git a/src/invariant.o b/src/invariant.o
+index 9865e70a..5ae6d6d3 100644
+Binary files a/src/invariant.o and b/src/invariant.o differ
+diff --git a/src/inversewavspd.o b/src/inversewavspd.o
+index a3a6f597..7afc7301 100644
+Binary files a/src/inversewavspd.o and b/src/inversewavspd.o differ
+diff --git a/src/islavactive.o b/src/islavactive.o
+index f4543ad0..586f119e 100644
+Binary files a/src/islavactive.o and b/src/islavactive.o differ
+diff --git a/src/isorti.o b/src/isorti.o
+index 24330f89..cdbd1ef2 100644
+Binary files a/src/isorti.o and b/src/isorti.o differ
+diff --git a/src/isortic.o b/src/isortic.o
+index 839df9fd..253c21e0 100644
+Binary files a/src/isortic.o and b/src/isortic.o differ
+diff --git a/src/isortid.o b/src/isortid.o
+index 566069ff..176e91f6 100644
+Binary files a/src/isortid.o and b/src/isortid.o differ
+diff --git a/src/isortiddc.o b/src/isortiddc.o
+index 3ee18929..b0a2fa46 100644
+Binary files a/src/isortiddc.o and b/src/isortiddc.o differ
+diff --git a/src/isortii.o b/src/isortii.o
+index cbbca343..54f1b640 100644
+Binary files a/src/isortii.o and b/src/isortii.o differ
+diff --git a/src/isortiid.o b/src/isortiid.o
+index 34214ca4..674501b0 100644
+Binary files a/src/isortiid.o and b/src/isortiid.o differ
+diff --git a/src/isortiiddc.o b/src/isortiiddc.o
+index 0afea75a..673751c5 100644
+Binary files a/src/isortiiddc.o and b/src/isortiiddc.o differ
+diff --git a/src/jouleheating.o b/src/jouleheating.o
+index e342d501..9fac5aeb 100644
+Binary files a/src/jouleheating.o and b/src/jouleheating.o differ
+diff --git a/src/keystart.o b/src/keystart.o
+index 045950ff..54cbedbb 100644
+Binary files a/src/keystart.o and b/src/keystart.o differ
+diff --git a/src/knotmpc.o b/src/knotmpc.o
+index c241fb90..89a51299 100644
+Binary files a/src/knotmpc.o and b/src/knotmpc.o differ
+diff --git a/src/lab_straight_ppkrit.o b/src/lab_straight_ppkrit.o
+index 51a3ae58..96545fe1 100644
+Binary files a/src/lab_straight_ppkrit.o and b/src/lab_straight_ppkrit.o differ
+diff --git a/src/labyrinth.o b/src/labyrinth.o
+index f8e4abe7..667c4e35 100644
+Binary files a/src/labyrinth.o and b/src/labyrinth.o differ
+diff --git a/src/lbfgsb.o b/src/lbfgsb.o
+index 1419818c..a21bd140 100644
+Binary files a/src/lbfgsb.o and b/src/lbfgsb.o differ
+diff --git a/src/limit_case_calc.o b/src/limit_case_calc.o
+index 01e476a6..f383bff8 100644
+Binary files a/src/limit_case_calc.o and b/src/limit_case_calc.o differ
+diff --git a/src/linel.o b/src/linel.o
+index 210c9cca..f8ba2641 100644
+Binary files a/src/linel.o and b/src/linel.o differ
+diff --git a/src/linkdissimilar.o b/src/linkdissimilar.o
+index 6645dac3..30cd858b 100644
+Binary files a/src/linkdissimilar.o and b/src/linkdissimilar.o differ
+diff --git a/src/linpack.o b/src/linpack.o
+index e130e11f..cd4081bf 100644
+Binary files a/src/linpack.o and b/src/linpack.o differ
+diff --git a/src/linscal.o b/src/linscal.o
+index f7ee83ff..3b9bdc26 100644
+Binary files a/src/linscal.o and b/src/linscal.o differ
+diff --git a/src/linscal10.o b/src/linscal10.o
+index d87d7b78..617f7385 100644
+Binary files a/src/linscal10.o and b/src/linscal10.o differ
+diff --git a/src/linstatic.o b/src/linstatic.o
+index 71fc3571..3ef9049e 100644
+Binary files a/src/linstatic.o and b/src/linstatic.o differ
+diff --git a/src/lintemp.o b/src/lintemp.o
+index 9dcccd4b..847bfa56 100644
+Binary files a/src/lintemp.o and b/src/lintemp.o differ
+diff --git a/src/lintemp_th.o b/src/lintemp_th.o
+index bec1eed1..0924b603 100644
+Binary files a/src/lintemp_th.o and b/src/lintemp_th.o differ
+diff --git a/src/linvec.o b/src/linvec.o
+index 06011f86..17a06612 100644
+Binary files a/src/linvec.o and b/src/linvec.o differ
+diff --git a/src/linvec10.o b/src/linvec10.o
+index faafe893..79ab7bbb 100644
+Binary files a/src/linvec10.o and b/src/linvec10.o differ
+diff --git a/src/liquidchannel.o b/src/liquidchannel.o
+index 7367ac37..161511af 100644
+Binary files a/src/liquidchannel.o and b/src/liquidchannel.o differ
+diff --git a/src/liquidfractions.o b/src/liquidfractions.o
+index 75aa7ac0..72ae1c3a 100644
+Binary files a/src/liquidfractions.o and b/src/liquidfractions.o differ
+diff --git a/src/liquidpipe.o b/src/liquidpipe.o
+index 1e0a5b49..56f6da69 100644
+Binary files a/src/liquidpipe.o and b/src/liquidpipe.o differ
+diff --git a/src/liquidpump.o b/src/liquidpump.o
+index 3ab3af75..48af017b 100644
+Binary files a/src/liquidpump.o and b/src/liquidpump.o differ
+diff --git a/src/loadadd.o b/src/loadadd.o
+index 6165d276..c32eae6b 100644
+Binary files a/src/loadadd.o and b/src/loadadd.o differ
+diff --git a/src/loadaddp.o b/src/loadaddp.o
+index bd548d00..e210f473 100644
+Binary files a/src/loadaddp.o and b/src/loadaddp.o differ
+diff --git a/src/loadaddt.o b/src/loadaddt.o
+index ba576c3b..c1f25a4b 100644
+Binary files a/src/loadaddt.o and b/src/loadaddt.o differ
+diff --git a/src/lump.o b/src/lump.o
+index bc68a427..9af761d1 100644
+Binary files a/src/lump.o and b/src/lump.o differ
+diff --git a/src/machpi.o b/src/machpi.o
+index a4c52008..d64ed2d0 100644
+Binary files a/src/machpi.o and b/src/machpi.o differ
+diff --git a/src/mafillcorio.o b/src/mafillcorio.o
+index ce0bc865..a2cc0390 100644
+Binary files a/src/mafillcorio.o and b/src/mafillcorio.o differ
+diff --git a/src/mafilldm.o b/src/mafilldm.o
+index a568c909..657dea86 100644
+Binary files a/src/mafilldm.o and b/src/mafilldm.o differ
+diff --git a/src/mafilldmss.o b/src/mafilldmss.o
+index 5ad91080..d3d6a789 100644
+Binary files a/src/mafilldmss.o and b/src/mafilldmss.o differ
+diff --git a/src/mafilldmssmain.o b/src/mafilldmssmain.o
+index 9469f105..7f0690cf 100644
+Binary files a/src/mafilldmssmain.o and b/src/mafilldmssmain.o differ
+diff --git a/src/mafillem.o b/src/mafillem.o
+index 6dc4a3c0..26927fc8 100644
+Binary files a/src/mafillem.o and b/src/mafillem.o differ
+diff --git a/src/mafillk.o b/src/mafillk.o
+index c6b033d8..63eb34d4 100644
+Binary files a/src/mafillk.o and b/src/mafillk.o differ
+diff --git a/src/mafillklhs.o b/src/mafillklhs.o
+index 20d88818..0bfa4922 100644
+Binary files a/src/mafillklhs.o and b/src/mafillklhs.o differ
+diff --git a/src/mafillkmain.o b/src/mafillkmain.o
+index 7db41295..9f9fcbca 100644
+Binary files a/src/mafillkmain.o and b/src/mafillkmain.o differ
+diff --git a/src/mafillkrhs.o b/src/mafillkrhs.o
+index 3180d1c6..d0ae1b9c 100644
+Binary files a/src/mafillkrhs.o and b/src/mafillkrhs.o differ
+diff --git a/src/mafillnet.o b/src/mafillnet.o
+index 9b1e7e23..fc3366e4 100644
+Binary files a/src/mafillnet.o and b/src/mafillnet.o differ
+diff --git a/src/mafillo.o b/src/mafillo.o
+index 37d7754d..11402fa4 100644
+Binary files a/src/mafillo.o and b/src/mafillo.o differ
+diff --git a/src/mafillomain.o b/src/mafillomain.o
+index c4be59e5..7c491c25 100644
+Binary files a/src/mafillomain.o and b/src/mafillomain.o differ
+diff --git a/src/mafillp.o b/src/mafillp.o
+index 644a7569..d2f8d2e7 100644
+Binary files a/src/mafillp.o and b/src/mafillp.o differ
+diff --git a/src/mafillpbc.o b/src/mafillpbc.o
+index a3f536ce..ef583e84 100644
+Binary files a/src/mafillpbc.o and b/src/mafillpbc.o differ
+diff --git a/src/mafillpcomp.o b/src/mafillpcomp.o
+index 0b5c0711..43ff4738 100644
+Binary files a/src/mafillpcomp.o and b/src/mafillpcomp.o differ
+diff --git a/src/mafillpcompmain.o b/src/mafillpcompmain.o
+index eac98a23..d832344f 100644
+Binary files a/src/mafillpcompmain.o and b/src/mafillpcompmain.o differ
+diff --git a/src/mafillplhs.o b/src/mafillplhs.o
+index 8d83386a..d1549915 100644
+Binary files a/src/mafillplhs.o and b/src/mafillplhs.o differ
+diff --git a/src/mafillpmain.o b/src/mafillpmain.o
+index 7035d33d..008beb27 100644
+Binary files a/src/mafillpmain.o and b/src/mafillpmain.o differ
+diff --git a/src/mafillprhs.o b/src/mafillprhs.o
+index 61d91372..323659da 100644
+Binary files a/src/mafillprhs.o and b/src/mafillprhs.o differ
+diff --git a/src/mafillsm.o b/src/mafillsm.o
+index 6a31d102..0ca95672 100644
+Binary files a/src/mafillsm.o and b/src/mafillsm.o differ
+diff --git a/src/mafillsm_company.o b/src/mafillsm_company.o
+index 8886ce12..5c1a982a 100644
+Binary files a/src/mafillsm_company.o and b/src/mafillsm_company.o differ
+diff --git a/src/mafillsmas.o b/src/mafillsmas.o
+index 5e60ecec..c5c6acef 100644
+Binary files a/src/mafillsmas.o and b/src/mafillsmas.o differ
+diff --git a/src/mafillsmcs.o b/src/mafillsmcs.o
+index b866ad35..c56bde15 100644
+Binary files a/src/mafillsmcs.o and b/src/mafillsmcs.o differ
+diff --git a/src/mafillsmcsas.o b/src/mafillsmcsas.o
+index 7bd53877..781047c5 100644
+Binary files a/src/mafillsmcsas.o and b/src/mafillsmcsas.o differ
+diff --git a/src/mafillsmcsse.o b/src/mafillsmcsse.o
+index 5e1826b8..9ddf11e4 100644
+Binary files a/src/mafillsmcsse.o and b/src/mafillsmcsse.o differ
+diff --git a/src/mafillsmforc.o b/src/mafillsmforc.o
+index 6a33c53c..0c275c14 100644
+Binary files a/src/mafillsmforc.o and b/src/mafillsmforc.o differ
+diff --git a/src/mafillsmmain.o b/src/mafillsmmain.o
+index 4aa00f3b..44620276 100644
+Binary files a/src/mafillsmmain.o and b/src/mafillsmmain.o differ
+diff --git a/src/mafillsmmain_se.o b/src/mafillsmmain_se.o
+index 38802f86..68d38674 100644
+Binary files a/src/mafillsmmain_se.o and b/src/mafillsmmain_se.o differ
+diff --git a/src/mafillsmmain_se2.o b/src/mafillsmmain_se2.o
+index a5f4c935..3f5e3346 100644
+Binary files a/src/mafillsmmain_se2.o and b/src/mafillsmmain_se2.o differ
+diff --git a/src/mafillsmse.o b/src/mafillsmse.o
+index b491909b..e49b08df 100644
+Binary files a/src/mafillsmse.o and b/src/mafillsmse.o differ
+diff --git a/src/mafillsmse2.o b/src/mafillsmse2.o
+index 434b298f..4875ccec 100644
+Binary files a/src/mafillsmse2.o and b/src/mafillsmse2.o differ
+diff --git a/src/mafillt.o b/src/mafillt.o
+index d5cc6838..bdd77e5d 100644
+Binary files a/src/mafillt.o and b/src/mafillt.o differ
+diff --git a/src/mafilltcomp.o b/src/mafilltcomp.o
+index a211efa9..259e36ac 100644
+Binary files a/src/mafilltcomp.o and b/src/mafilltcomp.o differ
+diff --git a/src/mafilltcompmain.o b/src/mafilltcompmain.o
+index 6c921515..f73100c1 100644
+Binary files a/src/mafilltcompmain.o and b/src/mafilltcompmain.o differ
+diff --git a/src/mafilltlhs.o b/src/mafilltlhs.o
+index 083857bb..2e470ec6 100644
+Binary files a/src/mafilltlhs.o and b/src/mafilltlhs.o differ
+diff --git a/src/mafilltmain.o b/src/mafilltmain.o
+index 540f91e7..2593eeb6 100644
+Binary files a/src/mafilltmain.o and b/src/mafilltmain.o differ
+diff --git a/src/mafilltrhs.o b/src/mafilltrhs.o
+index acc9fdcd..dcd50176 100644
+Binary files a/src/mafilltrhs.o and b/src/mafilltrhs.o differ
+diff --git a/src/mafillv.o b/src/mafillv.o
+index f5e9ebae..33c0e9d8 100644
+Binary files a/src/mafillv.o and b/src/mafillv.o differ
+diff --git a/src/mafillv1rhs.o b/src/mafillv1rhs.o
+index aa73a22a..8c34b37e 100644
+Binary files a/src/mafillv1rhs.o and b/src/mafillv1rhs.o differ
+diff --git a/src/mafillv2rhs.o b/src/mafillv2rhs.o
+index 31cc1397..60b5ef14 100644
+Binary files a/src/mafillv2rhs.o and b/src/mafillv2rhs.o differ
+diff --git a/src/mafillvcomp.o b/src/mafillvcomp.o
+index d7f6b596..27d88a59 100644
+Binary files a/src/mafillvcomp.o and b/src/mafillvcomp.o differ
+diff --git a/src/mafillvcompmain.o b/src/mafillvcompmain.o
+index 747a0825..7c1a5d1d 100644
+Binary files a/src/mafillvcompmain.o and b/src/mafillvcompmain.o differ
+diff --git a/src/mafillvlhs.o b/src/mafillvlhs.o
+index 40235d7e..62cc2145 100644
+Binary files a/src/mafillvlhs.o and b/src/mafillvlhs.o differ
+diff --git a/src/mafillvmain.o b/src/mafillvmain.o
+index d7d079ff..5ea7da34 100644
+Binary files a/src/mafillvmain.o and b/src/mafillvmain.o differ
+diff --git a/src/magneticpermeabilitys.o b/src/magneticpermeabilitys.o
+index 0ca1b2a9..70ee30a2 100644
+Binary files a/src/magneticpermeabilitys.o and b/src/magneticpermeabilitys.o differ
+diff --git a/src/map3dto1d2d.o b/src/map3dto1d2d.o
+index b42ccf5b..4fbfce05 100644
+Binary files a/src/map3dto1d2d.o and b/src/map3dto1d2d.o differ
+diff --git a/src/map3dto1d2d_cfdfem.o b/src/map3dto1d2d_cfdfem.o
+index 4f52f612..e36d686b 100644
+Binary files a/src/map3dto1d2d_cfdfem.o and b/src/map3dto1d2d_cfdfem.o differ
+diff --git a/src/map3dto1d2d_v.o b/src/map3dto1d2d_v.o
+index f2c10521..14283233 100644
+Binary files a/src/map3dto1d2d_v.o and b/src/map3dto1d2d_v.o differ
+diff --git a/src/map3dtolayer.o b/src/map3dtolayer.o
+index 39c9316c..655fec11 100644
+Binary files a/src/map3dtolayer.o and b/src/map3dtolayer.o differ
+diff --git a/src/massflow_percent.o b/src/massflow_percent.o
+index 5263e168..5605f304 100644
+Binary files a/src/massflow_percent.o and b/src/massflow_percent.o differ
+diff --git a/src/massflows.o b/src/massflows.o
+index 4c304eb3..4d58f677 100644
+Binary files a/src/massflows.o and b/src/massflows.o differ
+diff --git a/src/masss.o b/src/masss.o
+index bd75349a..5a378a1a 100644
+Binary files a/src/masss.o and b/src/masss.o differ
+diff --git a/src/mastruct.o b/src/mastruct.o
+index 1bc89e76..9dc1d1d8 100644
+Binary files a/src/mastruct.o and b/src/mastruct.o differ
+diff --git a/src/mastructcs.o b/src/mastructcs.o
+index 4743c9b2..ced5e833 100644
+Binary files a/src/mastructcs.o and b/src/mastructcs.o differ
+diff --git a/src/mastructem.o b/src/mastructem.o
+index 422ac2d2..06ed1839 100644
+Binary files a/src/mastructem.o and b/src/mastructem.o differ
+diff --git a/src/mastructf.o b/src/mastructf.o
+index f817f464..0dd6fe74 100644
+Binary files a/src/mastructf.o and b/src/mastructf.o differ
+diff --git a/src/mastructffem.o b/src/mastructffem.o
+index 0488e56b..2ac3105b 100644
+Binary files a/src/mastructffem.o and b/src/mastructffem.o differ
+diff --git a/src/mastructnmatrix.o b/src/mastructnmatrix.o
+index 78ea4d82..545f86d6 100644
+Binary files a/src/mastructnmatrix.o and b/src/mastructnmatrix.o differ
+diff --git a/src/mastructrad.o b/src/mastructrad.o
+index 1ddd7a4e..9676fa8e 100644
+Binary files a/src/mastructrad.o and b/src/mastructrad.o differ
+diff --git a/src/mastructrand.o b/src/mastructrand.o
+index faa7fc5b..4ad3b7aa 100644
+Binary files a/src/mastructrand.o and b/src/mastructrand.o differ
+diff --git a/src/mastructse.o b/src/mastructse.o
+index 53fbe947..a686a9d6 100644
+Binary files a/src/mastructse.o and b/src/mastructse.o differ
+diff --git a/src/mastructse2.o b/src/mastructse2.o
+index bf376cf2..976c9142 100644
+Binary files a/src/mastructse2.o and b/src/mastructse2.o differ
+diff --git a/src/materialdata_cfd.o b/src/materialdata_cfd.o
+index 0af0bfbc..48318793 100644
+Binary files a/src/materialdata_cfd.o and b/src/materialdata_cfd.o differ
+diff --git a/src/materialdata_cfd_comp.o b/src/materialdata_cfd_comp.o
+index 20aa4f6b..c58f37ae 100644
+Binary files a/src/materialdata_cfd_comp.o and b/src/materialdata_cfd_comp.o differ
+diff --git a/src/materialdata_cond.o b/src/materialdata_cond.o
+index eee9271b..651ef222 100644
+Binary files a/src/materialdata_cond.o and b/src/materialdata_cond.o differ
+diff --git a/src/materialdata_cp.o b/src/materialdata_cp.o
+index c16d9244..88e64204 100644
+Binary files a/src/materialdata_cp.o and b/src/materialdata_cp.o differ
+diff --git a/src/materialdata_cp_sec.o b/src/materialdata_cp_sec.o
+index 9ae90d9a..e02968ef 100644
+Binary files a/src/materialdata_cp_sec.o and b/src/materialdata_cp_sec.o differ
+diff --git a/src/materialdata_dvi.o b/src/materialdata_dvi.o
+index f94245e2..1ec9cca3 100644
+Binary files a/src/materialdata_dvi.o and b/src/materialdata_dvi.o differ
+diff --git a/src/materialdata_dvifem.o b/src/materialdata_dvifem.o
+index a8fc2789..63fb7394 100644
+Binary files a/src/materialdata_dvifem.o and b/src/materialdata_dvifem.o differ
+diff --git a/src/materialdata_em.o b/src/materialdata_em.o
+index f18e1f8a..f8180645 100644
+Binary files a/src/materialdata_em.o and b/src/materialdata_em.o differ
+diff --git a/src/materialdata_h2temp.o b/src/materialdata_h2temp.o
+index 8ea62a97..08d6aa4e 100644
+Binary files a/src/materialdata_h2temp.o and b/src/materialdata_h2temp.o differ
+diff --git a/src/materialdata_me.o b/src/materialdata_me.o
+index a807e4b8..a7eb5175 100644
+Binary files a/src/materialdata_me.o and b/src/materialdata_me.o differ
+diff --git a/src/materialdata_rho.o b/src/materialdata_rho.o
+index 80e20ec6..7f5a3caf 100644
+Binary files a/src/materialdata_rho.o and b/src/materialdata_rho.o differ
+diff --git a/src/materialdata_sp.o b/src/materialdata_sp.o
+index 53913c72..53807576 100644
+Binary files a/src/materialdata_sp.o and b/src/materialdata_sp.o differ
+diff --git a/src/materialdata_temp2fl.o b/src/materialdata_temp2fl.o
+index 9dbce6a6..93cded08 100644
+Binary files a/src/materialdata_temp2fl.o and b/src/materialdata_temp2fl.o differ
+diff --git a/src/materialdata_temp2h.o b/src/materialdata_temp2h.o
+index 846afebf..ac6d990e 100644
+Binary files a/src/materialdata_temp2h.o and b/src/materialdata_temp2h.o differ
+diff --git a/src/materialdata_tg.o b/src/materialdata_tg.o
+index 0ba76ac4..a057813f 100644
+Binary files a/src/materialdata_tg.o and b/src/materialdata_tg.o differ
+diff --git a/src/materialdata_th.o b/src/materialdata_th.o
+index f9c0ffcb..45391459 100644
+Binary files a/src/materialdata_th.o and b/src/materialdata_th.o differ
+diff --git a/src/materials.o b/src/materials.o
+index 801baab6..25815a4e 100644
+Binary files a/src/materials.o and b/src/materials.o differ
+diff --git a/src/matrixstorage.o b/src/matrixstorage.o
+index b173856c..a2de218b 100644
+Binary files a/src/matrixstorage.o and b/src/matrixstorage.o differ
+diff --git a/src/matvec.o b/src/matvec.o
+index ba314420..6eeaf4d4 100644
+Binary files a/src/matvec.o and b/src/matvec.o differ
+diff --git a/src/matvec_struct.o b/src/matvec_struct.o
+index 5cac05e5..b4d3a9e7 100644
+Binary files a/src/matvec_struct.o and b/src/matvec_struct.o differ
+diff --git a/src/meannode.o b/src/meannode.o
+index 327cb628..d4a2e6cc 100644
+Binary files a/src/meannode.o and b/src/meannode.o differ
+diff --git a/src/mechmodel.o b/src/mechmodel.o
+index 8cae56b6..91ddd91f 100644
+Binary files a/src/mechmodel.o and b/src/mechmodel.o differ
+diff --git a/src/membranesections.o b/src/membranesections.o
+index 0c12bb0e..a7f423da 100644
+Binary files a/src/membranesections.o and b/src/membranesections.o differ
+diff --git a/src/metal_powder.o b/src/metal_powder.o
+index 66c7e1ea..0889aac6 100644
+Binary files a/src/metal_powder.o and b/src/metal_powder.o differ
+diff --git a/src/metalpowders.o b/src/metalpowders.o
+index 55f29100..8f841bd1 100644
+Binary files a/src/metalpowders.o and b/src/metalpowders.o differ
+diff --git a/src/modaldampings.o b/src/modaldampings.o
+index 6c601028..7d518a30 100644
+Binary files a/src/modaldampings.o and b/src/modaldampings.o differ
+diff --git a/src/modaldynamics.o b/src/modaldynamics.o
+index 4f5c818d..3be32b1b 100644
+Binary files a/src/modaldynamics.o and b/src/modaldynamics.o differ
+diff --git a/src/modelchanges.o b/src/modelchanges.o
+index 54c452a5..35dc5928 100644
+Binary files a/src/modelchanges.o and b/src/modelchanges.o differ
+diff --git a/src/modf.o b/src/modf.o
+index b2942eca..27cd109d 100644
+Binary files a/src/modf.o and b/src/modf.o differ
+diff --git a/src/moehring.o b/src/moehring.o
+index fb78e89a..4946ad48 100644
+Binary files a/src/moehring.o and b/src/moehring.o differ
+diff --git a/src/mpcadd.o b/src/mpcadd.o
+index 6eccd9dc..27d44d16 100644
+Binary files a/src/mpcadd.o and b/src/mpcadd.o differ
+diff --git a/src/mpcrem.o b/src/mpcrem.o
+index 9c32859a..48e0bee7 100644
+Binary files a/src/mpcrem.o and b/src/mpcrem.o differ
+diff --git a/src/mpcs.o b/src/mpcs.o
+index cac87f7c..ee0f26e5 100644
+Binary files a/src/mpcs.o and b/src/mpcs.o differ
+diff --git a/src/msolve.o b/src/msolve.o
+index cc969a8e..bd3a7479 100644
+Binary files a/src/msolve.o and b/src/msolve.o differ
+diff --git a/src/msolve_struct.o b/src/msolve_struct.o
+index e8695cdb..62a48b34 100644
+Binary files a/src/msolve_struct.o and b/src/msolve_struct.o differ
+diff --git a/src/mult.o b/src/mult.o
+index 3c622309..56d27e89 100644
+Binary files a/src/mult.o and b/src/mult.o differ
+diff --git a/src/multistages.o b/src/multistages.o
+index bcf00179..06cbd7d5 100644
+Binary files a/src/multistages.o and b/src/multistages.o differ
+diff --git a/src/multvec.o b/src/multvec.o
+index 1b118f59..b55108e8 100644
+Binary files a/src/multvec.o and b/src/multvec.o differ
+diff --git a/src/near2d.o b/src/near2d.o
+index 724acf0d..84288db5 100644
+Binary files a/src/near2d.o and b/src/near2d.o differ
+diff --git a/src/near3d.o b/src/near3d.o
+index 276f8950..99919898 100644
+Binary files a/src/near3d.o and b/src/near3d.o differ
+diff --git a/src/near3d_se.o b/src/near3d_se.o
+index 20b0eb09..850916ef 100644
+Binary files a/src/near3d_se.o and b/src/near3d_se.o differ
+diff --git a/src/neartriangle.o b/src/neartriangle.o
+index 44d0a6b7..43248efd 100644
+Binary files a/src/neartriangle.o and b/src/neartriangle.o differ
+diff --git a/src/negativepressure.o b/src/negativepressure.o
+index 18c3e4b1..ac2bd3ef 100644
+Binary files a/src/negativepressure.o and b/src/negativepressure.o differ
+diff --git a/src/networkelementpernode.o b/src/networkelementpernode.o
+index c78bf23d..516d10f6 100644
+Binary files a/src/networkelementpernode.o and b/src/networkelementpernode.o differ
+diff --git a/src/networkextrapolate.o b/src/networkextrapolate.o
+index cf97b5a7..90cfc15a 100644
+Binary files a/src/networkextrapolate.o and b/src/networkextrapolate.o differ
+diff --git a/src/networkforc.o b/src/networkforc.o
+index c57a9304..34bc4fe0 100644
+Binary files a/src/networkforc.o and b/src/networkforc.o differ
+diff --git a/src/networkinum.o b/src/networkinum.o
+index 00e381dc..a32f5e70 100644
+Binary files a/src/networkinum.o and b/src/networkinum.o differ
+diff --git a/src/networkmpc_lhs.o b/src/networkmpc_lhs.o
+index e1f56959..c64a33e5 100644
+Binary files a/src/networkmpc_lhs.o and b/src/networkmpc_lhs.o differ
+diff --git a/src/networkmpc_rhs.o b/src/networkmpc_rhs.o
+index 64b999b6..e0c95a4d 100644
+Binary files a/src/networkmpc_rhs.o and b/src/networkmpc_rhs.o differ
+diff --git a/src/networkmpcs.o b/src/networkmpcs.o
+index b54190e0..5353220a 100644
+Binary files a/src/networkmpcs.o and b/src/networkmpcs.o differ
+diff --git a/src/networkneighbor.o b/src/networkneighbor.o
+index 1e9351e9..4a743c84 100644
+Binary files a/src/networkneighbor.o and b/src/networkneighbor.o differ
+diff --git a/src/networkstiff.o b/src/networkstiff.o
+index 47167df6..a2eeb5ab 100644
+Binary files a/src/networkstiff.o and b/src/networkstiff.o differ
+diff --git a/src/newton.o b/src/newton.o
+index 098dd0ee..05265426 100644
+Binary files a/src/newton.o and b/src/newton.o differ
+diff --git a/src/nident.o b/src/nident.o
+index eca2e814..f26910d1 100644
+Binary files a/src/nident.o and b/src/nident.o differ
+diff --git a/src/nident2.o b/src/nident2.o
+index 8025cfc5..e5208925 100644
+Binary files a/src/nident2.o and b/src/nident2.o differ
+diff --git a/src/nidentk.o b/src/nidentk.o
+index b300a091..63fbdd14 100644
+Binary files a/src/nidentk.o and b/src/nidentk.o differ
+diff --git a/src/nidentll.o b/src/nidentll.o
+index 74aba0ce..b394f51c 100644
+Binary files a/src/nidentll.o and b/src/nidentll.o differ
+diff --git a/src/nmatrix.o b/src/nmatrix.o
+index e16abdb0..d5fadc81 100644
+Binary files a/src/nmatrix.o and b/src/nmatrix.o differ
+diff --git a/src/noanalysiss.o b/src/noanalysiss.o
+index 44e097e3..e61ccd2d 100644
+Binary files a/src/noanalysiss.o and b/src/noanalysiss.o differ
+diff --git a/src/nodalthicknesss.o b/src/nodalthicknesss.o
+index f95f0a63..8ae4d3f8 100644
+Binary files a/src/nodalthicknesss.o and b/src/nodalthicknesss.o differ
+diff --git a/src/nodeprints.o b/src/nodeprints.o
+index 1e840a84..48a910ee 100644
+Binary files a/src/nodeprints.o and b/src/nodeprints.o differ
+diff --git a/src/nodes.o b/src/nodes.o
+index ae0a5c40..1103cbc1 100644
+Binary files a/src/nodes.o and b/src/nodes.o differ
+diff --git a/src/nodestiedface.o b/src/nodestiedface.o
+index 137219d5..78bba9a6 100644
+Binary files a/src/nodestiedface.o and b/src/nodestiedface.o differ
+diff --git a/src/noelfiles.o b/src/noelfiles.o
+index 7f5e4ce6..88b1affd 100644
+Binary files a/src/noelfiles.o and b/src/noelfiles.o differ
+diff --git a/src/noelsets.o b/src/noelsets.o
+index 105b06b8..8a190ee0 100644
+Binary files a/src/noelsets.o and b/src/noelsets.o differ
+diff --git a/src/nonlingeo.o b/src/nonlingeo.o
+index bf1252bd..e9065707 100644
+Binary files a/src/nonlingeo.o and b/src/nonlingeo.o differ
+diff --git a/src/nonlinmpc.o b/src/nonlinmpc.o
+index b1c2f030..b2bb85ce 100644
+Binary files a/src/nonlinmpc.o and b/src/nonlinmpc.o differ
+diff --git a/src/norm.o b/src/norm.o
+index 4554bc8b..cd0cd9dc 100644
+Binary files a/src/norm.o and b/src/norm.o differ
+diff --git a/src/normals.o b/src/normals.o
+index d4ddefc9..110832d0 100644
+Binary files a/src/normals.o and b/src/normals.o differ
+diff --git a/src/normalsforequ_se.o b/src/normalsforequ_se.o
+index a3c6f4b8..02e784ea 100644
+Binary files a/src/normalsforequ_se.o and b/src/normalsforequ_se.o differ
+diff --git a/src/normalsoninterface.o b/src/normalsoninterface.o
+index b57c91b1..7b886aa5 100644
+Binary files a/src/normalsoninterface.o and b/src/normalsoninterface.o differ
+diff --git a/src/normalsonsurface_se.o b/src/normalsonsurface_se.o
+index 31cc8600..9eaac713 100644
+Binary files a/src/normalsonsurface_se.o and b/src/normalsonsurface_se.o differ
+diff --git a/src/normmpc.o b/src/normmpc.o
+index 7f4e603b..ae61319f 100644
+Binary files a/src/normmpc.o and b/src/normmpc.o differ
+diff --git a/src/norshell3.o b/src/norshell3.o
+index d6c22ddd..f8c741d4 100644
+Binary files a/src/norshell3.o and b/src/norshell3.o differ
+diff --git a/src/norshell4.o b/src/norshell4.o
+index 495c1d5b..95645bfa 100644
+Binary files a/src/norshell4.o and b/src/norshell4.o differ
+diff --git a/src/norshell6.o b/src/norshell6.o
+index 912fbf7e..0f5e0097 100644
+Binary files a/src/norshell6.o and b/src/norshell6.o differ
+diff --git a/src/norshell8.o b/src/norshell8.o
+index 15af3023..396939a5 100644
+Binary files a/src/norshell8.o and b/src/norshell8.o differ
+diff --git a/src/nystar2flcr.o b/src/nystar2flcr.o
+index b00c55cf..da0e39e3 100644
+Binary files a/src/nystar2flcr.o and b/src/nystar2flcr.o differ
+diff --git a/src/nystarflcrchart.o b/src/nystarflcrchart.o
+index 909df9f5..ae045e01 100644
+Binary files a/src/nystarflcrchart.o and b/src/nystarflcrchart.o differ
+diff --git a/src/objective_disp.o b/src/objective_disp.o
+index bef7f312..918b1c6e 100644
+Binary files a/src/objective_disp.o and b/src/objective_disp.o differ
+diff --git a/src/objective_disp_dx.o b/src/objective_disp_dx.o
+index b34bdc75..b847a8a6 100644
+Binary files a/src/objective_disp_dx.o and b/src/objective_disp_dx.o differ
+diff --git a/src/objective_freq.o b/src/objective_freq.o
+index 763ed957..20dba117 100644
+Binary files a/src/objective_freq.o and b/src/objective_freq.o differ
+diff --git a/src/objective_freq_cs.o b/src/objective_freq_cs.o
+index b188cbca..54728cef 100644
+Binary files a/src/objective_freq_cs.o and b/src/objective_freq_cs.o differ
+diff --git a/src/objective_mass_dx.o b/src/objective_mass_dx.o
+index 11c19ac1..be07e386 100644
+Binary files a/src/objective_mass_dx.o and b/src/objective_mass_dx.o differ
+diff --git a/src/objective_shapeener_dx.o b/src/objective_shapeener_dx.o
+index b3d7338b..81759d9c 100644
+Binary files a/src/objective_shapeener_dx.o and b/src/objective_shapeener_dx.o differ
+diff --git a/src/objective_shapeener_tot.o b/src/objective_shapeener_tot.o
+index de178f16..db3a2868 100644
+Binary files a/src/objective_shapeener_tot.o and b/src/objective_shapeener_tot.o differ
+diff --git a/src/objective_stress.o b/src/objective_stress.o
+index c0e40887..558b1fc2 100644
+Binary files a/src/objective_stress.o and b/src/objective_stress.o differ
+diff --git a/src/objective_stress_dx_dy.o b/src/objective_stress_dx_dy.o
+index 73f73f49..cd3521c9 100644
+Binary files a/src/objective_stress_dx_dy.o and b/src/objective_stress_dx_dy.o differ
+diff --git a/src/objective_stress_se.o b/src/objective_stress_se.o
+index ef3a015d..4426ca37 100644
+Binary files a/src/objective_stress_se.o and b/src/objective_stress_se.o differ
+diff --git a/src/objective_stress_tot.o b/src/objective_stress_tot.o
+index 4e1743b7..ed0cb137 100644
+Binary files a/src/objective_stress_tot.o and b/src/objective_stress_tot.o differ
+diff --git a/src/objectivemain_se.o b/src/objectivemain_se.o
+index 88ffb39b..164fe8c9 100644
+Binary files a/src/objectivemain_se.o and b/src/objectivemain_se.o differ
+diff --git a/src/objectives.o b/src/objectives.o
+index 2209ee2b..8fd36a4d 100644
+Binary files a/src/objectives.o and b/src/objectives.o differ
+diff --git a/src/onedint.o b/src/onedint.o
+index 1e0809ec..9a8ec4f3 100644
+Binary files a/src/onedint.o and b/src/onedint.o differ
+diff --git a/src/op.o b/src/op.o
+index 6b1a40d4..5431314e 100644
+Binary files a/src/op.o and b/src/op.o differ
+diff --git a/src/op_corio.o b/src/op_corio.o
+index ac3bfeae..9a482b47 100644
+Binary files a/src/op_corio.o and b/src/op_corio.o differ
+diff --git a/src/opas.o b/src/opas.o
+index 5d296cb1..08568255 100644
+Binary files a/src/opas.o and b/src/opas.o differ
+diff --git a/src/openfile.o b/src/openfile.o
+index 0ed93142..eb9accd3 100644
+Binary files a/src/openfile.o and b/src/openfile.o differ
+diff --git a/src/openfilefluid.o b/src/openfilefluid.o
+index cc3b5c18..e7a7d6bd 100644
+Binary files a/src/openfilefluid.o and b/src/openfilefluid.o differ
+diff --git a/src/orientations.o b/src/orientations.o
+index 7d4b29d3..14cc064b 100644
+Binary files a/src/orientations.o and b/src/orientations.o differ
+diff --git a/src/orifice.o b/src/orifice.o
+index 66329888..eb55e8ec 100644
+Binary files a/src/orifice.o and b/src/orifice.o differ
+diff --git a/src/orthonl.o b/src/orthonl.o
+index a2e8c443..737c6d8e 100644
+Binary files a/src/orthonl.o and b/src/orthonl.o differ
+diff --git a/src/orthotropic.o b/src/orthotropic.o
+index 12468cde..1bf93b68 100644
+Binary files a/src/orthotropic.o and b/src/orthotropic.o differ
+diff --git a/src/output_mtx.o b/src/output_mtx.o
+index 74a4419e..0eae64ba 100644
+Binary files a/src/output_mtx.o and b/src/output_mtx.o differ
+diff --git a/src/outputs.o b/src/outputs.o
+index bea68bbe..98ce1721 100644
+Binary files a/src/outputs.o and b/src/outputs.o differ
+diff --git a/src/pardiso.o b/src/pardiso.o
+index 2f407a06..c77ba99e 100644
+Binary files a/src/pardiso.o and b/src/pardiso.o differ
+diff --git a/src/pardiso_as.o b/src/pardiso_as.o
+index df248c6b..602d4a19 100644
+Binary files a/src/pardiso_as.o and b/src/pardiso_as.o differ
+diff --git a/src/patch.o b/src/patch.o
+index 4c7e4d28..57f33401 100644
+Binary files a/src/patch.o and b/src/patch.o differ
+diff --git a/src/pcgsolver.o b/src/pcgsolver.o
+index f283477b..6841b41a 100644
+Binary files a/src/pcgsolver.o and b/src/pcgsolver.o differ
+diff --git a/src/phaselatentherat.o b/src/phaselatentherat.o
+index a2ed04d0..e3aa884e 100644
+Binary files a/src/phaselatentherat.o and b/src/phaselatentherat.o differ
+diff --git a/src/phaseother.o b/src/phaseother.o
+index cdbdce3f..b9ec9348 100644
+Binary files a/src/phaseother.o and b/src/phaseother.o differ
+diff --git a/src/phasetransition.o b/src/phasetransition.o
+index 6739e260..6958ff73 100644
+Binary files a/src/phasetransition.o and b/src/phasetransition.o differ
+diff --git a/src/phasetransition1.o b/src/phasetransition1.o
+index 24918e10..3b9dca86 100644
+Binary files a/src/phasetransition1.o and b/src/phasetransition1.o differ
+diff --git a/src/phys2con.o b/src/phys2con.o
+index 90976961..4552b7f9 100644
+Binary files a/src/phys2con.o and b/src/phys2con.o differ
+diff --git a/src/phys2con_cast.o b/src/phys2con_cast.o
+index 53591869..81263ce2 100644
+Binary files a/src/phys2con_cast.o and b/src/phys2con_cast.o differ
+diff --git a/src/physicalconstantss.o b/src/physicalconstantss.o
+index c037afbf..77cfd06a 100644
+Binary files a/src/physicalconstantss.o and b/src/physicalconstantss.o differ
+diff --git a/src/pk_cdc_cl1.o b/src/pk_cdc_cl1.o
+index 69cfe079..86ca3f7f 100644
+Binary files a/src/pk_cdc_cl1.o and b/src/pk_cdc_cl1.o differ
+diff --git a/src/pk_cdc_cl3.o b/src/pk_cdc_cl3.o
+index 382925f2..efb04dd8 100644
+Binary files a/src/pk_cdc_cl3.o and b/src/pk_cdc_cl3.o differ
+diff --git a/src/pk_cdc_cl3a.o b/src/pk_cdc_cl3a.o
+index 233b8563..b946cd50 100644
+Binary files a/src/pk_cdc_cl3a.o and b/src/pk_cdc_cl3a.o differ
+diff --git a/src/pk_cdc_cl3b.o b/src/pk_cdc_cl3b.o
+index c826449a..81589a52 100644
+Binary files a/src/pk_cdc_cl3b.o and b/src/pk_cdc_cl3b.o differ
+diff --git a/src/pk_cdc_cl3d.o b/src/pk_cdc_cl3d.o
+index bcb86109..7d35bc7a 100644
+Binary files a/src/pk_cdc_cl3d.o and b/src/pk_cdc_cl3d.o differ
+diff --git a/src/pk_cdi_noz.o b/src/pk_cdi_noz.o
+index 85a0d27b..d5ed650b 100644
+Binary files a/src/pk_cdi_noz.o and b/src/pk_cdi_noz.o differ
+diff --git a/src/pk_cdi_r.o b/src/pk_cdi_r.o
+index 541f5da3..584ec55c 100644
+Binary files a/src/pk_cdi_r.o and b/src/pk_cdi_r.o differ
+diff --git a/src/pk_cdi_rl.o b/src/pk_cdi_rl.o
+index f8a5767a..3b4470db 100644
+Binary files a/src/pk_cdi_rl.o and b/src/pk_cdi_rl.o differ
+diff --git a/src/pk_cdi_se.o b/src/pk_cdi_se.o
+index a4014ff9..1c2d8dd5 100644
+Binary files a/src/pk_cdi_se.o and b/src/pk_cdi_se.o differ
+diff --git a/src/pk_y0_yg.o b/src/pk_y0_yg.o
+index 9ca37ebb..bd8e5bed 100644
+Binary files a/src/pk_y0_yg.o and b/src/pk_y0_yg.o differ
+diff --git a/src/plane_eq.o b/src/plane_eq.o
+index 7e1314a6..8d4a8c67 100644
+Binary files a/src/plane_eq.o and b/src/plane_eq.o differ
+diff --git a/src/planeeq.o b/src/planeeq.o
+index 1e027e24..9e55698a 100644
+Binary files a/src/planeeq.o and b/src/planeeq.o differ
+diff --git a/src/planempc.o b/src/planempc.o
+index 8740ea92..8e240e51 100644
+Binary files a/src/planempc.o and b/src/planempc.o differ
+diff --git a/src/plastics.o b/src/plastics.o
+index 32b40e7c..a6b6dff1 100644
+Binary files a/src/plastics.o and b/src/plastics.o differ
+diff --git a/src/plasticwork.c b/src/plasticwork.c
+index dc344b3b..a02b211f 100644
+--- a/src/plasticwork.c
++++ b/src/plasticwork.c
+@@ -619,7 +619,7 @@ void plasticwork ( double * xstate,  int * nstate, double * stx, double * ener,
+ 
+   for ( inode = 0; inode < *nk; inode++ ) { /* update nodal temperature
+ 						 */
+-    //t1[inode] +=  ptr_dtemp_node[inode] ;
++//    t1[inode] +=  ptr_dtemp_node[inode] ;
+     v[inode*4] += ptr_dtemp_node[inode] ;
+     vold[inode*4] = v[inode*4] ; // this is not important
+   }
+diff --git a/src/plasticwork.o b/src/plasticwork.o
+index 8f88cb5c..583b46bc 100644
+Binary files a/src/plasticwork.o and b/src/plasticwork.o differ
+diff --git a/src/plcopy.o b/src/plcopy.o
+index b27c7878..68d5f939 100644
+Binary files a/src/plcopy.o and b/src/plcopy.o differ
+diff --git a/src/plinterpol.o b/src/plinterpol.o
+index 7dfad6b9..a28c5c32 100644
+Binary files a/src/plinterpol.o and b/src/plinterpol.o differ
+diff --git a/src/plmix.o b/src/plmix.o
+index 3f9baedf..7f663695 100644
+Binary files a/src/plmix.o and b/src/plmix.o differ
+diff --git a/src/pop.o b/src/pop.o
+index aa2a7563..c0744b41 100644
+Binary files a/src/pop.o and b/src/pop.o differ
+diff --git a/src/postinitialnet.o b/src/postinitialnet.o
+index 84bdae7c..8f6e18fd 100644
+Binary files a/src/postinitialnet.o and b/src/postinitialnet.o differ
+diff --git a/src/postprocess_cast.o b/src/postprocess_cast.o
+index fcc1f949..d3318ca1 100644
+Binary files a/src/postprocess_cast.o and b/src/postprocess_cast.o differ
+diff --git a/src/postprojectgrad.o b/src/postprojectgrad.o
+index 8225ec43..c89954d7 100644
+Binary files a/src/postprojectgrad.o and b/src/postprojectgrad.o differ
+diff --git a/src/posttransition.o b/src/posttransition.o
+index 941685b6..891a035e 100644
+Binary files a/src/posttransition.o and b/src/posttransition.o differ
+diff --git a/src/postview.o b/src/postview.o
+index c0b76e5b..adb83fc6 100644
+Binary files a/src/postview.o and b/src/postview.o differ
+diff --git a/src/powderhardenings.o b/src/powderhardenings.o
+index 1bed6d05..2c08133e 100644
+Binary files a/src/powderhardenings.o and b/src/powderhardenings.o differ
+diff --git a/src/precfd.o b/src/precfd.o
+index 062d1dd6..25d59403 100644
+Binary files a/src/precfd.o and b/src/precfd.o differ
+diff --git a/src/precfdcyc.o b/src/precfdcyc.o
+index 68a1d86b..a36ed356 100644
+Binary files a/src/precfdcyc.o and b/src/precfdcyc.o differ
+diff --git a/src/preconditioning.o b/src/preconditioning.o
+index 57874869..b1b2a266 100644
+Binary files a/src/preconditioning.o and b/src/preconditioning.o differ
+diff --git a/src/precontact.o b/src/precontact.o
+index bbf77b38..1af0ca5d 100644
+Binary files a/src/precontact.o and b/src/precontact.o differ
+diff --git a/src/preconvert2slapcol.o b/src/preconvert2slapcol.o
+index 3d2f2085..cbe32791 100644
+Binary files a/src/preconvert2slapcol.o and b/src/preconvert2slapcol.o differ
+diff --git a/src/predgmres.o b/src/predgmres.o
+index 6f067b36..522bba8e 100644
+Binary files a/src/predgmres.o and b/src/predgmres.o differ
+diff --git a/src/predgmres_struct.o b/src/predgmres_struct.o
+index 55806f42..20b84947 100644
+Binary files a/src/predgmres_struct.o and b/src/predgmres_struct.o differ
+diff --git a/src/prediction.o b/src/prediction.o
+index 4823c809..4386273f 100644
+Binary files a/src/prediction.o and b/src/prediction.o differ
+diff --git a/src/prediction_em.o b/src/prediction_em.o
+index 7ef587f9..58cdcd4b 100644
+Binary files a/src/prediction_em.o and b/src/prediction_em.o differ
+diff --git a/src/predir.o b/src/predir.o
+index 1c350f81..23064f4f 100644
+Binary files a/src/predir.o and b/src/predir.o differ
+diff --git a/src/prefilter.o b/src/prefilter.o
+index e020f75f..76f67d0e 100644
+Binary files a/src/prefilter.o and b/src/prefilter.o differ
+diff --git a/src/preinitialnet.o b/src/preinitialnet.o
+index e9d97695..d5558baa 100644
+Binary files a/src/preinitialnet.o and b/src/preinitialnet.o differ
+diff --git a/src/preiter.o b/src/preiter.o
+index 7e7bab72..7d8b15c0 100644
+Binary files a/src/preiter.o and b/src/preiter.o differ
+diff --git a/src/preparenycalc.o b/src/preparenycalc.o
+index 13abd60f..3818e643 100644
+Binary files a/src/preparenycalc.o and b/src/preparenycalc.o differ
+diff --git a/src/preprojectgrad.o b/src/preprojectgrad.o
+index 3e0816b7..033fecbb 100644
+Binary files a/src/preprojectgrad.o and b/src/preprojectgrad.o differ
+diff --git a/src/presgradient.o b/src/presgradient.o
+index 4a13fec0..0e2e9bfc 100644
+Binary files a/src/presgradient.o and b/src/presgradient.o differ
+diff --git a/src/pretensionsections.o b/src/pretensionsections.o
+index b839ee83..414a88aa 100644
+Binary files a/src/pretensionsections.o and b/src/pretensionsections.o differ
+diff --git a/src/prethickness.o b/src/prethickness.o
+index 21aa9227..c7b2f2be 100644
+Binary files a/src/prethickness.o and b/src/prethickness.o differ
+diff --git a/src/pretransition.o b/src/pretransition.o
+index 6dccdd1a..081ec881 100644
+Binary files a/src/pretransition.o and b/src/pretransition.o differ
+diff --git a/src/printout.o b/src/printout.o
+index a0ff0de6..2444b2a7 100644
+Binary files a/src/printout.o and b/src/printout.o differ
+diff --git a/src/printoutelem.o b/src/printoutelem.o
+index 9933b666..1fc47b49 100644
+Binary files a/src/printoutelem.o and b/src/printoutelem.o differ
+diff --git a/src/printoutface.o b/src/printoutface.o
+index ccb3ee8f..fa670c9e 100644
+Binary files a/src/printoutface.o and b/src/printoutface.o differ
+diff --git a/src/printoutfacefem.o b/src/printoutfacefem.o
+index cd4613a5..4ae795ae 100644
+Binary files a/src/printoutfacefem.o and b/src/printoutfacefem.o differ
+diff --git a/src/printoutfluid.o b/src/printoutfluid.o
+index b67bd64d..91c2ab7d 100644
+Binary files a/src/printoutfluid.o and b/src/printoutfluid.o differ
+diff --git a/src/printoutfluidfem.o b/src/printoutfluidfem.o
+index 13bd2e11..2d2df909 100644
+Binary files a/src/printoutfluidfem.o and b/src/printoutfluidfem.o differ
+diff --git a/src/printoutint.o b/src/printoutint.o
+index e558fc9d..3165f666 100644
+Binary files a/src/printoutint.o and b/src/printoutint.o differ
+diff --git a/src/printoutint_cfdfem.o b/src/printoutint_cfdfem.o
+index 7e3b8deb..b3a39f29 100644
+Binary files a/src/printoutint_cfdfem.o and b/src/printoutint_cfdfem.o differ
+diff --git a/src/printoutnode.o b/src/printoutnode.o
+index 5f48fc05..2e8d7ff9 100644
+Binary files a/src/printoutnode.o and b/src/printoutnode.o differ
+diff --git a/src/printoutnodefluid.o b/src/printoutnodefluid.o
+index 04b74529..796898d6 100644
+Binary files a/src/printoutnodefluid.o and b/src/printoutnodefluid.o differ
+diff --git a/src/printoutnodefluidfem.o b/src/printoutnodefluidfem.o
+index a30fc2d2..5b0b5be1 100644
+Binary files a/src/printoutnodefluidfem.o and b/src/printoutnodefluidfem.o differ
+diff --git a/src/projectgrad.o b/src/projectgrad.o
+index bdfe38be..9878bb20 100644
+Binary files a/src/projectgrad.o and b/src/projectgrad.o differ
+diff --git a/src/projectgradmain.o b/src/projectgradmain.o
+index 853dee28..d21f4ba2 100644
+Binary files a/src/projectgradmain.o and b/src/projectgradmain.o differ
+diff --git a/src/propertynet.o b/src/propertynet.o
+index 774c8bc1..f5bd9137 100644
+Binary files a/src/propertynet.o and b/src/propertynet.o differ
+diff --git a/src/pt2_lim_calc.o b/src/pt2_lim_calc.o
+index bad9306b..c4060218 100644
+Binary files a/src/pt2_lim_calc.o and b/src/pt2_lim_calc.o differ
+diff --git a/src/pt2zpt1_crit.o b/src/pt2zpt1_crit.o
+index 295e48c9..82d154dc 100644
+Binary files a/src/pt2zpt1_crit.o and b/src/pt2zpt1_crit.o differ
+diff --git a/src/push.o b/src/push.o
+index 752593fc..06402e8d 100644
+Binary files a/src/push.o and b/src/push.o differ
+diff --git a/src/qsorti.o b/src/qsorti.o
+index bcd70cb2..000dcf23 100644
+Binary files a/src/qsorti.o and b/src/qsorti.o differ
+diff --git a/src/quadraticsens.o b/src/quadraticsens.o
+index 81a236f1..380dc40f 100644
+Binary files a/src/quadraticsens.o and b/src/quadraticsens.o differ
+diff --git a/src/radcyc.o b/src/radcyc.o
+index 11604c9b..aef3434e 100644
+Binary files a/src/radcyc.o and b/src/radcyc.o differ
+diff --git a/src/radflowload.o b/src/radflowload.o
+index d62817fd..53b060c7 100644
+Binary files a/src/radflowload.o and b/src/radflowload.o differ
+diff --git a/src/radiate.o b/src/radiate.o
+index ef0d94a5..5f84acb1 100644
+Binary files a/src/radiate.o and b/src/radiate.o differ
+diff --git a/src/radiates.o b/src/radiates.o
+index dd37544e..bf308acd 100644
+Binary files a/src/radiates.o and b/src/radiates.o differ
+diff --git a/src/radmatrix.o b/src/radmatrix.o
+index 22f1a2de..6cecbea4 100644
+Binary files a/src/radmatrix.o and b/src/radmatrix.o differ
+diff --git a/src/radresult.o b/src/radresult.o
+index 0088b8cb..e166a2b3 100644
+Binary files a/src/radresult.o and b/src/radresult.o differ
+diff --git a/src/randomfieldmain.o b/src/randomfieldmain.o
+index e0720642..d1a3d9f1 100644
+Binary files a/src/randomfieldmain.o and b/src/randomfieldmain.o differ
+diff --git a/src/randomfields.o b/src/randomfields.o
+index 059ff0f9..fa2abde4 100644
+Binary files a/src/randomfields.o and b/src/randomfields.o differ
+diff --git a/src/randomval.o b/src/randomval.o
+index c3d8f0f9..ff237483 100644
+Binary files a/src/randomval.o and b/src/randomval.o differ
+diff --git a/src/ratedependentplastics.o b/src/ratedependentplastics.o
+index f5c2455d..80985ed5 100644
+Binary files a/src/ratedependentplastics.o and b/src/ratedependentplastics.o differ
+diff --git a/src/rcavi.o b/src/rcavi.o
+index badb090d..5f1b03dc 100644
+Binary files a/src/rcavi.o and b/src/rcavi.o differ
+diff --git a/src/rcavi2.o b/src/rcavi2.o
+index 4492e66f..040de303 100644
+Binary files a/src/rcavi2.o and b/src/rcavi2.o differ
+diff --git a/src/rcavi_cp_lt.o b/src/rcavi_cp_lt.o
+index c12aff84..0316e680 100644
+Binary files a/src/rcavi_cp_lt.o and b/src/rcavi_cp_lt.o differ
+diff --git a/src/rcavi_cp_nt.o b/src/rcavi_cp_nt.o
+index c5deab6c..f1081ac1 100644
+Binary files a/src/rcavi_cp_nt.o and b/src/rcavi_cp_nt.o differ
+diff --git a/src/rdplas.f b/src/rdplas.f
+index 340f1ad3..5894eba9 100644
+--- a/src/rdplas.f
++++ b/src/rdplas.f
+@@ -265,6 +265,7 @@ c
+       statev(8) = eqplasrt
+       statev(9) = syield
+       statev(10) = deqpl*(syiel0+syield)/2.d0
++      statev(25) = 1.d0
+ 
+ 
+       return
+diff --git a/src/rdplas.o b/src/rdplas.o
+index fe9d7eca..20bf47f2 100644
+Binary files a/src/rdplas.o and b/src/rdplas.o differ
+diff --git a/src/readforce.o b/src/readforce.o
+index ed8356bf..ee2e183d 100644
+Binary files a/src/readforce.o and b/src/readforce.o differ
+diff --git a/src/readfrd.o b/src/readfrd.o
+index fa3d3978..695f042b 100644
+Binary files a/src/readfrd.o and b/src/readfrd.o differ
+diff --git a/src/readinput.o b/src/readinput.o
+index 283eb613..c18b405c 100644
+Binary files a/src/readinput.o and b/src/readinput.o differ
+diff --git a/src/readphaseinf.o b/src/readphaseinf.o
+index 520f78c1..fad06985 100644
+Binary files a/src/readphaseinf.o and b/src/readphaseinf.o differ
+diff --git a/src/readsen.o b/src/readsen.o
+index 0c397982..49cd3200 100644
+Binary files a/src/readsen.o and b/src/readsen.o differ
+diff --git a/src/readview.o b/src/readview.o
+index 14170b01..cee5e8d0 100644
+Binary files a/src/readview.o and b/src/readview.o differ
+diff --git a/src/readxstateini.o b/src/readxstateini.o
+index 2af49385..ba84738e 100644
+Binary files a/src/readxstateini.o and b/src/readxstateini.o differ
+diff --git a/src/rearrange.o b/src/rearrange.o
+index fdd432d5..64e37c39 100644
+Binary files a/src/rearrange.o and b/src/rearrange.o differ
+diff --git a/src/rectcyl.o b/src/rectcyl.o
+index 1987925f..02b4330f 100644
+Binary files a/src/rectcyl.o and b/src/rectcyl.o differ
+diff --git a/src/rectcylexp.o b/src/rectcylexp.o
+index 81638251..468a9f86 100644
+Binary files a/src/rectcylexp.o and b/src/rectcylexp.o differ
+diff --git a/src/rectcyltrfm.o b/src/rectcyltrfm.o
+index 09503a38..04e27ae6 100644
+Binary files a/src/rectcyltrfm.o and b/src/rectcyltrfm.o differ
+diff --git a/src/rectcylvi.o b/src/rectcylvi.o
+index a55d1afd..3eb6814e 100644
+Binary files a/src/rectcylvi.o and b/src/rectcylvi.o differ
+diff --git a/src/remastruct.o b/src/remastruct.o
+index c9bbf793..215376bb 100644
+Binary files a/src/remastruct.o and b/src/remastruct.o differ
+diff --git a/src/remastructar.o b/src/remastructar.o
+index 2ec4e37d..55b32d34 100644
+Binary files a/src/remastructar.o and b/src/remastructar.o differ
+diff --git a/src/remastructem.o b/src/remastructem.o
+index 26c2c7d1..1efce0fe 100644
+Binary files a/src/remastructem.o and b/src/remastructem.o differ
+diff --git a/src/reorderampl.o b/src/reorderampl.o
+index 35ca0010..9df06e90 100644
+Binary files a/src/reorderampl.o and b/src/reorderampl.o differ
+diff --git a/src/reorderlhs.o b/src/reorderlhs.o
+index e6d38d22..661fa474 100644
+Binary files a/src/reorderlhs.o and b/src/reorderlhs.o differ
+diff --git a/src/reorderrhs.o b/src/reorderrhs.o
+index b1102bbe..0a0a0a91 100644
+Binary files a/src/reorderrhs.o and b/src/reorderrhs.o differ
+diff --git a/src/restartread.o b/src/restartread.o
+index 17b9acb6..4fa07845 100644
+Binary files a/src/restartread.o and b/src/restartread.o differ
+diff --git a/src/restarts.o b/src/restarts.o
+index 24e767f2..49daa701 100644
+Binary files a/src/restarts.o and b/src/restarts.o differ
+diff --git a/src/restartshort.o b/src/restartshort.o
+index 50edf77f..20abef7c 100644
+Binary files a/src/restartshort.o and b/src/restartshort.o differ
+diff --git a/src/restartwrite.o b/src/restartwrite.o
+index 827f8ddc..4711ff08 100644
+Binary files a/src/restartwrite.o and b/src/restartwrite.o differ
+diff --git a/src/restrictor.o b/src/restrictor.o
+index 8610070e..e50d9caf 100644
+Binary files a/src/restrictor.o and b/src/restrictor.o differ
+diff --git a/src/resultnet.o b/src/resultnet.o
+index 14c7f2da..421341c6 100644
+Binary files a/src/resultnet.o and b/src/resultnet.o differ
+diff --git a/src/results.c b/src/results.c
+index e2900e6f..b3d9f227 100644
+--- a/src/results.c
++++ b/src/results.c
+@@ -393,7 +393,8 @@ void results(double *co,ITG *nk,ITG *kon,ITG *ipkon,char *lakon,ITG *ne,
+        extrapolation of integration point values to the nodes
+        interpolation of 3d results for 1d/2d elements */
+ 
+-    
++
++/*
+     pwork = malloc ( sizeof(double) * (*mi) * (*ne) ) ;
+ 
+     plasticwork ( xstate, nstate_, stx, ener, pwork,
+@@ -404,6 +405,7 @@ void results(double *co,ITG *nk,ITG *kon,ITG *ipkon,char *lakon,ITG *ne,
+     ttime, time ) ;
+ 
+     free ( pwork ) ;
++*/
+ 
+ 
+     /* use external function to calculate
+diff --git a/src/results.o b/src/results.o
+index c00adfd5..ffbc9284 100644
+Binary files a/src/results.o and b/src/results.o differ
+diff --git a/src/results_se.o b/src/results_se.o
+index 8fb829fd..226b61a1 100644
+Binary files a/src/results_se.o and b/src/results_se.o differ
+diff --git a/src/resultsem.o b/src/resultsem.o
+index 899bbd2b..eb2b581f 100644
+Binary files a/src/resultsem.o and b/src/resultsem.o differ
+diff --git a/src/resultsforc.o b/src/resultsforc.o
+index 0ea696da..34a263d5 100644
+Binary files a/src/resultsforc.o and b/src/resultsforc.o differ
+diff --git a/src/resultsforc_em.o b/src/resultsforc_em.o
+index 228a0bf3..9d6d86b1 100644
+Binary files a/src/resultsforc_em.o and b/src/resultsforc_em.o differ
+diff --git a/src/resultsforc_se.o b/src/resultsforc_se.o
+index 84c86f5e..2c152e69 100644
+Binary files a/src/resultsforc_se.o and b/src/resultsforc_se.o differ
+diff --git a/src/resultsinduction.o b/src/resultsinduction.o
+index 09dc65ed..7c75543e 100644
+Binary files a/src/resultsinduction.o and b/src/resultsinduction.o differ
+diff --git a/src/resultsini.o b/src/resultsini.o
+index cee90a01..e1da7147 100644
+Binary files a/src/resultsini.o and b/src/resultsini.o differ
+diff --git a/src/resultsini_em.o b/src/resultsini_em.o
+index 4c69a444..b1204f7f 100644
+Binary files a/src/resultsini_em.o and b/src/resultsini_em.o differ
+diff --git a/src/resultsk.o b/src/resultsk.o
+index e95e1a6d..54d2124c 100644
+Binary files a/src/resultsk.o and b/src/resultsk.o differ
+diff --git a/src/resultsmech.f b/src/resultsmech.f
+index ca6e758d..bb3cd052 100644
+--- a/src/resultsmech.f
++++ b/src/resultsmech.f
+@@ -792,17 +792,21 @@ c     Bernhardi end
+                      do i1=1,8
+                         t0l=t0l+t0(konl(i1))/8.d0
+                         t1l=t1l+t1(konl(i1))/8.d0
++c                        t1l=t1l+v(0,konl(i1))/8.d0
+                      enddo
+                   elseif(lakonl(4:6).eq.'20 ') then
+                      nopered=20
+                      call lintemp(t0,t1,konl,nopered,jj,t0l,t1l)
++c                     call lintemp_th(t0,v,konl,nopered,jj,t0l,t1l,mi)
+                   elseif(lakonl(4:6).eq.'10T') then
+                      call linscal10(t0,konl,t0l,null,shp)
+                      call linscal10(t1,konl,t1l,null,shp)
++c                     call linscal10(v,konl,t1l,mi(2),shp)
+                   else
+                      do i1=1,nope
+                         t0l=t0l+shp(4,i1)*t0(konl(i1))
+                         t1l=t1l+shp(4,i1)*t1(konl(i1))
++c                        t1l=t1l+shp(4,i1)*v(0,konl(i1))
+                      enddo
+                   endif
+                elseif(ithermal(1).ge.2) then
+diff --git a/src/resultsmech.o b/src/resultsmech.o
+index 272d4030..bc9b4dde 100644
+Binary files a/src/resultsmech.o and b/src/resultsmech.o differ
+diff --git a/src/resultsmech_se.o b/src/resultsmech_se.o
+index bd5204a7..faeb4b4d 100644
+Binary files a/src/resultsmech_se.o and b/src/resultsmech_se.o differ
+diff --git a/src/resultsmech_u.o b/src/resultsmech_u.o
+index 2fb13c88..2342ca75 100644
+Binary files a/src/resultsmech_u.o and b/src/resultsmech_u.o differ
+diff --git a/src/resultsmech_u1.o b/src/resultsmech_u1.o
+index f1512a5d..f293c4ee 100644
+Binary files a/src/resultsmech_u1.o and b/src/resultsmech_u1.o differ
+diff --git a/src/resultsnoddir.o b/src/resultsnoddir.o
+index 402c732e..edbe15b8 100644
+Binary files a/src/resultsnoddir.o and b/src/resultsnoddir.o differ
+diff --git a/src/resultsp.o b/src/resultsp.o
+index 5937f862..5f2475d3 100644
+Binary files a/src/resultsp.o and b/src/resultsp.o differ
+diff --git a/src/resultsprint.o b/src/resultsprint.o
+index 7a9921db..57f5667d 100644
+Binary files a/src/resultsprint.o and b/src/resultsprint.o differ
+diff --git a/src/resultsstr.o b/src/resultsstr.o
+index 688f0720..e0c06891 100644
+Binary files a/src/resultsstr.o and b/src/resultsstr.o differ
+diff --git a/src/resultst.o b/src/resultst.o
+index 27735b23..fdf9eb6d 100644
+Binary files a/src/resultst.o and b/src/resultst.o differ
+diff --git a/src/resultstherm.o b/src/resultstherm.o
+index b6f27903..1a67d9ef 100644
+Binary files a/src/resultstherm.o and b/src/resultstherm.o differ
+diff --git a/src/resultsv1.o b/src/resultsv1.o
+index 4958e225..9add76af 100644
+Binary files a/src/resultsv1.o and b/src/resultsv1.o differ
+diff --git a/src/resultsv2.o b/src/resultsv2.o
+index 8bae7335..b2b0a20f 100644
+Binary files a/src/resultsv2.o and b/src/resultsv2.o differ
+diff --git a/src/retainednodaldofss.o b/src/retainednodaldofss.o
+index fcce1c78..3bde447a 100644
+Binary files a/src/retainednodaldofss.o and b/src/retainednodaldofss.o differ
+diff --git a/src/rhs.o b/src/rhs.o
+index e4376431..8baddbb3 100644
+Binary files a/src/rhs.o and b/src/rhs.o differ
+diff --git a/src/rhsp.o b/src/rhsp.o
+index 6f655a70..75ba61f7 100644
+Binary files a/src/rhsp.o and b/src/rhsp.o differ
+diff --git a/src/rhspcomp.o b/src/rhspcomp.o
+index 2ac6c6c9..f847cb53 100644
+Binary files a/src/rhspcomp.o and b/src/rhspcomp.o differ
+diff --git a/src/rhspcompmain.o b/src/rhspcompmain.o
+index d7ea0dea..3c68eb44 100644
+Binary files a/src/rhspcompmain.o and b/src/rhspcompmain.o differ
+diff --git a/src/rhspmain.o b/src/rhspmain.o
+index 2f15d80f..959cf4a5 100644
+Binary files a/src/rhspmain.o and b/src/rhspmain.o differ
+diff --git a/src/rigidbodys.o b/src/rigidbodys.o
+index 812e8130..1cdee7aa 100644
+Binary files a/src/rigidbodys.o and b/src/rigidbodys.o differ
+diff --git a/src/rigidmpc.o b/src/rigidmpc.o
+index 8b8fd879..7f909fca 100644
+Binary files a/src/rigidmpc.o and b/src/rigidmpc.o differ
+diff --git a/src/rimseal.o b/src/rimseal.o
+index d86f44c7..ed632daf 100644
+Binary files a/src/rimseal.o and b/src/rimseal.o differ
+diff --git a/src/rimseal_calc.o b/src/rimseal_calc.o
+index 8c27b4dd..fbb586c1 100644
+Binary files a/src/rimseal_calc.o and b/src/rimseal_calc.o differ
+diff --git a/src/rotationvector.o b/src/rotationvector.o
+index e77a959c..93df9239 100644
+Binary files a/src/rotationvector.o and b/src/rotationvector.o differ
+diff --git a/src/rotationvectorinv.o b/src/rotationvectorinv.o
+index b95cadf6..38b87f74 100644
+Binary files a/src/rotationvectorinv.o and b/src/rotationvectorinv.o differ
+diff --git a/src/rs.o b/src/rs.o
+index 50139895..b7ff73a5 100644
+Binary files a/src/rs.o and b/src/rs.o differ
+diff --git a/src/rubber.o b/src/rubber.o
+index 1400bfa9..d8dcb1b8 100644
+Binary files a/src/rubber.o and b/src/rubber.o differ
+diff --git a/src/scalesen.o b/src/scalesen.o
+index de3abbeb..ac0aedfe 100644
+Binary files a/src/scalesen.o and b/src/scalesen.o differ
+diff --git a/src/scavenge_pump.o b/src/scavenge_pump.o
+index 5844400d..eefe9e94 100644
+Binary files a/src/scavenge_pump.o and b/src/scavenge_pump.o differ
+diff --git a/src/sdvini.o b/src/sdvini.o
+index 0a30f3b7..99165158 100644
+Binary files a/src/sdvini.o and b/src/sdvini.o differ
+diff --git a/src/sectionprints.o b/src/sectionprints.o
+index 12165dc1..8a45d2c4 100644
+Binary files a/src/sectionprints.o and b/src/sectionprints.o differ
+diff --git a/src/selectcyclicsymmetrymodess.o b/src/selectcyclicsymmetrymodess.o
+index 0c11f612..488f2762 100644
+Binary files a/src/selectcyclicsymmetrymodess.o and b/src/selectcyclicsymmetrymodess.o differ
+diff --git a/src/sensitivity.o b/src/sensitivity.o
+index e4f05831..a02380bc 100644
+Binary files a/src/sensitivity.o and b/src/sensitivity.o differ
+diff --git a/src/sensitivity_glob.o b/src/sensitivity_glob.o
+index 164d409c..695709dd 100644
+Binary files a/src/sensitivity_glob.o and b/src/sensitivity_glob.o differ
+diff --git a/src/sensitivity_out.o b/src/sensitivity_out.o
+index d267a6af..704b7079 100644
+Binary files a/src/sensitivity_out.o and b/src/sensitivity_out.o differ
+diff --git a/src/sensitivitys.o b/src/sensitivitys.o
+index 757f057b..ea6acd45 100644
+Binary files a/src/sensitivitys.o and b/src/sensitivitys.o differ
+diff --git a/src/sgi.o b/src/sgi.o
+index c6652095..4f11b406 100644
+Binary files a/src/sgi.o and b/src/sgi.o differ
+diff --git a/src/shape10tet.o b/src/shape10tet.o
+index d7a2c003..c4313889 100644
+Binary files a/src/shape10tet.o and b/src/shape10tet.o differ
+diff --git a/src/shape14tet.o b/src/shape14tet.o
+index 24857b50..8982e4cd 100644
+Binary files a/src/shape14tet.o and b/src/shape14tet.o differ
+diff --git a/src/shape15w.o b/src/shape15w.o
+index 825c8f85..10c4474c 100644
+Binary files a/src/shape15w.o and b/src/shape15w.o differ
+diff --git a/src/shape20h.o b/src/shape20h.o
+index 12dd299e..3e990c19 100644
+Binary files a/src/shape20h.o and b/src/shape20h.o differ
+diff --git a/src/shape20h_ax.o b/src/shape20h_ax.o
+index 85428490..7396edcd 100644
+Binary files a/src/shape20h_ax.o and b/src/shape20h_ax.o differ
+diff --git a/src/shape20h_pl.o b/src/shape20h_pl.o
+index 13aa6d8f..5253f470 100644
+Binary files a/src/shape20h_pl.o and b/src/shape20h_pl.o differ
+diff --git a/src/shape26h.o b/src/shape26h.o
+index a92e87d0..8d594bb8 100644
+Binary files a/src/shape26h.o and b/src/shape26h.o differ
+diff --git a/src/shape2l.o b/src/shape2l.o
+index 1f201af2..34702e00 100644
+Binary files a/src/shape2l.o and b/src/shape2l.o differ
+diff --git a/src/shape3l.o b/src/shape3l.o
+index f2720610..7989739c 100644
+Binary files a/src/shape3l.o and b/src/shape3l.o differ
+diff --git a/src/shape3tri.o b/src/shape3tri.o
+index 421f2ebc..ad5a8171 100644
+Binary files a/src/shape3tri.o and b/src/shape3tri.o differ
+diff --git a/src/shape4q.o b/src/shape4q.o
+index 933b0a33..bc048596 100644
+Binary files a/src/shape4q.o and b/src/shape4q.o differ
+diff --git a/src/shape4tet.o b/src/shape4tet.o
+index d69c6925..e0e2635d 100644
+Binary files a/src/shape4tet.o and b/src/shape4tet.o differ
+diff --git a/src/shape6tri.o b/src/shape6tri.o
+index bdbf4039..910caf46 100644
+Binary files a/src/shape6tri.o and b/src/shape6tri.o differ
+diff --git a/src/shape6w.o b/src/shape6w.o
+index 5f534d52..fa20ef2d 100644
+Binary files a/src/shape6w.o and b/src/shape6w.o differ
+diff --git a/src/shape7tri.o b/src/shape7tri.o
+index 311939fd..4a234bbd 100644
+Binary files a/src/shape7tri.o and b/src/shape7tri.o differ
+diff --git a/src/shape8h.o b/src/shape8h.o
+index 733666f8..8a30c631 100644
+Binary files a/src/shape8h.o and b/src/shape8h.o differ
+diff --git a/src/shape8hr.o b/src/shape8hr.o
+index eee31f7a..1864c6a5 100644
+Binary files a/src/shape8hr.o and b/src/shape8hr.o differ
+diff --git a/src/shape8hu.o b/src/shape8hu.o
+index cfa1981c..1c175a1d 100644
+Binary files a/src/shape8hu.o and b/src/shape8hu.o differ
+diff --git a/src/shape8q.o b/src/shape8q.o
+index 774e76de..d51b60db 100644
+Binary files a/src/shape8q.o and b/src/shape8q.o differ
+diff --git a/src/shape9q.o b/src/shape9q.o
+index 227a9b60..d62ee1d3 100644
+Binary files a/src/shape9q.o and b/src/shape9q.o differ
+diff --git a/src/shellsections.o b/src/shellsections.o
+index 57b98295..d1730946 100644
+Binary files a/src/shellsections.o and b/src/shellsections.o differ
+diff --git a/src/sigini.o b/src/sigini.o
+index 6b96cbaa..6cb9eedc 100644
+Binary files a/src/sigini.o and b/src/sigini.o differ
+diff --git a/src/skip.o b/src/skip.o
+index a796fc58..7c99396e 100644
+Binary files a/src/skip.o and b/src/skip.o differ
+diff --git a/src/slavintpoints.o b/src/slavintpoints.o
+index 0cf5dafb..8e1d717d 100644
+Binary files a/src/slavintpoints.o and b/src/slavintpoints.o differ
+diff --git a/src/smalldist.o b/src/smalldist.o
+index d9dea120..d42d289a 100644
+Binary files a/src/smalldist.o and b/src/smalldist.o differ
+diff --git a/src/smoothshock.o b/src/smoothshock.o
+index 742c9c5d..b6b649de 100644
+Binary files a/src/smoothshock.o and b/src/smoothshock.o differ
+diff --git a/src/solidsections.o b/src/solidsections.o
+index a1234d39..0fe7a2db 100644
+Binary files a/src/solidsections.o and b/src/solidsections.o differ
+diff --git a/src/solveeq.o b/src/solveeq.o
+index 3afd38ec..5c1416d8 100644
+Binary files a/src/solveeq.o and b/src/solveeq.o differ
+diff --git a/src/solveexplicitly.o b/src/solveexplicitly.o
+index 59a0ee99..78d87549 100644
+Binary files a/src/solveexplicitly.o and b/src/solveexplicitly.o differ
+diff --git a/src/sortev.o b/src/sortev.o
+index e13a7cc2..3553dbb6 100644
+Binary files a/src/sortev.o and b/src/sortev.o differ
+diff --git a/src/spcmatch.o b/src/spcmatch.o
+index 762911a1..92c02d14 100644
+Binary files a/src/spcmatch.o and b/src/spcmatch.o differ
+diff --git a/src/specificgasconstants.o b/src/specificgasconstants.o
+index 47e6591d..ea13eb10 100644
+Binary files a/src/specificgasconstants.o and b/src/specificgasconstants.o differ
+diff --git a/src/specificheats.o b/src/specificheats.o
+index a0398f39..d0071749 100644
+Binary files a/src/specificheats.o and b/src/specificheats.o differ
+diff --git a/src/splitline.o b/src/splitline.o
+index a69ba361..d84aa38c 100644
+Binary files a/src/splitline.o and b/src/splitline.o differ
+diff --git a/src/spooles.o b/src/spooles.o
+index 0714216a..94e28022 100644
+Binary files a/src/spooles.o and b/src/spooles.o differ
+diff --git a/src/springdamp_f2f.o b/src/springdamp_f2f.o
+index c23e83aa..a4f2e095 100644
+Binary files a/src/springdamp_f2f.o and b/src/springdamp_f2f.o differ
+diff --git a/src/springdamp_n2f.o b/src/springdamp_n2f.o
+index d9657a0c..f7e3120e 100644
+Binary files a/src/springdamp_n2f.o and b/src/springdamp_n2f.o differ
+diff --git a/src/springforc_f2f.o b/src/springforc_f2f.o
+index ccb20d8a..71faf7d9 100644
+Binary files a/src/springforc_f2f.o and b/src/springforc_f2f.o differ
+diff --git a/src/springforc_f2f_th.o b/src/springforc_f2f_th.o
+index d64742e8..4d4d188e 100644
+Binary files a/src/springforc_f2f_th.o and b/src/springforc_f2f_th.o differ
+diff --git a/src/springforc_n2f.o b/src/springforc_n2f.o
+index bba50790..0b22c281 100644
+Binary files a/src/springforc_n2f.o and b/src/springforc_n2f.o differ
+diff --git a/src/springforc_n2f_th.o b/src/springforc_n2f_th.o
+index a1d339c4..2b0c6ed7 100644
+Binary files a/src/springforc_n2f_th.o and b/src/springforc_n2f_th.o differ
+diff --git a/src/springs.o b/src/springs.o
+index 837172c9..fcbe872c 100644
+Binary files a/src/springs.o and b/src/springs.o differ
+diff --git a/src/springstiff_f2f.o b/src/springstiff_f2f.o
+index 063cab0f..0a33bb6f 100644
+Binary files a/src/springstiff_f2f.o and b/src/springstiff_f2f.o differ
+diff --git a/src/springstiff_f2f_th.o b/src/springstiff_f2f_th.o
+index cedc3d3e..4441bcc4 100644
+Binary files a/src/springstiff_f2f_th.o and b/src/springstiff_f2f_th.o differ
+diff --git a/src/springstiff_n2f.o b/src/springstiff_n2f.o
+index 55079d1f..323144ab 100644
+Binary files a/src/springstiff_n2f.o and b/src/springstiff_n2f.o differ
+diff --git a/src/springstiff_n2f_th.o b/src/springstiff_n2f_th.o
+index cc46ea5e..286487df 100644
+Binary files a/src/springstiff_n2f_th.o and b/src/springstiff_n2f_th.o differ
+diff --git a/src/statics.o b/src/statics.o
+index 264f8e9b..368ba74f 100644
+Binary files a/src/statics.o and b/src/statics.o differ
+diff --git a/src/steadystate.o b/src/steadystate.o
+index 87d650bd..f8ab612c 100644
+Binary files a/src/steadystate.o and b/src/steadystate.o differ
+diff --git a/src/steadystatedynamicss.o b/src/steadystatedynamicss.o
+index 89fceaec..6b0296e4 100644
+Binary files a/src/steadystatedynamicss.o and b/src/steadystatedynamicss.o differ
+diff --git a/src/steps.o b/src/steps.o
+index fac6a539..5fe1295a 100644
+Binary files a/src/steps.o and b/src/steps.o differ
+diff --git a/src/stiff2mat.o b/src/stiff2mat.o
+index 5a63709d..7c99218b 100644
+Binary files a/src/stiff2mat.o and b/src/stiff2mat.o differ
+diff --git a/src/stof.o b/src/stof.o
+index 159280d7..6c46798a 100644
+Binary files a/src/stof.o and b/src/stof.o differ
+diff --git a/src/stoi.o b/src/stoi.o
+index bbdfd052..e709a980 100644
+Binary files a/src/stoi.o and b/src/stoi.o differ
+diff --git a/src/stop.o b/src/stop.o
+index d04bf814..a5b3a1f7 100644
+Binary files a/src/stop.o and b/src/stop.o differ
+diff --git a/src/storecontactdof.o b/src/storecontactdof.o
+index 27e008c6..98000845 100644
+Binary files a/src/storecontactdof.o and b/src/storecontactdof.o differ
+diff --git a/src/storecontactprop.o b/src/storecontactprop.o
+index c17ae5b5..aef35381 100644
+Binary files a/src/storecontactprop.o and b/src/storecontactprop.o differ
+diff --git a/src/storeresidual.o b/src/storeresidual.o
+index ab938759..8c57b682 100644
+Binary files a/src/storeresidual.o and b/src/storeresidual.o differ
+diff --git a/src/stos.o b/src/stos.o
+index ebdab7de..af43ddea 100644
+Binary files a/src/stos.o and b/src/stos.o differ
+diff --git a/src/str2mat.o b/src/str2mat.o
+index bee453f1..cb623620 100644
+Binary files a/src/str2mat.o and b/src/str2mat.o differ
+diff --git a/src/straighteq2d.o b/src/straighteq2d.o
+index 0f7462b8..385491e1 100644
+Binary files a/src/straighteq2d.o and b/src/straighteq2d.o differ
+diff --git a/src/straighteq3d.o b/src/straighteq3d.o
+index 7dc3c998..562e5a1e 100644
+Binary files a/src/straighteq3d.o and b/src/straighteq3d.o differ
+diff --git a/src/straighteq3dpen.o b/src/straighteq3dpen.o
+index 30175643..fab20058 100644
+Binary files a/src/straighteq3dpen.o and b/src/straighteq3dpen.o differ
+diff --git a/src/straightmpc.o b/src/straightmpc.o
+index 82640d21..dfa0732c 100644
+Binary files a/src/straightmpc.o and b/src/straightmpc.o differ
+diff --git a/src/strcmp1.o b/src/strcmp1.o
+index efa02815..0f9e7502 100644
+Binary files a/src/strcmp1.o and b/src/strcmp1.o differ
+diff --git a/src/strcmp2.o b/src/strcmp2.o
+index 2b6deaf9..ac193750 100644
+Binary files a/src/strcmp2.o and b/src/strcmp2.o differ
+diff --git a/src/strcpy1.o b/src/strcpy1.o
+index c48ba5d3..84addcdd 100644
+Binary files a/src/strcpy1.o and b/src/strcpy1.o differ
+diff --git a/src/stress_sen_2ndorder.o b/src/stress_sen_2ndorder.o
+index 65be61b4..cb0bc8d4 100644
+Binary files a/src/stress_sen_2ndorder.o and b/src/stress_sen_2ndorder.o differ
+diff --git a/src/stress_sen_dv.o b/src/stress_sen_dv.o
+index 004d8763..41816b70 100644
+Binary files a/src/stress_sen_dv.o and b/src/stress_sen_dv.o differ
+diff --git a/src/stress_sen_dx.o b/src/stress_sen_dx.o
+index 914d856a..9be4e5b2 100644
+Binary files a/src/stress_sen_dx.o and b/src/stress_sen_dx.o differ
+diff --git a/src/strsplt.o b/src/strsplt.o
+index 434ceeb4..2a4a1a53 100644
+Binary files a/src/strsplt.o and b/src/strsplt.o differ
+diff --git a/src/submodels.o b/src/submodels.o
+index 6ccec438..7fd677a7 100644
+Binary files a/src/submodels.o and b/src/submodels.o differ
+diff --git a/src/subspace.o b/src/subspace.o
+index 7c964614..4f0d950c 100644
+Binary files a/src/subspace.o and b/src/subspace.o differ
+diff --git a/src/substructuregenerates.o b/src/substructuregenerates.o
+index c0632b34..575c7b88 100644
+Binary files a/src/substructuregenerates.o and b/src/substructuregenerates.o differ
+diff --git a/src/substructurematrixoutputs.o b/src/substructurematrixoutputs.o
+index 3df60c4f..cd244ad4 100644
+Binary files a/src/substructurematrixoutputs.o and b/src/substructurematrixoutputs.o differ
+diff --git a/src/surfacebehaviors.o b/src/surfacebehaviors.o
+index a32fbd22..d4340afe 100644
+Binary files a/src/surfacebehaviors.o and b/src/surfacebehaviors.o differ
+diff --git a/src/surfaceinteractions.o b/src/surfaceinteractions.o
+index afdca7ce..a1227eb4 100644
+Binary files a/src/surfaceinteractions.o and b/src/surfaceinteractions.o differ
+diff --git a/src/surfaces.o b/src/surfaces.o
+index 3f19eb71..996f9fc0 100644
+Binary files a/src/surfaces.o and b/src/surfaces.o differ
+diff --git a/src/sutherland_hodgman.o b/src/sutherland_hodgman.o
+index 9b1c22ea..d8e69713 100644
+Binary files a/src/sutherland_hodgman.o and b/src/sutherland_hodgman.o differ
+diff --git a/src/swap.o b/src/swap.o
+index 4748a470..814939ae 100644
+Binary files a/src/swap.o and b/src/swap.o differ
+diff --git a/src/tau.o b/src/tau.o
+index 76679eb1..2793401e 100644
+Binary files a/src/tau.o and b/src/tau.o differ
+diff --git a/src/tee.o b/src/tee.o
+index fb4a7945..fd1731c2 100644
+Binary files a/src/tee.o and b/src/tee.o differ
+diff --git a/src/temperatures.o b/src/temperatures.o
+index 556a444c..6b43bfb3 100644
+Binary files a/src/temperatures.o and b/src/temperatures.o differ
+diff --git a/src/templiquidussolidus.o b/src/templiquidussolidus.o
+index d17105d8..f3cb5e57 100644
+Binary files a/src/templiquidussolidus.o and b/src/templiquidussolidus.o differ
+diff --git a/src/tempload.o b/src/tempload.o
+index 36751492..62f1a5f9 100644
+Binary files a/src/tempload.o and b/src/tempload.o differ
+diff --git a/src/tempload_em.o b/src/tempload_em.o
+index f8b71213..d0749d2d 100644
+Binary files a/src/tempload_em.o and b/src/tempload_em.o differ
+diff --git a/src/temploaddiff.o b/src/temploaddiff.o
+index c069d3da..b5cfc216 100644
+Binary files a/src/temploaddiff.o and b/src/temploaddiff.o differ
+diff --git a/src/temploadfem.o b/src/temploadfem.o
+index bba5a113..04f64b4a 100644
+Binary files a/src/temploadfem.o and b/src/temploadfem.o differ
+diff --git a/src/temploadmodal.o b/src/temploadmodal.o
+index 6da08e66..8ea8a84b 100644
+Binary files a/src/temploadmodal.o and b/src/temploadmodal.o differ
+diff --git a/src/test_frd.o b/src/test_frd.o
+index a2ee2728..9c058cbb 100644
+Binary files a/src/test_frd.o and b/src/test_frd.o differ
+diff --git a/src/test_tdot_and_g.o b/src/test_tdot_and_g.o
+index 2d562edb..156155f0 100644
+Binary files a/src/test_tdot_and_g.o and b/src/test_tdot_and_g.o differ
+diff --git a/src/thermmodel.o b/src/thermmodel.o
+index 55ac8a42..a6923270 100644
+Binary files a/src/thermmodel.o and b/src/thermmodel.o differ
+diff --git a/src/thickness.o b/src/thickness.o
+index ce03be33..6e9f3b65 100644
+Binary files a/src/thickness.o and b/src/thickness.o differ
+diff --git a/src/thicknessmain.o b/src/thicknessmain.o
+index 1ae5f21b..9d4107d5 100644
+Binary files a/src/thicknessmain.o and b/src/thicknessmain.o differ
+diff --git a/src/tiedcontact.o b/src/tiedcontact.o
+index af0596d3..dd7b611f 100644
+Binary files a/src/tiedcontact.o and b/src/tiedcontact.o differ
+diff --git a/src/tiefaccont.o b/src/tiefaccont.o
+index 2af89237..9ac9454a 100644
+Binary files a/src/tiefaccont.o and b/src/tiefaccont.o differ
+diff --git a/src/ties.o b/src/ties.o
+index 0231efc4..518a617b 100644
+Binary files a/src/ties.o and b/src/ties.o differ
+diff --git a/src/time2solidus.o b/src/time2solidus.o
+index e84520a0..1346536c 100644
+Binary files a/src/time2solidus.o and b/src/time2solidus.o differ
+diff --git a/src/timepointss.o b/src/timepointss.o
+index d1972e4d..0feffdc3 100644
+Binary files a/src/timepointss.o and b/src/timepointss.o differ
+diff --git a/src/timer.o b/src/timer.o
+index 94519a65..39c15134 100644
+Binary files a/src/timer.o and b/src/timer.o differ
+diff --git a/src/topocfdfem.o b/src/topocfdfem.o
+index f9d71af3..2326b233 100644
+Binary files a/src/topocfdfem.o and b/src/topocfdfem.o differ
+diff --git a/src/transformation.o b/src/transformation.o
+index 8db5d2a0..804d81ea 100644
+Binary files a/src/transformation.o and b/src/transformation.o differ
+diff --git a/src/transformatrix.o b/src/transformatrix.o
+index 718b0e07..e00abc18 100644
+Binary files a/src/transformatrix.o and b/src/transformatrix.o differ
+diff --git a/src/transformfs.o b/src/transformfs.o
+index 330dfa0b..1672a6c7 100644
+Binary files a/src/transformfs.o and b/src/transformfs.o differ
+diff --git a/src/transforms.o b/src/transforms.o
+index d8c5e755..71d9bf51 100644
+Binary files a/src/transforms.o and b/src/transforms.o differ
+diff --git a/src/transition.o b/src/transition.o
+index 0a9d87c8..d6dd0743 100644
+Binary files a/src/transition.o and b/src/transition.o differ
+diff --git a/src/transitionmain.o b/src/transitionmain.o
+index 3f29d7b7..c197411b 100644
+Binary files a/src/transitionmain.o and b/src/transitionmain.o differ
+diff --git a/src/treatmasterface.o b/src/treatmasterface.o
+index ea711c24..b1e94d43 100644
+Binary files a/src/treatmasterface.o and b/src/treatmasterface.o differ
+diff --git a/src/trianeighbor.o b/src/trianeighbor.o
+index 1f221abb..cd904a77 100644
+Binary files a/src/trianeighbor.o and b/src/trianeighbor.o differ
+diff --git a/src/triangucont.o b/src/triangucont.o
+index 8dfb052a..dd1744ca 100644
+Binary files a/src/triangucont.o and b/src/triangucont.o differ
+diff --git a/src/triangulate.o b/src/triangulate.o
+index 0f9f32bc..3945755e 100644
+Binary files a/src/triangulate.o and b/src/triangulate.o differ
+diff --git a/src/tridiagonal.o b/src/tridiagonal.o
+index a76e9759..92c90b3e 100644
+Binary files a/src/tridiagonal.o and b/src/tridiagonal.o differ
+diff --git a/src/tridiagonal_nrhs.o b/src/tridiagonal_nrhs.o
+index 9be630d3..16b5ca2e 100644
+Binary files a/src/tridiagonal_nrhs.o and b/src/tridiagonal_nrhs.o differ
+diff --git a/src/triloc.o b/src/triloc.o
+index 981eec83..94f4d8eb 100644
+Binary files a/src/triloc.o and b/src/triloc.o differ
+diff --git a/src/ts_calc.o b/src/ts_calc.o
+index e285344b..c692cfcc 100644
+Binary files a/src/ts_calc.o and b/src/ts_calc.o differ
+diff --git a/src/tt_calc.o b/src/tt_calc.o
+index d6a4e6b3..f121e48f 100644
+Binary files a/src/tt_calc.o and b/src/tt_calc.o differ
+diff --git a/src/two_phase_flow.o b/src/two_phase_flow.o
+index 26ac3f36..d9a5477a 100644
+Binary files a/src/two_phase_flow.o and b/src/two_phase_flow.o differ
+diff --git a/src/twodint.o b/src/twodint.o
+index 48d5b4b8..a8d1a983 100644
+Binary files a/src/twodint.o and b/src/twodint.o differ
+diff --git a/src/u_calloc.o b/src/u_calloc.o
+index 8fa678c8..9d95d840 100644
+Binary files a/src/u_calloc.o and b/src/u_calloc.o differ
+diff --git a/src/u_free.o b/src/u_free.o
+index 089b4373..4d7f04f5 100644
+Binary files a/src/u_free.o and b/src/u_free.o differ
+diff --git a/src/u_realloc.o b/src/u_realloc.o
+index 0c54d11d..ece7d46a 100644
+Binary files a/src/u_realloc.o and b/src/u_realloc.o differ
+diff --git a/src/uamplitude.o b/src/uamplitude.o
+index ec611b87..11ed4102 100644
+Binary files a/src/uamplitude.o and b/src/uamplitude.o differ
+diff --git a/src/uboun.o b/src/uboun.o
+index 90df33dc..82a4fa8b 100644
+Binary files a/src/uboun.o and b/src/uboun.o differ
+diff --git a/src/uexpan.o b/src/uexpan.o
+index 2ae0a2d3..95c9f3fd 100644
+Binary files a/src/uexpan.o and b/src/uexpan.o differ
+diff --git a/src/ufaceload.o b/src/ufaceload.o
+index 1a4bc7b2..968d6418 100644
+Binary files a/src/ufaceload.o and b/src/ufaceload.o differ
+diff --git a/src/uhard.o b/src/uhard.o
+index 95323ca3..e39987de 100644
+Binary files a/src/uhard.o and b/src/uhard.o differ
+diff --git a/src/uhardening.o b/src/uhardening.o
+index 6b793ba1..b04246bc 100644
+Binary files a/src/uhardening.o and b/src/uhardening.o differ
+diff --git a/src/umat.o b/src/umat.o
+index 1d786f2e..8ea1d7c9 100644
+Binary files a/src/umat.o and b/src/umat.o differ
+diff --git a/src/umat_abaqus.o b/src/umat_abaqus.o
+index b4c140e3..83a6d321 100644
+Binary files a/src/umat_abaqus.o and b/src/umat_abaqus.o differ
+diff --git a/src/umat_abaqusnl.o b/src/umat_abaqusnl.o
+index 126f6acf..503140fd 100644
+Binary files a/src/umat_abaqusnl.o and b/src/umat_abaqusnl.o differ
+diff --git a/src/umat_aniso_creep.o b/src/umat_aniso_creep.o
+index f11b98a5..06785f16 100644
+Binary files a/src/umat_aniso_creep.o and b/src/umat_aniso_creep.o differ
+diff --git a/src/umat_aniso_plas.o b/src/umat_aniso_plas.o
+index 5f68a41f..f55f7524 100644
+Binary files a/src/umat_aniso_plas.o and b/src/umat_aniso_plas.o differ
+diff --git a/src/umat_ciarlet_el.o b/src/umat_ciarlet_el.o
+index 605cd6ea..c1a14a75 100644
+Binary files a/src/umat_ciarlet_el.o and b/src/umat_ciarlet_el.o differ
+diff --git a/src/umat_compression_only.o b/src/umat_compression_only.o
+index 5cdffab8..be989538 100644
+Binary files a/src/umat_compression_only.o and b/src/umat_compression_only.o differ
+diff --git a/src/umat_elastic_fiber.o b/src/umat_elastic_fiber.o
+index f79a5e26..fc4a552d 100644
+Binary files a/src/umat_elastic_fiber.o and b/src/umat_elastic_fiber.o differ
+diff --git a/src/umat_ideal_gas.o b/src/umat_ideal_gas.o
+index b3015070..0db5a92c 100644
+Binary files a/src/umat_ideal_gas.o and b/src/umat_ideal_gas.o differ
+diff --git a/src/umat_lin_iso_el.o b/src/umat_lin_iso_el.o
+index 0dd9498b..ed2db066 100644
+Binary files a/src/umat_lin_iso_el.o and b/src/umat_lin_iso_el.o differ
+diff --git a/src/umat_main.o b/src/umat_main.o
+index e23f0ea4..e36b6418 100644
+Binary files a/src/umat_main.o and b/src/umat_main.o differ
+diff --git a/src/umat_single_crystal.o b/src/umat_single_crystal.o
+index e5b6ab16..220e3383 100644
+Binary files a/src/umat_single_crystal.o and b/src/umat_single_crystal.o differ
+diff --git a/src/umat_single_crystal_creep.o b/src/umat_single_crystal_creep.o
+index 729ed76a..10e5020a 100644
+Binary files a/src/umat_single_crystal_creep.o and b/src/umat_single_crystal_creep.o differ
+diff --git a/src/umat_tension_only.o b/src/umat_tension_only.o
+index b01d5666..5e0574c0 100644
+Binary files a/src/umat_tension_only.o and b/src/umat_tension_only.o differ
+diff --git a/src/umat_undo_nlgeom_lin_iso_el.o b/src/umat_undo_nlgeom_lin_iso_el.o
+index 4b76a5d6..e6de5701 100644
+Binary files a/src/umat_undo_nlgeom_lin_iso_el.o and b/src/umat_undo_nlgeom_lin_iso_el.o differ
+diff --git a/src/umat_user.o b/src/umat_user.o
+index 0dcf74a0..1cae1449 100644
+Binary files a/src/umat_user.o and b/src/umat_user.o differ
+diff --git a/src/umatht.o b/src/umatht.o
+index b6ecb0d8..e1d6dac3 100644
+Binary files a/src/umatht.o and b/src/umatht.o differ
+diff --git a/src/umpc_dist.o b/src/umpc_dist.o
+index 6b9243a5..5b54c197 100644
+Binary files a/src/umpc_dist.o and b/src/umpc_dist.o differ
+diff --git a/src/umpc_gap.o b/src/umpc_gap.o
+index 561c88d1..567cae2e 100644
+Binary files a/src/umpc_gap.o and b/src/umpc_gap.o differ
+diff --git a/src/umpc_mean_rot.o b/src/umpc_mean_rot.o
+index cf8c3bfb..07204520 100644
+Binary files a/src/umpc_mean_rot.o and b/src/umpc_mean_rot.o differ
+diff --git a/src/umpc_user.o b/src/umpc_user.o
+index 1b1a2cdc..e5f075d7 100644
+Binary files a/src/umpc_user.o and b/src/umpc_user.o differ
+diff --git a/src/uncouptempdisps.o b/src/uncouptempdisps.o
+index 7ee6d0f0..34a37f7c 100644
+Binary files a/src/uncouptempdisps.o and b/src/uncouptempdisps.o differ
+diff --git a/src/updatecon.o b/src/updatecon.o
+index 6f3dcee3..5d106d2d 100644
+Binary files a/src/updatecon.o and b/src/updatecon.o differ
+diff --git a/src/updatecont.o b/src/updatecont.o
+index 5ae26e5f..18430f8e 100644
+Binary files a/src/updatecont.o and b/src/updatecont.o differ
+diff --git a/src/updatecont2d.o b/src/updatecont2d.o
+index 561ffafe..37c36980 100644
+Binary files a/src/updatecont2d.o and b/src/updatecont2d.o differ
+diff --git a/src/updatecontpen.o b/src/updatecontpen.o
+index b7e6d8e0..c471e7b2 100644
+Binary files a/src/updatecontpen.o and b/src/updatecontpen.o differ
+diff --git a/src/user_network_element.o b/src/user_network_element.o
+index 961f3acb..8229acc0 100644
+Binary files a/src/user_network_element.o and b/src/user_network_element.o differ
+diff --git a/src/user_network_element_p0.o b/src/user_network_element_p0.o
+index 2941ffeb..a6a340fb 100644
+Binary files a/src/user_network_element_p0.o and b/src/user_network_element_p0.o differ
+diff --git a/src/user_network_element_p1.o b/src/user_network_element_p1.o
+index be5b0bca..600d7d28 100644
+Binary files a/src/user_network_element_p1.o and b/src/user_network_element_p1.o differ
+diff --git a/src/userelements.o b/src/userelements.o
+index b68ed781..dc9b2e97 100644
+Binary files a/src/userelements.o and b/src/userelements.o differ
+diff --git a/src/usermaterials.o b/src/usermaterials.o
+index 9cd66750..b697b709 100644
+Binary files a/src/usermaterials.o and b/src/usermaterials.o differ
+diff --git a/src/usermpc.o b/src/usermpc.o
+index c8a463da..9c1f7d5a 100644
+Binary files a/src/usermpc.o and b/src/usermpc.o differ
+diff --git a/src/utemp.o b/src/utemp.o
+index 00197903..453a1414 100644
+Binary files a/src/utemp.o and b/src/utemp.o differ
+diff --git a/src/utemp_ccxlib.o b/src/utemp_ccxlib.o
+index 732f1515..1ef627a7 100644
+Binary files a/src/utemp_ccxlib.o and b/src/utemp_ccxlib.o differ
+diff --git a/src/v_betrag.o b/src/v_betrag.o
+index 0fcd5c14..609375a1 100644
+Binary files a/src/v_betrag.o and b/src/v_betrag.o differ
+diff --git a/src/v_prod.o b/src/v_prod.o
+index de0873f0..bb9b0f78 100644
+Binary files a/src/v_prod.o and b/src/v_prod.o differ
+diff --git a/src/v_result.o b/src/v_result.o
+index 41231c6f..7a4f2457 100644
+Binary files a/src/v_result.o and b/src/v_result.o differ
+diff --git a/src/valuesatinfinitys.o b/src/valuesatinfinitys.o
+index 31a7dd95..fe627250 100644
+Binary files a/src/valuesatinfinitys.o and b/src/valuesatinfinitys.o differ
+diff --git a/src/velsolve.o b/src/velsolve.o
+index 9eaaa10b..6c4ca81e 100644
+Binary files a/src/velsolve.o and b/src/velsolve.o differ
+diff --git a/src/viewfactors.o b/src/viewfactors.o
+index 83b36723..cba13e90 100644
+Binary files a/src/viewfactors.o and b/src/viewfactors.o differ
+diff --git a/src/viscos.o b/src/viscos.o
+index bc70faa3..fa47321a 100644
+Binary files a/src/viscos.o and b/src/viscos.o differ
+diff --git a/src/vortex.o b/src/vortex.o
+index 97990d68..fdb1cab9 100644
+Binary files a/src/vortex.o and b/src/vortex.o differ
+diff --git a/src/wcoef.o b/src/wcoef.o
+index 3a89f9e3..26dba3c2 100644
+Binary files a/src/wcoef.o and b/src/wcoef.o differ
+diff --git a/src/withinradius3d.o b/src/withinradius3d.o
+index abe0a051..35eb885a 100644
+Binary files a/src/withinradius3d.o and b/src/withinradius3d.o differ
+diff --git a/src/wpi.o b/src/wpi.o
+index 191188a2..32c2f6fa 100644
+Binary files a/src/wpi.o and b/src/wpi.o differ
+diff --git a/src/writeboun.o b/src/writeboun.o
+index 311c4c64..a565df50 100644
+Binary files a/src/writeboun.o and b/src/writeboun.o differ
+diff --git a/src/writebv.o b/src/writebv.o
+index 5216bfd8..b1711baf 100644
+Binary files a/src/writebv.o and b/src/writebv.o differ
+diff --git a/src/writecvg.o b/src/writecvg.o
+index dd8e29fc..6dc05ab9 100644
+Binary files a/src/writecvg.o and b/src/writecvg.o differ
+diff --git a/src/writedeigdx.o b/src/writedeigdx.o
+index 01aa8ed8..0b2da2a9 100644
+Binary files a/src/writedeigdx.o and b/src/writedeigdx.o differ
+diff --git a/src/writedesi.o b/src/writedesi.o
+index 23c70258..6addc74b 100644
+Binary files a/src/writedesi.o and b/src/writedesi.o differ
+diff --git a/src/writeelem.o b/src/writeelem.o
+index 4bc9fdc7..9e5281d2 100644
+Binary files a/src/writeelem.o and b/src/writeelem.o differ
+diff --git a/src/writeev.o b/src/writeev.o
+index 8b010f62..900b31b1 100644
+Binary files a/src/writeev.o and b/src/writeev.o differ
+diff --git a/src/writeevcomplex.o b/src/writeevcomplex.o
+index df8145da..c50ca2c2 100644
+Binary files a/src/writeevcomplex.o and b/src/writeevcomplex.o differ
+diff --git a/src/writeevcs.o b/src/writeevcs.o
+index 26f1bd85..857b4c8f 100644
+Binary files a/src/writeevcs.o and b/src/writeevcs.o differ
+diff --git a/src/writeevcscomplex.o b/src/writeevcscomplex.o
+index 647b2909..1221a6b0 100644
+Binary files a/src/writeevcscomplex.o and b/src/writeevcscomplex.o differ
+diff --git a/src/writehe.o b/src/writehe.o
+index a21fe2b8..22858f96 100644
+Binary files a/src/writehe.o and b/src/writehe.o differ
+diff --git a/src/writeheading.o b/src/writeheading.o
+index d2db41eb..5c0c043b 100644
+Binary files a/src/writeheading.o and b/src/writeheading.o differ
+diff --git a/src/writeim.o b/src/writeim.o
+index 17d7adb1..02047114 100644
+Binary files a/src/writeim.o and b/src/writeim.o differ
+diff --git a/src/writeinput.o b/src/writeinput.o
+index b74e5df1..b8c9b5be 100644
+Binary files a/src/writeinput.o and b/src/writeinput.o differ
+diff --git a/src/writelm.o b/src/writelm.o
+index 0d828988..93f5cbf8 100644
+Binary files a/src/writelm.o and b/src/writelm.o differ
+diff --git a/src/writemac.o b/src/writemac.o
+index 60f2cb8d..50950cf4 100644
+Binary files a/src/writemac.o and b/src/writemac.o differ
+diff --git a/src/writemaccs.o b/src/writemaccs.o
+index 0c7bff15..e59c6921 100644
+Binary files a/src/writemaccs.o and b/src/writemaccs.o differ
+diff --git a/src/writempc.o b/src/writempc.o
+index d397aca0..3a3e89be 100644
+Binary files a/src/writempc.o and b/src/writempc.o differ
+diff --git a/src/writeobj.o b/src/writeobj.o
+index a0e0ec02..462dd51e 100644
+Binary files a/src/writeobj.o and b/src/writeobj.o differ
+diff --git a/src/writepf.o b/src/writepf.o
+index e0b60fef..5364be29 100644
+Binary files a/src/writepf.o and b/src/writepf.o differ
+diff --git a/src/writerandomfield.o b/src/writerandomfield.o
+index 7b87d593..019ec53d 100644
+Binary files a/src/writerandomfield.o and b/src/writerandomfield.o differ
+diff --git a/src/writere.o b/src/writere.o
+index 3579809e..71fb5309 100644
+Binary files a/src/writere.o and b/src/writere.o differ
+diff --git a/src/writesen.o b/src/writesen.o
+index 3913312c..4683ddec 100644
+Binary files a/src/writesen.o and b/src/writesen.o differ
+diff --git a/src/writesta.o b/src/writesta.o
+index 4ba931e0..01b43568 100644
+Binary files a/src/writesta.o and b/src/writesta.o differ
+diff --git a/src/writestadiv.o b/src/writestadiv.o
+index 5c687380..d1f338fe 100644
+Binary files a/src/writestadiv.o and b/src/writestadiv.o differ
+diff --git a/src/writesubmatrix.o b/src/writesubmatrix.o
+index 1f934dbe..76b8fae6 100644
+Binary files a/src/writesubmatrix.o and b/src/writesubmatrix.o differ
+diff --git a/src/writetetmesh.o b/src/writetetmesh.o
+index 0340b0a2..420d2969 100644
+Binary files a/src/writetetmesh.o and b/src/writetetmesh.o differ
+diff --git a/src/writevfa.o b/src/writevfa.o
+index 04ada41e..ee939b07 100644
+Binary files a/src/writevfa.o and b/src/writevfa.o differ
+diff --git a/src/writeview.o b/src/writeview.o
+index eaa6e4c0..9e6e2381 100644
+Binary files a/src/writeview.o and b/src/writeview.o differ
+diff --git a/src/wye.o b/src/wye.o
+index cd2daa1d..39497e14 100644
+Binary files a/src/wye.o and b/src/wye.o differ
+diff --git a/src/zeta_calc.o b/src/zeta_calc.o
+index fa6bc3ea..77359791 100644
+Binary files a/src/zeta_calc.o and b/src/zeta_calc.o differ
+diff --git a/src/zienzhu.o b/src/zienzhu.o
+index 1749185a..2c76eadc 100644
+Binary files a/src/zienzhu.o and b/src/zienzhu.o differ
